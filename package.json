@@ -1,0 +1,11 @@
+{
+  "name": "conniebot",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Does various language stuff.",
+  "main": "bot.js",
+  "author": "Shane Duan",
+  "dependencies": {
+    "discord.js": "^11.2.1"
+  }
+}
