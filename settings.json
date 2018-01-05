@@ -1,3 +1,4 @@
 {
-    "activeMessage": "hello!"
+    "activeMessage": "hello!",
+    "prefix": "!"
 }

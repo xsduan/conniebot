@@ -22,6 +22,22 @@ printMessage = function(message, status) {
     console.log('(' + status + ') ' + message.author.username + message.author + ': ' + content);
 }
 
+parse = function (message) {
+    var command, prefixRegex = new RegExp('(?:^' + settings.prefix + ')(\\w*)');
+    if (command = message.content.match(prefixRegex)) {
+        tokens = message.content.split(" ");
+
+        return 'command/' + command[1];
+    }
+
+    var matches = x2i.grab(message.content);
+    if (matches.length != 0) {
+        message.channel.send(matches);
+        return 'x2i';
+    }
+
+    return 'none';
+}
 bot.on('ready', () => {
     console.log('Bot ready. Setting up...');
 
@@ -35,13 +51,10 @@ bot.on('ready', () => {
 
 bot.on('message', message => {
     if (!message.author.bot) {
-        var matches = x2i.grab(message.content);
-        if (matches.length != 0) {
-            message.channel.send(matches);
-        }
-        printMessage(message, 'processed');
+        result = parse(message);
+        printMessage(message, 'processed:' + result);
     } else {
-        printMessage(message, 'ignored/bot');
+        printMessage(message, 'ignored:bot');
     }
 });
 
