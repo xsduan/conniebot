@@ -67,16 +67,20 @@ parse = function (message) {
     if (matches.length != 0) {
         var index = 0;
         for (var i = 0; i < settings.embeds.timeoutAfterBatches; i++) {
+            // check if finished
+            if (index > matches.length) {
+                return 'x2i/all';
+            }
+
             after = index + settings.embeds.batchSize;
+
             message.channel.send({
                 embed: {
                     color: settings.embeds.colors.success,
                     fields: matches.slice(index, after)
                 }
             });
-            if (after > matches.length) {
-                return 'x2i/all';
-            }
+
             index = after;
         }
 
