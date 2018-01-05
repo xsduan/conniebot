@@ -32,10 +32,10 @@ printMessage = function (message, status) {
 
 parse = function (message) {
     var command, prefixRegex = new RegExp('(?:^' + settings.prefix + ')(\\w*)');
-    if (command = message.content.match(prefixRegex)) {
+    if (command = message.content.match(prefixRegex)[1]) {
         tokens = message.content.split(" ");
 
-        return 'command/' + command[1];
+        return 'command/' + command;
     }
 
     var matches = x2i.grab(message.content);
