@@ -78,6 +78,7 @@ parse = function (message) {
                 embed: {
                     color: settings.embeds.colors.success,
                     fields: [{
+                        name: '',
                         value: matches.slice(index, after).join('\n')
                     }]
                 }
