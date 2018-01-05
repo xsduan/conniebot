@@ -26,7 +26,7 @@ rest in pisces connie the bot (201x - 2017)
 
 #### here in ground control
 
-- download and install npm and node.js if you haven't already (duh)
+- download and install [node.js and npm](https://nodejs.org/) if you haven't already (duh)
 - set up `auth.json` using your bot token (an example with blank credentials can be found in `auth-example.json`)
 - maybe look at `settings.json`?
 
