@@ -32,7 +32,8 @@ printMessage = function (message, status) {
 
 parse = function (message) {
     var command, prefixRegex = new RegExp('(?:^' + settings.prefix + ')(\\w*)');
-    if (command = message.content.match(prefixRegex)[1]) {
+    if (command = message.content.match(prefixRegex)) {
+        command = command[1];
         tokens = message.content.split(" ");
 
         // TODO: make into separate module
