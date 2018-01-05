@@ -1,9 +1,15 @@
 {
     "activeMessage": "hello!",
     "prefix": "!",
-    "colors": {
-        "help": 3447003,
-        "success": 10017588,
-        "fail": 14365848
+    "embeds": {
+        "batchSize": 4,
+        "timeoutAfterBatches": 4,
+        "timeoutMessage": "Could not parse all the X-SAMPA inputs as there were too many in a single message.",
+        "colors": {
+            "help": 3447003,
+            "success": 10017588,
+            "warning": 14382900,
+            "fail": 14365848
+        }
     }
 }

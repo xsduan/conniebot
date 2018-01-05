@@ -31,16 +31,16 @@ printMessage = function (message, status) {
 }
 
 parse = function (message) {
+    // TODO: make into separate module
     var command, prefixRegex = new RegExp('(?:^' + settings.prefix + ')(\\w*)');
     if (command = message.content.match(prefixRegex)) {
         command = command[1];
         tokens = message.content.split(" ");
 
-        // TODO: make into separate module
         if (command === 'help') {
             message.channel.send({
                 embed: {
-                    color: settings.colors.help,
+                    color: settings.embeds.colors.help,
                     author: {
                         name: bot.user.username,
                         icon_url: bot.user.avatarURL
@@ -65,13 +65,29 @@ parse = function (message) {
 
     var matches = x2i.grab(message.content);
     if (matches.length != 0) {
+        var index = 0;
+        for (var i = 0; i < settings.embeds.timeoutAfterBatches; i++) {
+            after = index + settings.embeds.batchSize;
+            message.channel.send({
+                embed: {
+                    color: settings.embeds.colors.success,
+                    fields: matches.slice(index, after)
+                }
+            });
+            if (after > matches.length) {
+                return 'x2i/all';
+            }
+            index = after;
+        }
+
         message.channel.send({
             embed: {
-                color: settings.colors.success,
-                fields: matches
+                color: settings.embeds.colors.warning,
+                fields: [{ name: "Timeout", value: settings.embeds.timeoutMessage }]
             }
         });
-        return 'x2i';
+
+        return 'x2i/partial';
     }
 
     return 'none';
