@@ -77,7 +77,9 @@ parse = function (message) {
             message.channel.send({
                 embed: {
                     color: settings.embeds.colors.success,
-                    fields: matches.slice(index, after)
+                    fields: [{
+                        value: matches.slice(index, after).join('\n')
+                    }]
                 }
             });
 
