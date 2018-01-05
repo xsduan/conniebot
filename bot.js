@@ -1,3 +1,7 @@
+//-----------
+//   vars
+//-----------
+
 // libraries
 const Discord = require('discord.js');
 
@@ -12,7 +16,11 @@ const settings = require('./settings.json');
 const bot = new Discord.Client();
 const guild = new Discord.Guild();
 
-printMessage = function(message, status) {
+//-----------
+// functions
+//-----------
+
+printMessage = function (message, status) {
     // truncate message contents
     var content = message.content;
     if (content.length > 100) {
@@ -38,6 +46,11 @@ parse = function (message) {
 
     return 'none';
 }
+
+//-----------
+//   main
+//-----------
+
 bot.on('ready', () => {
     console.log('Bot ready. Setting up...');
 

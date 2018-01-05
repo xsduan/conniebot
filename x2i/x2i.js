@@ -1,4 +1,27 @@
+//-----------
+//   vars
+//-----------
+
+// data files
 const x2iKeys = require('./x2i-keys.json');
+
+//-----------
+// functions
+//-----------
+
+convert = function (xsampa) {
+    // find & replace, in descending order of substr size
+    x2iKeys.forEach(function (x2iKey) {
+        xsampa = xsampa.replace(new RegExp(x2iKey[0], 'g'), x2iKey[1]);
+    });
+
+    // reappend x[] and send it off
+    return xsampa;
+}
+
+//-----------
+//  exports
+//-----------
 
 exports.grab = function (message) {
     // regexes
@@ -14,14 +37,4 @@ exports.grab = function (message) {
     // TODO: PIE-SAMPA or whatever
 
     return matches;
-}
-
-convert = function (xsampa) {
-    // find & replace, in descending order of substr size
-    x2iKeys.forEach(function (x2iKey) {
-        xsampa = xsampa.replace(new RegExp(x2iKey[0], 'g'), x2iKey[1]);
-    });
-
-    // reappend x[] and send it off
-    return xsampa;
 }
