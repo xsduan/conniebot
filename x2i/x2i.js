@@ -32,7 +32,7 @@ exports.grab = function (message) {
     var matches = [], match;
     while (match = xsampaRegex.exec(message)) {
         if (match[3] != '') {
-            matches.push({ name: match[0], value: convert(match.slice(2).join('')) });
+            matches.push({ name: match[2], value: convert(match[2]) });
         }
     }
 
