@@ -25,13 +25,13 @@ convert = function (xsampa) {
 
 exports.grab = function (message) {
     // regexes
-    var xsampaRegex = /(?:\s)(x[\/\[])(.*?)([\/\]])/gm;
+    var xsampaRegex = /(?:(^|\s))(x[\/\[])(.*?)([\/\]])/gm;
 
     // find all occurences of xsampa using x[]
     // or x// (or x[/ or x/] if you're absolutely crazy)
     var matches = [], match;
     while (match = xsampaRegex.exec(message)) {
-        matches.push({ name: match[0], value: convert(match.slice(1).join('')) });
+        matches.push({ name: match[0], value: convert(match.slice(2).join('')) });
     }
 
     // TODO: PIE-SAMPA or whatever
