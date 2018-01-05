@@ -78,7 +78,7 @@ parse = function (message) {
                 embed: {
                     color: settings.embeds.colors.success,
                     fields: [{
-                        name: '',
+                        name: '\u200b',
                         value: matches.slice(index, after).join('\n')
                     }]
                 }
