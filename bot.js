@@ -35,6 +35,11 @@ parse = function (message) {
     if (command = message.content.match(prefixRegex)[1]) {
         tokens = message.content.split(" ");
 
+        // TODO: make into separate module
+        if (command === 'help') {
+            message.channel.send("x[] or x// for X-SAMPA to IPA conversion.");
+        }
+
         return 'command/' + command;
     }
 
