@@ -31,7 +31,7 @@ exports.grab = function (message) {
     // or x// (or x[/ or x/] if you're absolutely crazy)
     var matches = [], match;
     while (match = xsampaRegex.exec(message)) {
-        matches.push(convert(match.slice(1).join('')));
+        matches.push({ name: match[0], value: convert(match.slice(1).join('')) });
     }
 
     // TODO: PIE-SAMPA or whatever

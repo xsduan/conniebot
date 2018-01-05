@@ -38,7 +38,26 @@ parse = function (message) {
 
         // TODO: make into separate module
         if (command === 'help') {
-            message.channel.send("x[] or x// for X-SAMPA to IPA conversion.");
+            message.channel.send({
+                embed: {
+                    color: settings.colors.help,
+                    author: {
+                        name: bot.user.username,
+                        icon_url: bot.user.avatarURL
+                    },
+                    title: "Commands",
+                    fields: [
+                        {
+                            name: "x[narrow] or x/broad/",
+                            value: "Converts XSAMPA to IPA. Hopefully."
+                        },
+                        {
+                            name: settings.prefix + "help",
+                            value: "Reply with this box."
+                        }
+                    ]
+                }
+            })
         }
 
         return 'command/' + command;
@@ -46,7 +65,12 @@ parse = function (message) {
 
     var matches = x2i.grab(message.content);
     if (matches.length != 0) {
-        message.channel.send(matches);
+        message.channel.send({
+            embed: {
+                color: settings.colors.success,
+                fields: matches
+            }
+        });
         return 'x2i';
     }
 

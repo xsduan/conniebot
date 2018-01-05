@@ -1,4 +1,9 @@
 {
     "activeMessage": "hello!",
-    "prefix": "!"
+    "prefix": "!",
+    "colors": {
+        "help": 3447003,
+        "success": 10017588,
+        "fail": 14365848
+    }
 }
