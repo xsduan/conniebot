@@ -6,7 +6,7 @@ really cool language bot (rip miss connie sr)
 
 it does various cool language things. currently it has these features:
 
-- xsampa to ipa (try it out in chat with `x[Eks "s{mp_h@ tu aIpi:Ei_^]`)
+- xsampa to ipa (try it out in chat with `x[Eks "s{mp_h@ tu aI_^pi:Ei_^]`)
 - oh wow this is a pathetic features list
 
 hopefully it does more in future.
