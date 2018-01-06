@@ -70,7 +70,7 @@ parse = function (message) {
                 }]
             }
         }).then(() => logMessage('success:x2i/all'))
-        .catch(err => err => logMessage('error:x2i/partial', err));
+            .catch(err => err => logMessage('error:x2i/partial', err));
     }
 
     logMessage('none');

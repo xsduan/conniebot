@@ -1,5 +1,5 @@
 {
-    "activeMessage": "hello!",
+    "activeMessage": "x/help for info",
     "prefix": "x/",
     "embeds": {
         "timeoutMessage": "Could not send all the X-SAMPA inputs as there were too many in a single message.",
