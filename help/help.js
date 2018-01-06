@@ -20,7 +20,7 @@ exports.embed = function (user) {
             title: "Commands",
             fields: [
                 {
-                    name: "x[narrow] or x/broad/",
+                    name: "x[phonetic] or x/phonemic/",
                     value: "Converts XSAMPA to IPA. Hopefully."
                 },
                 {
