@@ -40,5 +40,5 @@ exports.output = function (message, headersImportant = true) {
 }
 
 exports.strip = function (message, headersImportant = true) {
-    return handleTitle(message) + handleBody(message);
+    return handleTitle(message) + handleBody(message, headersImportant);
 }
