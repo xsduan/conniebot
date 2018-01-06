@@ -25,7 +25,7 @@ convert = function (xsampa) {
 
 exports.grab = function (message) {
     // regexes
-    var xsampaRegex = /(?:(^|\s))(x[\/\[])(.*?)([\/\]])/gm;
+    var xsampaRegex = /(?:(^|\s))(x[\/\[])(\S.*?\S)([\/\]])/gm;
 
     // find all occurences of xsampa using x[]
     // or x// (or x[/ or x/] if you're absolutely crazy)
