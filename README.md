@@ -9,7 +9,13 @@ it does various cool language things. currently it has these features:
 - xsampa to ipa (try it out in chat with `x[Eks "s{mp_h@ tu aI_^pi:Ei_^]`)
 - oh wow this is a pathetic features list
 
-hopefully it does more in future.
+hopefully it does more in future, such as:
+
+- apie and zsampa
+- play phonemes in chat
+- spectrogram/vowel analyzer in chat
+
+don't count on it tho
 
 ### but y
 
