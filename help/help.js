@@ -5,6 +5,17 @@
 // data files
 const settings = require('../settings.json');
 
+const help = [
+    {
+        name: 'x[phonetic] or x/phonemic/',
+        value: 'Converts XSAMPA to IPA. Hopefully.'
+    },
+    {
+        name: settings.prefix + 'help',
+        value: 'Reply with this box.'
+    }
+]
+
 //-----------
 //  exports
 //-----------
@@ -17,17 +28,8 @@ exports.embed = function (user) {
                 name: user.username,
                 icon_url: user.avatarURL
             },
-            title: "Commands",
-            fields: [
-                {
-                    name: "x[phonetic] or x/phonemic/",
-                    value: "Converts XSAMPA to IPA. Hopefully."
-                },
-                {
-                    name: settings.prefix + "help",
-                    value: "Reply with this box."
-                }
-            ]
+            title: 'Commands',
+            fields: help
         }
-    }
+    };
 }

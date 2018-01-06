@@ -2,7 +2,8 @@
     "activeMessage": "x/help for info",
     "prefix": "x/",
     "embeds": {
-        "timeoutMessage": "Could not send all the X-SAMPA inputs as there were too many in a single message.",
+        "active": false,
+        "timeoutMessage": "Could not send all output as there were too many in a single message.",
         "colors": {
             "help": 3447003,
             "success": 10017588,

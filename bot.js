@@ -6,6 +6,7 @@
 const Discord = require('discord.js');
 
 // local modules
+const embed = require('./embed/embed.js');
 const x2i = require('./x2i/x2i.js');
 const help = require('./help/help.js');
 
@@ -36,10 +37,10 @@ parse = function (message) {
     var command, prefixRegex = new RegExp('(?:^' + settings.prefix + ')(\\S*)');
     if (command = message.content.match(prefixRegex)) {
         command = command[1];
-        tokens = message.content.split(" ");
+        tokens = message.content.split(' ');
 
         if (command === 'help') {
-            message.channel.send(help.embed(bot.user))
+            message.channel.send(embed.output(help.embed(bot.user)))
                 .then(() => logMessage('success:command/help'))
                 .catch(err => logMessage('error:command/help', err));
         } else if (command === 'ping') {
@@ -54,20 +55,20 @@ parse = function (message) {
 
     // x2i
     var matches = x2i.grab(message.content);
-    if (matches.length != 0) {
+    if (matches.length !== 0) {
         // shorten field to 1024
         if (matches.length > 1024) {
             matches = matches.slice(0, 1023) + '…';
-            message.channel.send({
+            message.channel.send(embed.output({
                 embed: {
                     color: settings.embeds.colors.warning,
-                    fields: [{ name: "Timeout", value: settings.embeds.timeoutMessage }]
+                    fields: [{ name: 'Timeout', value: settings.embeds.timeoutMessage }]
                 }
-            }).then(() => logMessage('timeout:x2i/partial', message))
+            })).then(() => logMessage('timeout:x2i/partial', message))
                 .catch(err => logMessage('error:timeout:x2i/partial', err));
         }
 
-        message.channel.send({
+        message.channel.send(embed.output({
             embed: {
                 color: settings.embeds.colors.success,
                 fields: [{
@@ -75,7 +76,7 @@ parse = function (message) {
                     value: matches
                 }]
             }
-        }).then(() => logMessage('success:x2i/all'))
+        }, false)).then(() => logMessage('success:x2i/all'))
             .catch(err => err => logMessage('error:x2i/partial', err));
     }
 
