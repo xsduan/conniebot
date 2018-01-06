@@ -42,6 +42,11 @@ parse = function (message) {
             message.channel.send(help.embed(bot.user))
                 .then(() => logMessage('success:command/help'))
                 .catch(err => logMessage('error:command/help', message));
+        } else if (command === 'ping') {
+            elapsed = new Date().getTime() + message.createdTimestamp;
+            message.channel.send('I\'m alive! (' + elapsed + ' ms)')
+                .then(() => logMessage('success:command/ping/' + elapsed + 'ms'))
+                .catch(err => logMessage('error:command/ping', err));
         }
 
         logMessage('ignored:command/' + command);
