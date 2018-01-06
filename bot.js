@@ -65,7 +65,7 @@ parse = function (message) {
             embed: {
                 color: settings.embeds.colors.success,
                 fields: [{
-                    name: '\u200b',
+                    name: 'X-SAMPA found:',
                     value: matches
                 }]
             }
