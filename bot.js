@@ -7,6 +7,7 @@ const Discord = require('discord.js');
 
 // local modules
 const x2i = require('./x2i/x2i.js');
+const help = require('./help/help.js');
 
 // data files
 const auth = require('./auth.json');
@@ -38,29 +39,11 @@ parse = function (message) {
         tokens = message.content.split(" ");
 
         if (command === 'help') {
-            message.channel.send({
-                embed: {
-                    color: settings.embeds.colors.help,
-                    author: {
-                        name: bot.user.username,
-                        icon_url: bot.user.avatarURL
-                    },
-                    title: "Commands",
-                    fields: [
-                        {
-                            name: "x[narrow] or x/broad/",
-                            value: "Converts XSAMPA to IPA. Hopefully."
-                        },
-                        {
-                            name: settings.prefix + "help",
-                            value: "Reply with this box."
-                        }
-                    ]
-                }
-            })
+            message.channel.send(help.embed(settings.embeds.colors.success, bot.user))
+            logMessage('success:command/help');
         }
 
-        logMessage('success:command/' + command);
+        logMessage('ignored:command/' + command);
     }
 
     var matches = x2i.grab(message.content);
