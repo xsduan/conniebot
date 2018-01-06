@@ -20,14 +20,14 @@ const guild = new Discord.Guild();
 // functions
 //-----------
 
-printMessage = function (message, status) {
-    // truncate message contents
-    var content = message.content;
-    if (content.length > 100) {
-        content = content.substr(0, 100) + '...\n--------';
+logMessage = function (status, message = null) {
+    log = '(' + status + ')';
+
+    if (message != null) {
+        log += ' ' + message;
     }
 
-    console.log('(' + status + ') ' + message.author.username + message.author + ': ' + content);
+    console.log(log);
 }
 
 parse = function (message) {
@@ -60,7 +60,7 @@ parse = function (message) {
             })
         }
 
-        return 'command/' + command;
+        logMessage('success:command/' + command);
     }
 
     var matches = x2i.grab(message.content);
@@ -69,7 +69,7 @@ parse = function (message) {
         for (var i = 0; i < settings.embeds.timeoutAfterBatches; i++) {
             // check if finished
             if (index > matches.length) {
-                return 'x2i/all';
+                logMessage('success:x2i/all');
             }
 
             after = index + settings.embeds.batchSize;
@@ -94,10 +94,10 @@ parse = function (message) {
             }
         });
 
-        return 'x2i/partial';
+        logMessage('timeout:x2i/partial', message);
     }
 
-    return 'none';
+    logMessage('none');
 }
 
 //-----------
@@ -117,10 +117,9 @@ bot.on('ready', () => {
 
 bot.on('message', message => {
     if (!message.author.bot) {
-        result = parse(message);
-        printMessage(message, 'processed:' + result);
+        parse(message);
     } else {
-        printMessage(message, 'ignored:bot');
+        logMessage('ignored:bot');
     }
 });
 
