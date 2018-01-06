@@ -32,7 +32,7 @@ exports.grab = function (message) {
     var matches = [], match;
     while (match = xsampaRegex.exec(message)) {
         if (match[3] != '') {
-            matches += match[3] + ' \u2192 ' + convert(match[3]) + '\n';
+            matches += convert(match[3]) + '\n';
         }
 
         if (matches.length > 1024) {
