@@ -33,13 +33,13 @@ logMessage = function (status, message = null) {
 
 parse = function (message) {
     // TODO: make into separate module
-    var command, prefixRegex = new RegExp('(?:^' + settings.prefix + ')(\\w*)');
+    var command, prefixRegex = new RegExp('(?:^' + settings.prefix + ')(\\S*)');
     if (command = message.content.match(prefixRegex)) {
         command = command[1];
         tokens = message.content.split(" ");
 
         if (command === 'help') {
-            message.channel.send(help.embed(settings.embeds.colors.success, bot.user))
+            message.channel.send(help.embed(bot.user))
                 .then(() => logMessage('success:command/help'))
                 .catch(err => logMessage('error:command/help', message));
         }

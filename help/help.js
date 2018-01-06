@@ -1,7 +1,18 @@
-exports.embed = function (color, user) {
+//-----------
+//   vars
+//-----------
+
+// data files
+const settings = require('../settings.json');
+
+//-----------
+//  exports
+//-----------
+
+exports.embed = function (user) {
     return {
         embed: {
-            color: color,
+            color: settings.embeds.colors.success,
             author: {
                 name: user.username,
                 icon_url: user.avatarURL
