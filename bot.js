@@ -32,7 +32,7 @@ logMessage = function (status, message = null) {
 }
 
 parse = function (message) {
-    // TODO: make into separate module
+    // commands
     var command, prefixRegex = new RegExp('(?:^' + settings.prefix + ')(\\S*)');
     if (command = message.content.match(prefixRegex)) {
         command = command[1];
@@ -41,7 +41,7 @@ parse = function (message) {
         if (command === 'help') {
             message.channel.send(help.embed(bot.user))
                 .then(() => logMessage('success:command/help'))
-                .catch(err => logMessage('error:command/help', message));
+                .catch(err => logMessage('error:command/help', err));
         } else if (command === 'ping') {
             elapsed = new Date().getTime() - message.createdTimestamp;
             message.channel.send('I\'m alive! (' + elapsed + ' ms)')
@@ -52,6 +52,7 @@ parse = function (message) {
         logMessage('ignored:command/' + command);
     }
 
+    // x2i
     var matches = x2i.grab(message.content);
     if (matches.length != 0) {
         // shorten field to 1024
