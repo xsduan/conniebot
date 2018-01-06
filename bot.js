@@ -40,7 +40,8 @@ parse = function (message) {
 
         if (command === 'help') {
             message.channel.send(help.embed(settings.embeds.colors.success, bot.user))
-            logMessage('success:command/help');
+                .then(() => logMessage('success:command/help'))
+                .catch(err => logMessage('error:command/help', message));
         }
 
         logMessage('ignored:command/' + command);
@@ -48,36 +49,28 @@ parse = function (message) {
 
     var matches = x2i.grab(message.content);
     if (matches.length != 0) {
-        var index = 0;
-        for (var i = 0; i < settings.embeds.timeoutAfterBatches; i++) {
-            // check if finished
-            if (index > matches.length) {
-                logMessage('success:x2i/all');
-            }
-
-            after = index + settings.embeds.batchSize;
-
+        // shorten field to 1024
+        if (matches.length > 1024) {
+            matches = matches.slice(0, 1023) + '…';
             message.channel.send({
                 embed: {
-                    color: settings.embeds.colors.success,
-                    fields: [{
-                        name: '\u200b',
-                        value: matches.slice(index, after).join('\n')
-                    }]
+                    color: settings.embeds.colors.warning,
+                    fields: [{ name: "Timeout", value: settings.embeds.timeoutMessage }]
                 }
-            });
-
-            index = after;
+            }).then(() => logMessage('timeout:x2i/partial', message))
+                .catch(err => logMessage('error:timeout:x2i/partial', err));
         }
 
         message.channel.send({
             embed: {
-                color: settings.embeds.colors.warning,
-                fields: [{ name: "Timeout", value: settings.embeds.timeoutMessage }]
+                color: settings.embeds.colors.success,
+                fields: [{
+                    name: '\u200b',
+                    value: matches
+                }]
             }
-        });
-
-        logMessage('timeout:x2i/partial', message);
+        }).then(() => logMessage('success:x2i/all'))
+        .catch(err => err => logMessage('error:x2i/partial', err));
     }
 
     logMessage('none');

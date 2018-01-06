@@ -2,8 +2,6 @@
     "activeMessage": "hello!",
     "prefix": "!",
     "embeds": {
-        "batchSize": 25,
-        "timeoutAfterBatches": 5,
         "timeoutMessage": "Could not send all the X-SAMPA inputs as there were too many in a single message.",
         "colors": {
             "help": 3447003,

@@ -38,5 +38,5 @@ exports.grab = function (message) {
 
     // TODO: PIE-SAMPA or whatever
 
-    return matches;
+    return matches.join('\n');
 }
