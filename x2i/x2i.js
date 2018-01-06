@@ -32,11 +32,15 @@ exports.grab = function (message) {
     var matches = [], match;
     while (match = xsampaRegex.exec(message)) {
         if (match[3] != '') {
-            matches.push([match[3], convert(match[3])].join(' \u2192 '));
+            matches += match[3] + ' \u2192 ' + convert(match[3]) + '\n';
+        }
+
+        if (matches.length > 1024) {
+            break;
         }
     }
 
     // TODO: PIE-SAMPA or whatever
 
-    return matches.join('\n');
+    return matches;
 }
