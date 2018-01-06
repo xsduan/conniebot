@@ -6,23 +6,39 @@
 const settings = require('../settings.json');
 
 //-----------
-//  exports
+// functions
 //-----------
 
-exports.output = function (message, headersImportant = true) {
-    return settings.embeds.active ? message : strip(message, headersImportant);
+handleTitle = function (message) {
+    var title = '';
+    if (message.embed.title !== undefined) {
+        title = '**' + message.embed.title + '**\n\n';
+    }
+    return title;
 }
 
-exports.strip = function (message, headersImportant = true) {
-    var body = message.embed.fields.forEach(function (field) {
+handleBody = function(message, headersImportant) {
+    var body = '';
+    message.embed.fields.forEach(function (field) {
         var fieldString = '';
 
         if (headersImportant) {
             fieldString += '**' + field.name + '**\n';
         }
 
-        return fieldString + field.value;
+        body += fieldString + field.value + '\n\n';
     });
+    return body;
+}
 
-    return '**' + message.title + '**\n\n' + body.join('\n\n');
+//-----------
+//  exports
+//-----------
+
+exports.output = function (message, headersImportant = true) {
+    return settings.embeds.active ? message : exports.strip(message, headersImportant);
+}
+
+exports.strip = function (message, headersImportant = true) {
+    return handleTitle(message) + handleBody(message);
 }
