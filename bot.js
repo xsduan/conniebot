@@ -100,7 +100,7 @@ bot.on('ready', () => {
 });
 
 bot.on('message', message => {
-    logMessage('-start ' + message.createdAt + '-')
+    logMessage('-start ' + message.createdTimestamp + '-')
     if (!message.author.bot) {
         parse(message);
     } else {
@@ -108,7 +108,7 @@ bot.on('message', message => {
     }
 
     // separate message return statuses in logs
-    logMessage('-processed ' + message.createdAt + '-');
+    logMessage('-processed ' + message.createdTimestamp + '-');
     console.log();
 });
 
