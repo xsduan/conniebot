@@ -4,6 +4,9 @@
 //   vars
 //-----------
 
+// local modules
+const embed = require('./embed/embed.js');
+
 // data files
 const settings = require('../settings.json');
 
