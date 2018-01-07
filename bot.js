@@ -102,7 +102,7 @@ const x2iExec = function (message) {
                 color: settings.embeds.colors.success,
                 fields: results
             }
-        }, false)).then(() => logMessage('success:x2i/all'))
+        }, results.length > 1)).then(() => logMessage('success:x2i/all'))
             .catch(err => logMessage('error:x2i/partial', err));
 
         logMessage('processed:x2i');
