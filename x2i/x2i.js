@@ -6,8 +6,24 @@
 
 // data files
 const settings = require('../settings.json');
-const x2iKeys = require('./x2i-keys.json');
-const apieKeys = require('./apie-keys.json');
+
+// consts
+// regex match indices: 2 = key (to lower), 3 = bracket left, 4 = body, 5 = bracket right, (end)
+const regex = /(?:(^|\s))([A-Za-z])([\/\[])(\S.*?\S)([\/\]])/gm;
+const matchType = {
+    'x': {
+        keys: require('./x2i-keys.json'),
+        join: function (match) {
+            return match.slice(3).join('');
+        }
+    },
+    'p': {
+        keys: require('./apie-keys.json'),
+        join: function (match) {
+            return '*' + match[4];
+        }
+    }
+}
 
 //-----------
 // functions
@@ -21,40 +37,22 @@ const convert = function (raw, keys) {
     return raw;
 }
 
-const find = function (message, regex, keys, bodyIndex = 3) {
-    var matches = [], match;
-    var length = 0;
-    while (length < settings.embeds.timeoutChars && (match = regex.exec(message))) {
-        if (match[bodyIndex] != '') {
-            match[bodyIndex] = convert(match[bodyIndex], keys);
-            length += match[bodyIndex].length;
-            matches.push(match);
-        }
-    }
-    return matches;
-}
-
 //-----------
 //  exports
 //-----------
 
-exports.xsampa = function (message) {
-    var result = '';
-    // find all occurences of xsampa using x[]
-    // or x// (or x[/ or x/] if you're absolutely crazy)
-    var matches = find(message, /(?:(^|\s)x)([\/\[])(\S.*?\S)([\/\]])/gm, x2iKeys);
-    matches.forEach(function (match) {
-        result += match.slice(2).join('') + '\n';
-    })
-    return result;
-}
-
-exports.apie = function (message) {
-    var result = '';
-    // find all occurences of p//
-    var matches = find(message, /(?:(^|\s)p)(\/)(\S.*?\S)(\/)/gm, apieKeys);
-    matches.forEach(function (match) {
-        result += '*' + match[3] + '\n';
-    });
-    return result;
+exports.grab = function (content) {
+    var matches = [], match;
+    var length = 0;
+    while (length < settings.embeds.timeoutChars && (match = regex.exec(content))) {
+        if (match[4] != '') {
+            var matchActions = matchType[match[2].toLowerCase()];
+            if (matchActions !== undefined) {
+                match[4] = convert(match[4], matchActions.keys);
+                length += match[4].length;
+                matches.push(matchActions.join(match));
+            }
+        }
+    }
+    return matches.join('\n');
 }

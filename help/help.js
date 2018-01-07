@@ -21,7 +21,7 @@ const help = [
     },
     {
         name: '\u200B',
-        value: 'found a bug or want to suggest a feature? github: https://github.com/xsduan/conniebot'
+        value: 'found a bug or want to suggest a feature?\ngithub: https://github.com/xsduan/conniebot'
     }
 ]
 
@@ -41,15 +41,6 @@ exports.embed = function (user) {
             fields: help
         }
     };
-}
-
-exports.timeout = function(channel) {
-    return channel.send(embed.output({
-        embed: {
-            color: settings.embeds.colors.warning,
-            fields: [{ name: 'Timeout', value: settings.embeds.timeoutMessage }]
-        }
-    }));
 }
 
 exports.help = function (channel, user) {

@@ -52,6 +52,7 @@ const command = function (message) {
             case 'ping':
                 ping(message);
                 break;
+            // all the following commands are handled the same.
             case 'help':
                 help.help(message.channel, bot.user)
                     .then(() => logMessage('success:command/help'))
@@ -70,41 +71,33 @@ const ping = function (message) {
 }
 
 const x2iExec = function (message) {
-    var xsampa = x2i.xsampa(message.content);
-    var apie = x2i.apie(message.content);
-    if (xsampa.length !== 0 || apie.length !== 0) {
-        // shorten fields to limit
-        if (xsampa.length > settings.embeds.timeoutChars
-            || apie.length > settings.embeds.timeoutChars) {
-            xsampa = xsampa.slice(0, settings.embeds.timeoutChars - 1) + '…';
-            apie = apie.slice(0, settings.embeds.timeoutChars - 1) + '…';
+    var results = x2i.grab(message.content);
 
-            help.timeout(message.channel)
-                .then(() => logMessage('timeout:x2i/partial', message))
-                .catch(err => logMessage('error:timeout:x2i/partial', err));
+    if (results.length !== 0) {
+        var response = {
+            color: settings.embeds.colors.success
+        };
+        var logCode = 'all';
+
+        // check timeout
+        var timedOut = results.length > settings.embeds.timeoutChars;
+        if (timedOut) {
+            response.fields = [{ name: 'Timeout', value: settings.embeds.timeoutMessage }]
+            results = results.slice(0, settings.embeds.timeoutChars - 1) + '…';
+            
+            logCode = 'partial';
+            response.color = settings.embeds.colors.warning;
         }
 
-        if (xsampa.length !== 0) {
-            message.channel.send(embed.output({
-                embed: {
-                    color: settings.embeds.colors.success,
-                    description: xsampa
-                }
-            })).then(() => logMessage('success:x2i/xsampa'))
-                .catch(err => logMessage('error:x2i/xsampa', err));
-        }
+        response.description = results;
 
-        if (apie.length !== 0) {
-            message.channel.send(embed.output({
-                embed: {
-                    color: settings.embeds.colors.success,
-                    description: apie
-                }
-            })).then(() => logMessage('success:x2i/apie'))
-                .catch(err => logMessage('error:x2i/apie', err));
-        }
+        message.channel.send(embed.output({ embed: response }))
+            .then(() => logMessage('success:x2i/' + logCode))
+            .catch(err => logMessage('error:x2i/' + logCode, err));
 
         logMessage('processed:x2i');
+    } else {
+        logMessage('ignored:x2i');
     }
 }
 
