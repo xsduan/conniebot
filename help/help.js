@@ -53,5 +53,5 @@ exports.timeout = function(channel) {
 }
 
 exports.help = function (channel, user) {
-    return channel.send(embed.output(help.embed(user)))
+    return channel.send(embed.output(exports.embed(user)))
 }
