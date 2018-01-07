@@ -35,6 +35,11 @@ const logMessage = function (status, message = null) {
 }
 
 const parse = function (message) {
+    command(message);
+    x2i(message);
+}
+
+const command = function (message) {
     // commands
     const prefixRegex = new RegExp('(?:^' + settings.prefix + ')(\\S*)');
     var command;
@@ -42,32 +47,36 @@ const parse = function (message) {
         command = command[1];
         var tokens = message.content.split(' ');
 
-        if (command === 'help') {
-            message.channel.send(embed.output(help.embed(bot.user)))
-                .then(() => logMessage('success:command/help'))
-                .catch(err => logMessage('error:command/help', err));
-        } else if (command === 'ping') {
-            const elapsed = new Date().getTime() - message.createdTimestamp;
-            message.channel.send('I\'m alive! (' + elapsed + ' ms)')
-                .then(() => logMessage('success:command/ping/' + elapsed + 'ms'))
-                .catch(err => logMessage('error:command/ping', err));
+        switch (command) {
+            // ping command is special case response.
+            case 'ping':
+                ping(message);
+                break;
+            case 'help':
+                exports.help(message.channel)
+                    .then(() => logMessage('success:command/help'))
+                    .catch(err => logMessage('error:command/help', err));
         }
 
         logMessage('processed:command/' + command);
     }
+}
 
-    // x2i
-    var matches = x2i.grab(message.content);
+const ping = function (message) {
+    const elapsed = new Date().getTime() - message.createdTimestamp;
+    message.channel.send('I\'m alive! (' + elapsed + ' ms)')
+        .then(() => logMessage('success:command/ping/' + elapsed + 'ms'))
+        .catch(err => logMessage('error:command/ping', err));
+}
+
+const x2i = function (message) {
+    var matches = x2i.xsampa(message.content);
     if (matches.length !== 0) {
         // shorten field to 1024
         if (matches.length > 1024) {
             matches = matches.slice(0, 1023) + '…';
-            message.channel.send(embed.output({
-                embed: {
-                    color: settings.embeds.colors.warning,
-                    fields: [{ name: 'Timeout', value: settings.embeds.timeoutMessage }]
-                }
-            })).then(() => logMessage('timeout:x2i/partial', message))
+            help.timeout(message.channel)
+                .then(() => logMessage('timeout:x2i/partial', message))
                 .catch(err => logMessage('error:timeout:x2i/partial', err));
         }
 
@@ -80,7 +89,7 @@ const parse = function (message) {
                 }]
             }
         }, false)).then(() => logMessage('success:x2i/all'))
-            .catch(err => err => logMessage('error:x2i/partial', err));
+            .catch(err => logMessage('error:x2i/partial', err));
 
         logMessage('processed:x2i');
     }
@@ -109,8 +118,9 @@ bot.on('message', message => {
         logMessage('ignored:bot');
     }
 
-    // separate message return statuses in logs
     logMessage('-processed ' + message.createdTimestamp + '-');
+
+    // separate message return statuses in logs
     console.log();
 });
 

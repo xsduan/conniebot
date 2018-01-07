@@ -39,3 +39,16 @@ exports.embed = function (user) {
         }
     };
 }
+
+exports.timeout = function(channel) {
+    return channel.send(embed.output({
+        embed: {
+            color: settings.embeds.colors.warning,
+            fields: [{ name: 'Timeout', value: settings.embeds.timeoutMessage }]
+        }
+    }));
+}
+
+exports.help = function (channel) {
+    return channel.send(embed.output(help.embed(bot.user)))
+}

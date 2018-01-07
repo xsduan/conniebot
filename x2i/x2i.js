@@ -23,7 +23,7 @@ const convert = function (xsampa) {
 //  exports
 //-----------
 
-exports.grab = function (message) {
+exports.xsampa = function (message) {
     // regexes
     const xsampaRegex = /(?:(^|\s))(x[\/\[])(\S.*?\S)([\/\]])/gm;
 
