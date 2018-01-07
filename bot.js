@@ -53,7 +53,7 @@ const command = function (message) {
                 ping(message);
                 break;
             case 'help':
-                exports.help(message.channel)
+                help.help(message.channel)
                     .then(() => logMessage('success:command/help'))
                     .catch(err => logMessage('error:command/help', err));
         }
