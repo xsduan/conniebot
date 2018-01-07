@@ -17,6 +17,12 @@ const matchType = {
             return match.slice(3).join('');
         }
     },
+    'z': {
+        keys: require('./z2i-keys.json'),
+        join: function (match) {
+            return match.slice(3).join('');
+        }
+    },
     'p': {
         keys: require('./apie-keys.json'),
         join: function (match) {
