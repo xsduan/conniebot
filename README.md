@@ -4,16 +4,14 @@ really cool language bot (rip miss connie sr)
 
 ## what do
 
-it does various cool language things. currently it has these features:
+it does various cool language things. currently:
 
-- xsampa to ipa (try it out with `x[Eks "s{mp_h@ tu aI_^pi:Ei_^]`)
+- xsampa & zsampa to ipa (try it out with `x[Eks "s{mp_h@ tu aI_^pi:Ei_^]`)
 - apie to pie notation (try it out with `p/g'hm"o:/`)
-- getting hotter…
 
-hopefully it does more in future, such as:
+hopefully it does more in future relating to audio like
 
-- zsampa
-- play phonemes in chat
+- playing phonemes in chat
 - spectrogram/vowel analyzer in chat
 
 don't count on it tho
