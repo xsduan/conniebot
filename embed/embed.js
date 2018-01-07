@@ -1,3 +1,5 @@
+'use strict';
+
 //-----------
 //   vars
 //-----------
@@ -9,7 +11,7 @@ const settings = require('../settings.json');
 // functions
 //-----------
 
-handleTitle = function (message) {
+const handleTitle = function (message) {
     var title = '';
     if (message.embed.title !== undefined) {
         title = '**' + message.embed.title + '**\n\n';
@@ -17,7 +19,7 @@ handleTitle = function (message) {
     return title;
 }
 
-handleBody = function(message, headersImportant) {
+const handleBody = function(message, headersImportant) {
     var body = '';
     message.embed.fields.forEach(function (field) {
         var fieldString = '';

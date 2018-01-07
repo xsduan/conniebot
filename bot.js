@@ -1,3 +1,5 @@
+'use strict';
+
 //-----------
 //   vars
 //-----------
@@ -22,8 +24,8 @@ const guild = new Discord.Guild();
 // functions
 //-----------
 
-logMessage = function (status, message = null) {
-    log = '(' + status + ')';
+const logMessage = function (status, message = null) {
+    var log = '(' + status + ')';
 
     if (message != null) {
         log += ' ' + message;
@@ -32,19 +34,20 @@ logMessage = function (status, message = null) {
     console.log(log);
 }
 
-parse = function (message) {
+const parse = function (message) {
     // commands
-    var command, prefixRegex = new RegExp('(?:^' + settings.prefix + ')(\\S*)');
+    const prefixRegex = new RegExp('(?:^' + settings.prefix + ')(\\S*)');
+    var command;
     if (command = message.content.match(prefixRegex)) {
         command = command[1];
-        tokens = message.content.split(' ');
+        var tokens = message.content.split(' ');
 
         if (command === 'help') {
             message.channel.send(embed.output(help.embed(bot.user)))
                 .then(() => logMessage('success:command/help'))
                 .catch(err => logMessage('error:command/help', err));
         } else if (command === 'ping') {
-            elapsed = new Date().getTime() - message.createdTimestamp;
+            const elapsed = new Date().getTime() - message.createdTimestamp;
             message.channel.send('I\'m alive! (' + elapsed + ' ms)')
                 .then(() => logMessage('success:command/ping/' + elapsed + 'ms'))
                 .catch(err => logMessage('error:command/ping', err));
@@ -80,7 +83,7 @@ parse = function (message) {
             .catch(err => err => logMessage('error:x2i/partial', err));
     }
 
-    logMessage('none');
+    logMessage('-processed-');
 }
 
 //-----------
