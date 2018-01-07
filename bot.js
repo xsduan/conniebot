@@ -36,7 +36,7 @@ const logMessage = function (status, message = null) {
 
 const parse = function (message) {
     command(message);
-    x2i(message);
+    x2iExec(message);
 }
 
 const command = function (message) {
@@ -69,7 +69,7 @@ const ping = function (message) {
         .catch(err => logMessage('error:command/ping', err));
 }
 
-const x2i = function (message) {
+const x2iExec = function (message) {
     var matches = x2i.xsampa(message.content);
     if (matches.length !== 0) {
         // shorten field to 1024
