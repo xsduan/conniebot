@@ -14,7 +14,11 @@ const help = [
     },
     {
         name: settings.prefix + 'help',
-        value: 'Reply with this box.'
+        value: 'Reply with this message.'
+    },
+    {
+        name: '\u200B',
+        value: 'found a bug or want to suggest a feature? github: https://github.com/xsduan/conniebot'
     }
 ]
 
