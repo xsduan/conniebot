@@ -11,5 +11,11 @@
   "author": "Shane Duan",
   "dependencies": {
     "discord.js": "^11.2.1"
+  },
+  "devDependencies": {
+    "standard": "*"
+  },
+  "scripts": {
+    "lint": "standard --fix"
   }
 }

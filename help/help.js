@@ -1,48 +1,48 @@
-'use strict';
+'use strict'
 
-//-----------
-//   vars
-//-----------
+/*
+ *   vars
+ */
 
 // local modules
-const embed = require('../embed/embed.js');
+const embed = require('../embed/embed.js')
 
 // data files
-const settings = require('../settings.json');
+const settings = require('../settings.json')
 
 const help = [
-    {
-        name: 'x[phonetic] or x/phonemic/',
-        value: 'Converts XSAMPA to IPA. Hopefully.'
-    },
-    {
-        name: settings.prefix + 'help',
-        value: 'Reply with this message.'
-    },
-    {
-        name: '\u200B',
-        value: 'found a bug or want to suggest a feature?\ngithub: https://github.com/xsduan/conniebot'
-    }
+  {
+    name: 'x[phonetic] or x/phonemic/',
+    value: 'Converts XSAMPA to IPA. Hopefully.'
+  },
+  {
+    name: settings.prefix + 'help',
+    value: 'Reply with this message.'
+  },
+  {
+    name: '\u200B',
+    value: 'found a bug or want to suggest a feature?\ngithub: https://github.com/xsduan/conniebot'
+  }
 ]
 
-//-----------
-//  exports
-//-----------
+/*
+ *  exports
+ */
 
 exports.embed = function (user) {
-    return {
-        embed: {
-            color: settings.embeds.colors.success,
-            author: {
-                name: user.username,
-                icon_url: user.avatarURL
-            },
-            title: 'Commands',
-            fields: help
-        }
-    };
+  return {
+    embed: {
+      color: settings.embeds.colors.success,
+      author: {
+        name: user.username,
+        icon_url: user.avatarURL
+      },
+      title: 'Commands',
+      fields: help
+    }
+  }
 }
 
 exports.help = function (channel, user) {
-    return channel.send(embed.output(exports.embed(user)))
+  return channel.send(embed.output(exports.embed(user)))
 }
