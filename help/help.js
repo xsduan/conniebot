@@ -52,6 +52,6 @@ exports.timeout = function(channel) {
     }));
 }
 
-exports.help = function (channel) {
-    return channel.send(embed.output(help.embed(bot.user)))
+exports.help = function (channel, user) {
+    return channel.send(embed.output(help.embed(user)))
 }
