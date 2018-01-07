@@ -28,7 +28,7 @@ const handleBody = function(message, headersImportant) {
             fieldString += '**' + field.name + '**\n';
         }
 
-        body += fieldString + field.value + '\n\n';
+        body += fieldString + field.value + '\n';
     });
     return body;
 }
