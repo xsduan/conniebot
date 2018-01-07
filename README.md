@@ -43,9 +43,9 @@ rest in pisces connie the bot (201x - 2017)
 
 ## contributing
 
-currently using [vscode](https://code.visualstudio.com/)<sup>[repo](https://github.com/Microsoft/vscode)</sup> and as such using its default js autoformatting tools. I believe it's pretty standard so if you know that another editor uses the same standard then go wild.
+I use [standard js](https://standardjs.com/) as a linter (finally, huh?). just run `npm run lint` before committing (and if you don't, I'll run it before merging anyways). I'm not too attached to any standard specifically so if you can come up with a good reason to switch to another style then I'll consider it.
 
-as a minimum, please don't use too many blank lines or tabs, and keep all variable names sane. don't use anything unreadably terse or minified (whether formatting or code itself) but don't make it super long and boring. I'm not really serious about this project so I won't be too strict about this type of stuff but pls try.
+as a minimum, please don't use too many blank lines or tabs, and keep all variable names sane. don't use anything unreadably terse or minified (whether formatting or code itself) but don't make it more verbose than it has to be. I'm not really serious about this project so as long as it passes the standard js linter and isn't too weird I'll let it pass.
 
 ### issues & pull requests
 
