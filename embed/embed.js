@@ -14,22 +14,30 @@ const settings = require('../settings.json');
 const handleTitle = function (message) {
     var title = '';
     if (message.embed.title !== undefined) {
-        title = '**' + message.embed.title + '**\n\n';
+        title = '**' + message.embed.title + '**\n';
     }
     return title;
 }
 
-const handleBody = function(message, headersImportant) {
+const handleDescription = function (message) {
+    return message.embed.description !== undefined
+        ? message.embed.description + '\n\n'
+        : '\n';
+}
+
+const handleBody = function (message, headersImportant) {
     var body = '';
-    message.embed.fields.forEach(function (field) {
-        var fieldString = '';
+    if (message.embed.fields !== undefined) {
+        message.embed.fields.forEach(function (field) {
+            var fieldString = '';
 
-        if (headersImportant) {
-            fieldString += '**' + field.name + '**\n';
-        }
+            if (headersImportant) {
+                fieldString += '**' + field.name + '**\n';
+            }
 
-        body += fieldString + field.value + '\n';
-    });
+            body += fieldString + field.value + '\n';
+        });
+    }
     return body;
 }
 
@@ -42,5 +50,5 @@ exports.output = function (message, headersImportant = true) {
 }
 
 exports.strip = function (message, headersImportant = true) {
-    return handleTitle(message) + handleBody(message, headersImportant);
+    return handleTitle(message) + handleDescription(message) + handleBody(message, headersImportant);
 }

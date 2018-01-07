@@ -73,37 +73,36 @@ const x2iExec = function (message) {
     var xsampa = x2i.xsampa(message.content);
     var apie = x2i.apie(message.content);
     if (xsampa.length !== 0 || apie.length !== 0) {
-        // shorten fields to 1024
-        if (xsampa.length > 1024 || apie.length > 1024) {
-            xsampa = xsampa.slice(0, 1023) + '…';
-            apie = apie.slice(0, 1023) + '…';
-            
+        // shorten fields to limit
+        if (xsampa.length > settings.embeds.timeoutChars
+            || apie.length > settings.embeds.timeoutChars) {
+            xsampa = xsampa.slice(0, settings.embeds.timeoutChars - 1) + '…';
+            apie = apie.slice(0, settings.embeds.timeoutChars - 1) + '…';
+
             help.timeout(message.channel)
                 .then(() => logMessage('timeout:x2i/partial', message))
                 .catch(err => logMessage('error:timeout:x2i/partial', err));
         }
 
-        var results = [];
         if (xsampa.length !== 0) {
-            results.push({
-                name: 'X-SAMPA found:',
-                value: xsampa
-            });
-        }
-        if (apie.length !== 0) {
-            results.push({
-                name: 'APIE found:',
-                value: apie
-            });
+            message.channel.send(embed.output({
+                embed: {
+                    color: settings.embeds.colors.success,
+                    description: xsampa
+                }
+            })).then(() => logMessage('success:x2i/xsampa'))
+                .catch(err => logMessage('error:x2i/xsampa', err));
         }
 
-        message.channel.send(embed.output({
-            embed: {
-                color: settings.embeds.colors.success,
-                fields: results
-            }
-        }, results.length > 1)).then(() => logMessage('success:x2i/all'))
-            .catch(err => logMessage('error:x2i/partial', err));
+        if (apie.length !== 0) {
+            message.channel.send(embed.output({
+                embed: {
+                    color: settings.embeds.colors.success,
+                    description: apie
+                }
+            })).then(() => logMessage('success:x2i/apie'))
+                .catch(err => logMessage('error:x2i/apie', err));
+        }
 
         logMessage('processed:x2i');
     }

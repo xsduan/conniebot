@@ -2,7 +2,8 @@
     "activeMessage": "x/help for info",
     "prefix": "x/",
     "embeds": {
-        "active": false,
+        "active": true,
+        "timeoutChars": 2040,
         "timeoutMessage": "Could not send all output as there were too many in a single message.",
         "colors": {
             "help": 3447003,
