@@ -81,6 +81,8 @@ const parse = function (message) {
             }
         }, false)).then(() => logMessage('success:x2i/all'))
             .catch(err => err => logMessage('error:x2i/partial', err));
+
+        logMessage('processed:x2i');
     }
 }
 
