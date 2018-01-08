@@ -26,19 +26,19 @@ function handleDescription (message) {
 }
 
 function handleBody (message, headersImportant) {
-  var body = ''
+  var body = []
   if (message.fields !== undefined) {
     message.fields.forEach(function (field) {
       var fieldString = ''
 
       if (headersImportant) {
-        fieldString += '**' + field[0] + '**\n'
+        fieldString += '**' + field.name + '**\n'
       }
 
-      body += fieldString + field[1] + '\n'
+      body.push(fieldString + field.value)
     })
   }
-  return body
+  return body.join('\n\n')
 }
 
 function output (message, headersImportant = true) {
