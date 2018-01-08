@@ -17,7 +17,7 @@ const help = [
   },
   {
     name: settings.prefix + 'xsampa, ' + settings.prefix + 'zsampa, or ' + settings.prefix + 'apie',
-    value: 'Converts the rest of the message into their respective formats.',
+    value: 'Converts the rest of the message into their respective formats.'
   },
   {
     name: settings.prefix + 'help',

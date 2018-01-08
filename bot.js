@@ -23,7 +23,7 @@ const bot = new Discord.Client()
  * functions
  */
 
-function logMessage(status, message = null) {
+function logMessage (status, message = null) {
   var log = '(' + status + ')'
 
   if (message != null) {
@@ -33,8 +33,14 @@ function logMessage(status, message = null) {
   console.log(log)
 }
 
-function parse(message) {
-  command(message)
+function parse (message) {
+  var promise = command(message)
+  if (promise !== null) {
+    promise.then(() => logMessage('success:command/' + command))
+      .catch(err => logMessage('error:command/' + command, err))
+    return
+  }
+
   var x2iPromise = x2iExec(message)
   if (x2iPromise != null) {
     x2iPromise.then(() => logMessage('success:x2i'))
@@ -42,7 +48,7 @@ function parse(message) {
   }
 }
 
-function command(message) {
+function command (message) {
   // commands
   const prefixRegex = new RegExp('(?:^' + settings.prefix + ')(\\S*)')
   var command = message.content.match(prefixRegex)
@@ -63,40 +69,37 @@ function command(message) {
       // all the following commands are handled the same.
       case 'help':
         promise = help.help(message.channel, bot.user)
-        break;
+        break
       case 'xsampa':
         promise = forceX2i('x')
-        break;
+        break
       case 'zsampa':
         promise = forceX2i('z')
-        break;
+        break
       case 'apie':
         promise = forceX2i('p')
     }
 
-    if (promise !== null) {
-      promise.then(() => logMessage('success:command/' + command))
-        .catch(err => logMessage('error:command/' + command, err))
-    }
-
     logMessage('processed:command/' + command)
+
+    return promise
   } else {
     logMessage('ignored:command')
   }
 }
 
-function ping(message) {
+function ping (message) {
   const elapsed = new Date().getTime() - message.createdTimestamp
   message.channel.send('I\'m alive! (' + elapsed + ' ms)')
     .then(() => logMessage('success:command/ping/' + elapsed + 'ms'))
     .catch(err => logMessage('error:command/ping', err))
 }
 
-function x2iExec(message) {
+function x2iExec (message) {
   return x2iSend(message.channel, x2i.grab(message.content))
 }
 
-function x2iSend(channel, results) {
+function x2iSend (channel, results) {
   if (results !== undefined && results.length !== 0) {
     var response = {
       color: settings.embeds.colors.success

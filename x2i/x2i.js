@@ -35,7 +35,7 @@ const matchType = {
  * functions
  */
 
-function convert(raw, keys) {
+function convert (raw, keys) {
   // find & replace, in descending order of substr size
   keys.forEach(function (key) {
     raw = raw.replace(new RegExp(key[0], 'g'), key[1])
