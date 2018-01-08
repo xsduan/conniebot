@@ -33,7 +33,7 @@ const help = [
  * @param {User} user User to put as head
  * @returns {RichEmbed} Help message
  */
-function createEmbed(user) {
+function createEmbed (user) {
   var helpEmbed = new Discord.RichEmbed()
     .setColor(settings.embeds.colors.success)
     .setAuthor(user.username, user.avatarURL)

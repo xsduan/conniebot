@@ -27,7 +27,7 @@ function handleTitle (message) {
 /**
  * Grab description from RichEmbed
  * @param {RichEmbed} message Message to grab description from
- * @returns {String} Description of RichEmbed 
+ * @returns {String} Description of RichEmbed
  */
 function handleDescription (message) {
   return message.description !== undefined
