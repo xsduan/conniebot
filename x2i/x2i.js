@@ -13,20 +13,20 @@ const regex = /(?:(^|\s))([A-Za-z])([/[])(\S.*?\S)([/\]])/gm
 const matchType = {
   'x': {
     keys: require('./x2i-keys.json'),
-    join: function (match) {
-      return match.slice(3).join('')
+    join: function (left, match, right) {
+      return left + match + right
     }
   },
   'z': {
     keys: require('./z2i-keys.json'),
-    join: function (match) {
-      return match.slice(3).join('')
+    join: function (left, match, right) {
+      return left + match + right
     }
   },
   'p': {
     keys: require('./apie-keys.json'),
-    join: function (match) {
-      return '*' + match[4]
+    join: function (left, match, right) {
+      return '*' + match
     }
   }
 }
@@ -47,11 +47,11 @@ function convert (raw, keys) {
  *  exports
  */
 
-exports.force = function (match) {
-  var matchActions = matchType[match[2].toLowerCase()]
+exports.force = function (key, left, match, right) {
+  var matchActions = matchType[key.toLowerCase()]
   if (matchActions !== undefined) {
-    match[4] = convert(match[4], matchActions.keys)
-    return matchActions.join(match)
+    match = convert(match, matchActions.keys)
+    return matchActions.join(left, match, right)
   } else {
     return ''
   }
@@ -62,8 +62,9 @@ exports.grab = function (content) {
   var match
   var length = 0
   while (length < settings.embeds.timeoutChars && (match = regex.exec(content))) {
-    if (match[4] !== '') {
-      const converted = exports.force(match)
+    match = match.slice(2)
+    if (match[1] !== '') {
+      const converted = exports.force(...match)
       if (converted !== '') {
         length += converted.length
         matches.push(converted)

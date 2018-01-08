@@ -36,8 +36,8 @@ function logMessage (status, message = null) {
 function parse (message) {
   var promise = command(message)
   if (promise !== null) {
-    promise.then(() => logMessage('success:command/' + command))
-      .catch(err => logMessage('error:command/' + command, err))
+    promise.then(() => logMessage('success:command'))
+      .catch(err => logMessage('error:command', err))
     return
   }
 
@@ -49,6 +49,8 @@ function parse (message) {
 }
 
 function command (message) {
+  var promise = null
+
   // commands
   const prefixRegex = new RegExp('(?:^' + settings.prefix + ')(\\S*)')
   var command = message.content.match(prefixRegex)
@@ -57,10 +59,9 @@ function command (message) {
 
     const forceX2i = function (type) {
       return x2iSend(message.channel,
-        x2i.force(['', '', type, '[', message.content.split(' ').slice(1).join(' '), ']']))
+        x2i.force(type, '[', message.content.split(' ').slice(1).join(' '), ']'))
     }
 
-    var promise = null
     switch (command) {
       // ping command is special case response.
       case 'ping':
@@ -81,11 +82,11 @@ function command (message) {
     }
 
     logMessage('processed:command/' + command)
-
-    return promise
   } else {
     logMessage('ignored:command')
   }
+
+  return promise
 }
 
 function ping (message) {
