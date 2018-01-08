@@ -58,6 +58,8 @@ function command (message) {
     }
 
     logMessage('processed:command/' + command)
+  } else {
+    logMessage('ignored:command')
   }
 }
 
