@@ -12,8 +12,12 @@ const settings = require('../settings.json')
 
 const help = [
   {
-    name: 'x[phonetic] or x/phonemic/',
-    value: 'Converts XSAMPA to IPA. Hopefully.'
+    name: 'x,z,p[phonetic] or x,z,p/phonemic/',
+    value: 'Converts XSAMPA, ZSAMPA, or APIE to IPA. Hopefully.'
+  },
+  {
+    name: settings.prefix + 'xsampa, ' + settings.prefix + 'zsampa, or ' + settings.prefix + 'apie',
+    value: 'Converts the rest of the message into their respective formats.',
   },
   {
     name: settings.prefix + 'help',
@@ -44,5 +48,5 @@ exports.embed = function (user) {
 }
 
 exports.help = function (channel, user) {
-  return channel.send(embed.output(exports.embed(user)))
+  return embed.send(channel, exports.embed(user))
 }

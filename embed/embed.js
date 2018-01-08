@@ -11,7 +11,7 @@ const settings = require('../settings.json')
  * functions
  */
 
-function handleTitle (message) {
+function handleTitle(message) {
   var title = ''
   if (message.embed.title !== undefined) {
     title = '**' + message.embed.title + '**\n'
@@ -19,13 +19,13 @@ function handleTitle (message) {
   return title
 }
 
-function handleDescription (message) {
+function handleDescription(message) {
   return message.embed.description !== undefined
     ? message.embed.description + '\n\n'
     : '\n'
 }
 
-function handleBody (message, headersImportant) {
+function handleBody(message, headersImportant) {
   var body = ''
   if (message.embed.fields !== undefined) {
     message.embed.fields.forEach(function (field) {
@@ -41,12 +41,18 @@ function handleBody (message, headersImportant) {
   return body
 }
 
+function output(message, headersImportant = true) {
+  return settings.embeds.active
+    ? message
+    : exports.strip(message, headersImportant)
+}
+
 /*
  *  exports
  */
 
-exports.output = function (message, headersImportant = true) {
-  return settings.embeds.active ? message : exports.strip(message, headersImportant)
+exports.send = function (channel, message, headersImportant = true) {
+  return channel.send(output(message, headersImportant))
 }
 
 exports.strip = function (message, headersImportant = true) {

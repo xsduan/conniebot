@@ -35,7 +35,7 @@ const matchType = {
  * functions
  */
 
-function convert (raw, keys) {
+function convert(raw, keys) {
   // find & replace, in descending order of substr size
   keys.forEach(function (key) {
     raw = raw.replace(new RegExp(key[0], 'g'), key[1])
@@ -47,17 +47,26 @@ function convert (raw, keys) {
  *  exports
  */
 
+exports.force = function (match) {
+  var matchActions = matchType[match[2].toLowerCase()]
+  if (matchActions !== undefined) {
+    match[4] = convert(match[4], matchActions.keys)
+    return matchActions.join(match)
+  } else {
+    return ''
+  }
+}
+
 exports.grab = function (content) {
   var matches = []
   var match
   var length = 0
   while (length < settings.embeds.timeoutChars && (match = regex.exec(content))) {
     if (match[4] !== '') {
-      var matchActions = matchType[match[2].toLowerCase()]
-      if (matchActions !== undefined) {
-        match[4] = convert(match[4], matchActions.keys)
-        length += match[4].length
-        matches.push(matchActions.join(match))
+      const converted = exports.force(match)
+      if (converted !== '') {
+        length += converted.length
+        matches.push(converted)
       }
     }
   }

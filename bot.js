@@ -23,7 +23,7 @@ const bot = new Discord.Client()
  * functions
  */
 
-function logMessage (status, message = null) {
+function logMessage(status, message = null) {
   var log = '(' + status + ')'
 
   if (message != null) {
@@ -33,28 +33,50 @@ function logMessage (status, message = null) {
   console.log(log)
 }
 
-function parse (message) {
+function parse(message) {
   command(message)
-  x2iExec(message)
+  var x2iPromise = x2iExec(message)
+  if (x2iPromise != null) {
+    x2iPromise.then(() => logMessage('success:x2i'))
+      .catch(err => logMessage('error:x2i', err))
+  }
 }
 
-function command (message) {
+function command(message) {
   // commands
   const prefixRegex = new RegExp('(?:^' + settings.prefix + ')(\\S*)')
   var command = message.content.match(prefixRegex)
   if (command !== null) {
     command = command[1]
 
+    const forceX2i = function (type) {
+      return x2iSend(message.channel,
+        x2i.force(['', '', type, '[', message.content.split(' ').slice(1).join(' '), ']']))
+    }
+
+    var promise = null
     switch (command) {
       // ping command is special case response.
       case 'ping':
         ping(message)
         break
-        // all the following commands are handled the same.
+      // all the following commands are handled the same.
       case 'help':
-        help.help(message.channel, bot.user)
-          .then(() => logMessage('success:command/help'))
-          .catch(err => logMessage('error:command/help', err))
+        promise = help.help(message.channel, bot.user)
+        break;
+      case 'xsampa':
+        promise = forceX2i('x')
+        break;
+      case 'zsampa':
+        promise = forceX2i('z')
+        break;
+      case 'apie':
+        promise = forceX2i('p')
+    }
+
+    if (promise !== null) {
+      promise.then(() => logMessage('success:command/' + command))
+        .catch(err => logMessage('error:command/' + command, err))
     }
 
     logMessage('processed:command/' + command)
@@ -63,17 +85,19 @@ function command (message) {
   }
 }
 
-function ping (message) {
+function ping(message) {
   const elapsed = new Date().getTime() - message.createdTimestamp
   message.channel.send('I\'m alive! (' + elapsed + ' ms)')
     .then(() => logMessage('success:command/ping/' + elapsed + 'ms'))
     .catch(err => logMessage('error:command/ping', err))
 }
 
-function x2iExec (message) {
-  var results = x2i.grab(message.content)
+function x2iExec(message) {
+  return x2iSend(message.channel, x2i.grab(message.content))
+}
 
-  if (results.length !== 0) {
+function x2iSend(channel, results) {
+  if (results !== undefined && results.length !== 0) {
     var response = {
       color: settings.embeds.colors.success
     }
@@ -91,13 +115,11 @@ function x2iExec (message) {
 
     response.description = results
 
-    message.channel.send(embed.output({ embed: response }))
-      .then(() => logMessage('success:x2i/' + logCode))
-      .catch(err => logMessage('error:x2i/' + logCode, err))
-
-    logMessage('processed:x2i')
+    logMessage('processed:x2i/' + logCode)
+    return embed.send(channel, { embed: response })
   } else {
     logMessage('ignored:x2i')
+    return null
   }
 }
 
