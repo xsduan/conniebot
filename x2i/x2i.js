@@ -1,7 +1,7 @@
 'use strict'
 
 /*
- *   vars
+ * vars
  */
 
 // data files
@@ -35,6 +35,12 @@ const matchType = {
  * functions
  */
 
+ /**
+  * Find and replace all strings in keys
+  * @param {String} raw Raw string to convert
+  * @param {String[][]} keys Keys to find and replace
+  * @returns {String} Converted string
+  */
 function convert (raw, keys) {
   // find & replace, in descending order of substr size
   keys.forEach(function (key) {
@@ -44,9 +50,17 @@ function convert (raw, keys) {
 }
 
 /*
- *  exports
+ * exports
  */
 
+ /**
+  * Convert four-tuple of Strings into a specified "official" representation
+  * @param {String} key What kind of conversion key is appropriate
+  * @param {String} left Left bracket
+  * @param {String} match Body
+  * @param {String} right Right bracket
+  * @returns {String} Converted item or empty string
+  */
 exports.force = function (key, left, match, right) {
   var matchActions = matchType[key.toLowerCase()]
   if (matchActions !== undefined) {
@@ -57,6 +71,11 @@ exports.force = function (key, left, match, right) {
   }
 }
 
+/**
+ * Grab all x2i strings in message string.
+ * @param {String} content Full message that may or may not contain x2i strings
+ * @returns {String} Converted representations
+ */
 exports.grab = function (content) {
   var matches = []
   var match

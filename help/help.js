@@ -1,7 +1,7 @@
 'use strict'
 
 /*
- *   vars
+ * vars
  */
 
 // libraries
@@ -15,7 +15,7 @@ const settings = require('../settings.json')
 
 const help = [
   ['x,z,p[phonetic] or x,z,p/phonemic/',
-    'Converts XSAMPA, ZSAMPA, or APIE to IPA. Hopefully.' ],
+    'Converts XSAMPA, ZSAMPA, or APIE to IPA. Hopefully.'],
   [settings.prefix + 'xsampa, ' + settings.prefix + 'zsampa, or ' + settings.prefix + 'apie',
     'Converts the rest of the message into their respective formats.'],
   [settings.prefix + 'help',
@@ -25,10 +25,15 @@ const help = [
 ]
 
 /*
- *  exports
+ * functions
  */
 
-exports.embed = function (user) {
+/**
+ * Return Help message, nicely formatted.
+ * @param {User} user User to put as head
+ * @returns {RichEmbed} Help message
+ */
+function embed(user) {
   var helpEmbed = new Discord.RichEmbed()
     .setColor(settings.embeds.colors.success)
     .setAuthor(user.username, user.avatarURL)
@@ -41,6 +46,16 @@ exports.embed = function (user) {
   return helpEmbed
 }
 
+/*
+ * exports
+ */
+
+/**
+ * Sends a help message.
+ * @param {Channel} channel Channel to send to
+ * @param {User} user Who the sender is
+ * @returns {(Promise<(Message|Array<Message>)>)|null} Whatever message needs handling
+ */
 exports.help = function (channel, user) {
   return embed.send(channel, exports.embed(user))
 }

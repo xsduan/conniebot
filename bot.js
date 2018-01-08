@@ -1,7 +1,7 @@
 'use strict'
 
 /*
- *   vars
+ * vars
  */
 
 // libraries
@@ -23,6 +23,11 @@ const bot = new Discord.Client()
  * functions
  */
 
+ /**
+  * Prints a formatted message with a related object.
+  * @param {String} status Status logged as "(<status>)"
+  * @param {Object} [message] Optional object to log after status
+  */
 function logMessage (status, message = null) {
   var log = '(' + status + ')'
 
@@ -33,6 +38,10 @@ function logMessage (status, message = null) {
   console.log(log)
 }
 
+/**
+ * Acts for a response to a message.
+ * @param {Message} message Mssage to parse for responses
+ */
 function parse (message) {
   var x2iPromise = x2iExec(message)
   if (x2iPromise != null) {
@@ -48,6 +57,11 @@ function parse (message) {
   }
 }
 
+/**
+ * Looks for a message.
+ * @param {Message} message Message to parse for responses
+ * @returns {(Promise<(Message|Array<Message>)>)|null} Whatever message needs handling
+ */
 function command (message) {
   var promise = null
 
@@ -89,6 +103,10 @@ function command (message) {
   return promise
 }
 
+/**
+ * Tries to respond in a timely fashion (e.g. to acknowledge that it's alive).
+ * @param {Message} message Message to respond to (read time)
+ */
 function ping (message) {
   const elapsed = new Date().getTime() - message.createdTimestamp
   message.channel.send('I\'m alive! (' + elapsed + ' ms)')
@@ -96,10 +114,21 @@ function ping (message) {
     .catch(err => logMessage('error:command/ping', err))
 }
 
+/**
+ * Links x2i.grab(String) to a message channel.
+ * @param {Message} message Message to look for an x2i string in
+ * @returns {(Promise<(Message|Array<Message>)>)|null} Whatever message needs handling
+ */
 function x2iExec (message) {
   return x2iSend(message.channel, x2i.grab(message.content))
 }
 
+/**
+ * Sends an x2i string (but also could be used for simple embeds)
+ * @param {Channel} channel Channel to send message to
+ * @param {String} results String to put in description (body text)
+ * @returns {(Promise<(Message|Array<Message>)>)|null} Whatever message needs handling
+ */
 function x2iSend (channel, results) {
   if (results !== undefined && results.length !== 0) {
     var response = new Discord.RichEmbed()
@@ -128,7 +157,7 @@ function x2iSend (channel, results) {
 }
 
 /*
- *   main
+ * main
  */
 
 bot.on('ready', () => {
