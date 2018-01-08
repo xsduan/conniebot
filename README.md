@@ -43,7 +43,9 @@ rest in pisces connie the bot (201x - 2017)
 
 ## contributing
 
-I use [standard js](https://standardjs.com/) as a linter (finally, huh?). just run `npm run lint` before committing (and if you don't, I'll run it before merging anyways). I'm not too attached to any standard specifically so if you can come up with a good reason to switch to another style then I'll consider it.
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
+I use standard js as a linter (finally, huh?). just run `npm run lint` before committing (and if you don't, I'll run it before merging anyways). I'm not too attached to any standard specifically so if you can come up with a good reason to switch to another style then I'll consider it.
 
 as a minimum, please don't use too many blank lines or tabs, and keep all variable names sane. don't use anything unreadably terse or minified (whether formatting or code itself) but don't make it more verbose than it has to be. I'm not really serious about this project so as long as it passes the standard js linter and isn't too weird I'll let it pass.
 
