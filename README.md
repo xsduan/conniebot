@@ -37,7 +37,7 @@ rest in pisces connie the bot (201x - 2017)
 
 ### deployment
 
-- run `npm install`
+- run `npm install` (`npm install --production` if you're not planning on doing any code changes)
 - run `node bot`
 - pray to whatever god that it doesn't nuke your computer
 
