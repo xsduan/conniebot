@@ -4,6 +4,9 @@
  *   vars
  */
 
+// libraries
+const Discord = require('discord.js')
+
 // local modules
 const embed = require('../embed/embed.js')
 
@@ -11,22 +14,14 @@ const embed = require('../embed/embed.js')
 const settings = require('../settings.json')
 
 const help = [
-  {
-    name: 'x,z,p[phonetic] or x,z,p/phonemic/',
-    value: 'Converts XSAMPA, ZSAMPA, or APIE to IPA. Hopefully.'
-  },
-  {
-    name: settings.prefix + 'xsampa, ' + settings.prefix + 'zsampa, or ' + settings.prefix + 'apie',
-    value: 'Converts the rest of the message into their respective formats.'
-  },
-  {
-    name: settings.prefix + 'help',
-    value: 'Reply with this message.'
-  },
-  {
-    name: '\u200B',
-    value: 'found a bug or want to suggest a feature?\ngithub: https://github.com/xsduan/conniebot'
-  }
+  ['x,z,p[phonetic] or x,z,p/phonemic/',
+    'Converts XSAMPA, ZSAMPA, or APIE to IPA. Hopefully.' ],
+  [settings.prefix + 'xsampa, ' + settings.prefix + 'zsampa, or ' + settings.prefix + 'apie',
+    'Converts the rest of the message into their respective formats.'],
+  [settings.prefix + 'help',
+    'Reply with this message.'],
+  ['\u200B',
+    'found a bug or want to suggest a feature?\ngithub: https://github.com/xsduan/conniebot']
 ]
 
 /*
@@ -34,17 +29,16 @@ const help = [
  */
 
 exports.embed = function (user) {
-  return {
-    embed: {
-      color: settings.embeds.colors.success,
-      author: {
-        name: user.username,
-        icon_url: user.avatarURL
-      },
-      title: 'Commands',
-      fields: help
-    }
-  }
+  var helpEmbed = new Discord.RichEmbed()
+    .setColor(settings.embeds.colors.success)
+    .setAuthor(user.username, user.avatarURL)
+    .setTitle('Commands')
+
+  help.forEach(function (entry) {
+    helpEmbed.addField(...entry)
+  })
+
+  return helpEmbed
 }
 
 exports.help = function (channel, user) {

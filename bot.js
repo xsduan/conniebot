@@ -102,25 +102,25 @@ function x2iExec (message) {
 
 function x2iSend (channel, results) {
   if (results !== undefined && results.length !== 0) {
-    var response = {
-      color: settings.embeds.colors.success
-    }
+    var response = new Discord.RichEmbed()
+      .setColor(settings.embeds.colors.success)
     var logCode = 'all'
 
     // check timeout
     var timedOut = results.length > settings.embeds.timeoutChars
     if (timedOut) {
-      response.fields = [{ name: 'Timeout', value: settings.embeds.timeoutMessage }]
       results = results.slice(0, settings.embeds.timeoutChars - 1) + '…'
 
+      response.addField('Timeout', settings.embeds.timeoutMessage)
+        .setColor(settings.embeds.colors.warning)
+
       logCode = 'partial'
-      response.color = settings.embeds.colors.warning
     }
 
-    response.description = results
+    response.setDescription(results)
 
     logMessage('processed:x2i/' + logCode)
-    return embed.send(channel, { embed: response })
+    return embed.send(channel, response)
   } else {
     logMessage('ignored:x2i')
     return null
