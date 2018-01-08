@@ -34,17 +34,17 @@ function logMessage (status, message = null) {
 }
 
 function parse (message) {
-  var promise = command(message)
-  if (promise !== null) {
-    promise.then(() => logMessage('success:command'))
-      .catch(err => logMessage('error:command', err))
-    return
-  }
-
   var x2iPromise = x2iExec(message)
   if (x2iPromise != null) {
     x2iPromise.then(() => logMessage('success:x2i'))
       .catch(err => logMessage('error:x2i', err))
+    return
+  }
+
+  var promise = command(message)
+  if (promise !== null) {
+    promise.then(() => logMessage('success:command'))
+      .catch(err => logMessage('error:command', err))
   }
 }
 
