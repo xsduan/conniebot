@@ -68,11 +68,6 @@ function command (message) {
   if (command !== null) {
     command = command[1]
 
-    const forceX2i = function (type) {
-      return x2iSend(message.channel,
-        x2i.force(type, '[', message.content.split(' ').slice(1).join(' '), ']'))
-    }
-
     switch (command) {
       // ping command is special case response.
       case 'ping':
@@ -82,14 +77,6 @@ function command (message) {
       case 'help':
         promise = help.help(message.channel, bot.user)
         break
-      case 'xsampa':
-        promise = forceX2i('x')
-        break
-      case 'zsampa':
-        promise = forceX2i('z')
-        break
-      case 'apie':
-        promise = forceX2i('p')
     }
 
     logMessage('processed:command/' + command)
@@ -112,21 +99,12 @@ function ping (message) {
 }
 
 /**
- * Links x2i.grab(String) to a message channel.
- * @param {Message} message Message to look for an x2i string in
+ * Sends an x2i string (but also could be used for simple embeds)
+ * @param {Message} message Message to reply to
  * @returns {(Promise<(Message|Array<Message>)>)|null} Whatever message needs handling
  */
 function x2iExec (message) {
-  return x2iSend(message.channel, x2i.grab(message.content))
-}
-
-/**
- * Sends an x2i string (but also could be used for simple embeds)
- * @param {Channel} channel Channel to send message to
- * @param {String} results String to put in description (body text)
- * @returns {(Promise<(Message|Array<Message>)>)|null} Whatever message needs handling
- */
-function x2iSend (channel, results) {
+  var results = x2i.grab(message.content)
   if (results !== undefined && results.length !== 0) {
     var response = new Discord.RichEmbed()
       .setColor(cfg.get('embeds.colors.success'))
@@ -146,7 +124,7 @@ function x2iSend (channel, results) {
     response.setDescription(results)
 
     logMessage('processed:x2i/' + logCode)
-    return embed.send(channel, response)
+    return embed.send(message.channel, response)
   } else {
     logMessage('ignored:x2i')
     return null
@@ -166,9 +144,7 @@ bot.on('ready', () => {
       .then(() => console.log('Set game status.'))
       .catch(err => console.log('Game couldn\'t be set. ' + err))
   }
-})
-
-bot.on('message', message => {
+}).on('message', message => {
   logMessage('-start ' + message.createdTimestamp + '-')
   if (!message.author.bot) {
     parse(message)
