@@ -5,7 +5,7 @@
  */
 
 // data files
-const settings = require('../settings.json')
+const cfg = require('config')
 
 // consts
 // regex match indices: 2 = key (to lower), 3 = bracket left, 4 = body, 5 = bracket right, (end)
@@ -80,7 +80,7 @@ exports.grab = function (content) {
   var matches = []
   var match
   var length = 0
-  while (length < settings.embeds.timeoutChars && (match = regex.exec(content))) {
+  while (length < cfg.get('embeds.timeoutChars') && (match = regex.exec(content))) {
     match = match.slice(2)
     if (match[1] !== '') {
       const converted = exports.force(...match)

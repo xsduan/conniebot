@@ -32,8 +32,9 @@ rest in pisces connie the bot (201x - 2017)
 #### here in ground control
 
 - download and install [node.js and npm](https://nodejs.org/) if you haven't already (duh)
-- set up `auth.json` using your bot token (an example with blank credentials can be found in `auth-example.json`)
-- maybe look at `settings.json`?
+- set up `default.hjson` using your bot token (an example can be found in `default-example.hjson`)
+ - [hjson tutorial](http://hjson.org/) – different from json but makes writing these things a lot easier
+- maybe look at the other settings?
 
 ### deployment
 

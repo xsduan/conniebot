@@ -6,15 +6,12 @@
 
 // libraries
 const Discord = require('discord.js')
+var cfg = require('config')
 
 // local modules
 const embed = require('./embed/embed.js')
 const x2i = require('./x2i/x2i.js')
 const help = require('./help/help.js')
-
-// data files
-const auth = require('./auth.json')
-const settings = require('./settings.json')
 
 // lifetime objects
 const bot = new Discord.Client()
@@ -66,7 +63,7 @@ function command (message) {
   var promise = null
 
   // commands
-  const prefixRegex = new RegExp('(?:^' + settings.prefix + ')(\\S*)')
+  const prefixRegex = new RegExp('(?:^' + cfg.get('prefix') + ')(\\S*)')
   var command = message.content.match(prefixRegex)
   if (command !== null) {
     command = command[1]
@@ -132,16 +129,16 @@ function x2iExec (message) {
 function x2iSend (channel, results) {
   if (results !== undefined && results.length !== 0) {
     var response = new Discord.RichEmbed()
-      .setColor(settings.embeds.colors.success)
+      .setColor(cfg.get('embeds.colors.success'))
     var logCode = 'all'
 
     // check timeout
-    var timedOut = results.length > settings.embeds.timeoutChars
+    var timedOut = results.length > cfg.get('embeds.timeoutChars')
     if (timedOut) {
-      results = results.slice(0, settings.embeds.timeoutChars - 1) + '…'
+      results = results.slice(0, cfg.get('embeds.timeoutChars') - 1) + '…'
 
-      response.addField('Timeout', settings.embeds.timeoutMessage)
-        .setColor(settings.embeds.colors.warning)
+      response.addField('Timeout', cfg.get('embeds.timeoutChars'))
+        .setColor(cfg.get('embeds.colors.warning'))
 
       logCode = 'partial'
     }
@@ -163,10 +160,12 @@ function x2iSend (channel, results) {
 bot.on('ready', () => {
   console.log('Bot ready. Setting up...')
 
-  console.log('Changing game status...')
-  bot.user.setGame(settings.activeMessage)
-    .then(() => console.log('Set game status.'))
-    .catch(err => console.log('Game couldn\'t be set. ' + err))
+  if (cfg.has('activeMessage')) {
+    console.log('Changing game status...')
+    bot.user.setGame(cfg.get('activeMessage'))
+      .then(() => console.log('Set game status.'))
+      .catch(err => console.log('Game couldn\'t be set. ' + err))
+  }
 })
 
 bot.on('message', message => {
@@ -183,4 +182,8 @@ bot.on('message', message => {
   console.log()
 })
 
-bot.login(auth.token)
+if (!cfg.has('token')) {
+  console.error('Couldn\'t find a token to connect to the token.')
+}
+
+bot.login(cfg.get('token'))

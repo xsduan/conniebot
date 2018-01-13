@@ -5,7 +5,7 @@
  */
 
 // data files
-const settings = require('../settings.json')
+var cfg = require('config')
 
 /*
  * functions
@@ -58,13 +58,13 @@ function handleBody (message, headersImportant) {
 }
 
 /**
- * Choose appropriate message format depending on settings.embeds.active
+ * Choose appropriate message format depending on if settings is active
  * @param {RichEmbed} message Message to convert
  * @param {boolean} [headersImportant] Should keep headers?
  * @returns {(RichEmbed|String)} Message converted to appropriate format
  */
 function output (message, headersImportant = true) {
-  return settings.embeds.active
+  return cfg.get('embeds.active')
     ? message
     : strip(message, headersImportant)
 }

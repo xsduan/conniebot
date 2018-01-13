@@ -11,14 +11,14 @@ const Discord = require('discord.js')
 const embed = require('../embed/embed.js')
 
 // data files
-const settings = require('../settings.json')
+var cfg = require('config')
 
 const help = [
   ['x,z,p[phonetic] or x,z,p/phonemic/',
     'Converts XSAMPA, ZSAMPA, or APIE to IPA. Hopefully.'],
-  [settings.prefix + 'xsampa, ' + settings.prefix + 'zsampa, or ' + settings.prefix + 'apie',
+  [cfg.get('prefix') + 'xsampa, ' + cfg.get('prefix') + 'zsampa, or ' + cfg.get('prefix') + 'apie',
     'Converts the rest of the message into their respective formats.'],
-  [settings.prefix + 'help',
+  [cfg.get('prefix') + 'help',
     'Reply with this message.'],
   ['\u200B',
     'found a bug or want to suggest a feature?\ngithub: https://github.com/xsduan/conniebot']
@@ -35,7 +35,7 @@ const help = [
  */
 function createEmbed (user) {
   var helpEmbed = new Discord.RichEmbed()
-    .setColor(settings.embeds.colors.success)
+    .setColor(cfg.get('embeds.colors.success'))
     .setAuthor(user.username, user.avatarURL)
     .setTitle('Commands')
 

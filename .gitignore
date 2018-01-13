@@ -58,8 +58,8 @@ typings/
 .env
 
 # for the love of god don't include this
-# auth.json contains all private data such as ssh keys and tokens
-auth.json
+# this contains all private data such as ssh keys and tokens
+config/default.hjson
 
 # autorun
 autorun.sh
