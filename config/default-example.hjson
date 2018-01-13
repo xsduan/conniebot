@@ -1,12 +1,17 @@
 
 {
-  // guide for setting up your own token here:
-  // https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
+  # set up your own token here:
+  # https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
   token: 000000000000000000000000.000000.000000000000000000000000000
 
   # you can just leave this off if you want, but I suggest including it because it's useful
   activeMessage: x/help for info
   prefix: x/
+
+  # embed options (ie the fancy posts only bots can do)
+  # they mess with e-readers and logging apparently so you might want to turn it off if that's
+  # a thing you need to worry about
+  # (they look so pretty though…)
   embeds:
   {
     # if false then all embeds get converted into 
