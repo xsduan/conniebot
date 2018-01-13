@@ -60,3 +60,6 @@ typings/
 # for the love of god don't include this
 # auth.json contains all private data such as ssh keys and tokens
 auth.json
+
+# autorun
+autorun.sh
