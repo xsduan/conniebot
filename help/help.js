@@ -15,11 +15,12 @@ var cfg = require('config')
 
 const help = [
   ['x,z,p[phonetic] or x,z,p/phonemic/',
-    'Converts XSAMPA, ZSAMPA, or APIE to IPA. Hopefully.'],
-  [cfg.get('prefix') + 'xsampa, ' + cfg.get('prefix') + 'zsampa, or ' + cfg.get('prefix') + 'apie',
-    'Converts the rest of the message into their respective formats.'],
+    'Converts XSAMPA, ZSAMPA, or APIE. Hopefully.'],
   [cfg.get('prefix') + 'help',
     'Reply with this message.'],
+  ['About these conversions', `https://en.wikipedia.org/wiki/X-SAMPA
+http://www.kneequickie.com/kq/Z-SAMPA
+https://pastebin.com/TEwBxfF5`],
   ['\u200B',
     'found a bug or want to suggest a feature?\ngithub: https://github.com/xsduan/conniebot']
 ]
