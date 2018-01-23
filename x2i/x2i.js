@@ -9,7 +9,7 @@ const cfg = require('config')
 
 // consts
 // regex match indices: 2 = key (to lower), 3 = bracket left, 4 = body, 5 = bracket right, (end)
-const regex = /(?:(^|\s))([A-Za-z])([/[])(\S.*?\S)([/\]])/gm
+const regex = /(?:(^|\s))([A-Za-z])([/[])((\S)|(\S.*?\S))([/\]])/gm
 const matchType = {
   'x': {
     keys: require('./x2i-keys.json'),
