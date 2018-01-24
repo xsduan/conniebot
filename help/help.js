@@ -22,7 +22,7 @@ const help = [
 http://www.kneequickie.com/kq/Z-SAMPA
 https://pastebin.com/eSyXwg1Z`],
   ['\u200B',
-    'found a bug or want to suggest a feature?\ngithub: https://github.com/xsduan/conniebot']
+    'found a bug or want to suggest a feature?\ngithub: https://github.com/xsduan/conniebot\ncome discuss: https://discord.gg/MvWMH3z']
 ]
 
 /*

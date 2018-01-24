@@ -57,3 +57,7 @@ when opening issues please state which module or file this concerns (separating 
 please only work on one module at a time for pull requests if you can.
 
 thank you for contributing!
+
+### have a comment?
+
+join me on discord: https://discord.gg/MvWMH3z
