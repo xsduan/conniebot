@@ -18,11 +18,11 @@ const help = [
     'Converts XSAMPA, ZSAMPA, or APIE. Hopefully.'],
   [cfg.get('prefix') + 'help',
     'Reply with this message.'],
-  ['About these conversions', `https://en.wikipedia.org/wiki/X-SAMPA
-http://www.kneequickie.com/kq/Z-SAMPA
-https://pastebin.com/eSyXwg1Z`],
+  ['About these conversions', `<https://en.wikipedia.org/wiki/X-SAMPA>
+<http://www.kneequickie.com/kq/Z-SAMPA>
+<https://pastebin.com/eSyXwg1Z>`],
   ['\u200B',
-    'found a bug or want to suggest a feature?\ngithub: https://github.com/xsduan/conniebot\ncome discuss: https://discord.gg/MvWMH3z']
+    'found a bug or want to suggest a feature?\n<github: https://github.com/xsduan/conniebot>\ncome discuss: https://discord.gg/MvWMH3z']
 ]
 
 /*
