@@ -80,7 +80,7 @@ exports.grab = function (content) {
   var matches = []
   var match
   var length = 0
-  while (length < cfg.get('embeds.timeoutMessage') && (match = regex.exec(content))) {
+  while (length < cfg.get('embeds.timeoutChars') && (match = regex.exec(content))) {
     match = match.slice(2)
     if (match[1] !== '') {
       const converted = exports.force(...match)

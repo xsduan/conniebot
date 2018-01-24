@@ -115,7 +115,7 @@ function x2iExec (message) {
     if (timedOut) {
       results = results.slice(0, cfg.get('embeds.timeoutChars') - 1) + '…'
 
-      response.addField('Timeout', cfg.get('embeds.timeoutChars'))
+      response.addField('Timeout', cfg.get('embeds.timeoutMessage'))
         .setColor(cfg.get('embeds.colors.warning'))
 
       logCode = 'partial'
