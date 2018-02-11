@@ -61,6 +61,7 @@ exports.help = function (channel, user) {
   return embed.send(channel, createEmbed(user))
 }
 
+/* eslint-disable no-tabs */
 /*
 Here is the paste if the site ever shuts down or otherwise deletes the pastebin:
 (These conversions are done in the listed order)
@@ -472,5 +473,6 @@ x3		h₃
 x4		h₄
 x5		h₅
 x@		hₐ
-xx		hₓ 
+xx		hₓ
 */
+/* eslint-enable no-tabs */
