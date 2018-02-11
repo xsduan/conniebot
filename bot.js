@@ -36,8 +36,17 @@ function logMessage (status, message = null) {
 }
 
 /**
+ * Convert a message object into a string in the form of guildname: message{0, 100}
+ *
+ * @param {Message} message
+ */
+function messageSummary (message) {
+  return message.guild.name + ': ' + message.content.substr(0, 100)
+}
+
+/**
  * Acts for a response to a message.
- * @param {Message} message Mssage to parse for responses
+ * @param {Message} message Message to parse for responses
  */
 function parse (message) {
   var x2iPromise = x2iExec(message)
@@ -79,9 +88,7 @@ function command (message) {
         break
     }
 
-    logMessage('processed:command/' + command)
-  } else {
-    logMessage('ignored:command')
+    logMessage('processed:command/' + command, messageSummary(message))
   }
 
   return promise
@@ -104,6 +111,8 @@ function ping (message) {
  * @returns {(Promise<(Message|Array<Message>)>)|null} Whatever message needs handling
  */
 function x2iExec (message) {
+  var promise = null
+
   var results = x2i.grab(message.content)
   if (results !== undefined && results.length !== 0) {
     var response = new Discord.RichEmbed()
@@ -123,12 +132,11 @@ function x2iExec (message) {
 
     response.setDescription(results)
 
-    logMessage('processed:x2i/' + logCode)
-    return embed.send(message.channel, response)
-  } else {
-    logMessage('ignored:x2i')
-    return null
+    logMessage('processed:x2i/' + logCode, messageSummary(message))
+    promise = embed.send(message.channel, response)
   }
+
+  return promise
 }
 
 /*
@@ -145,21 +153,13 @@ bot.on('ready', () => {
       .catch(err => console.log('Game couldn\'t be set. ' + err))
   }
 }).on('message', message => {
-  logMessage('-start ' + message.createdTimestamp + '-')
   if (!message.author.bot) {
     parse(message)
-  } else {
-    logMessage('ignored:bot')
   }
-
-  logMessage('-processed ' + message.createdTimestamp + '-')
-
-  // separate message return statuses in logs
-  console.log()
 })
 
 if (!cfg.has('token')) {
-  console.error('Couldn\'t find a token to connect to the token.')
+  console.error('Couldn\'t find a token to connect with.')
 }
 
 bot.login(cfg.get('token'))
