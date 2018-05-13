@@ -20,11 +20,11 @@ const bot = new Discord.Client()
  * functions
  */
 
- /**
-  * Prints a formatted message with a related object.
-  * @param {String} status Status logged as "(<status>)"
-  * @param {Object} [message] Optional object to log after status
-  */
+/**
+ * Prints a formatted message with a related object.
+ * @param {String} status Status logged as "(<status>)"
+ * @param {Object} [message] Optional object to log after status
+ */
 function logMessage (status, message = null) {
   var log = '(' + status + ')'
 
@@ -148,7 +148,7 @@ bot.on('ready', () => {
 
   if (cfg.has('activeMessage')) {
     console.log('Changing game status...')
-    bot.user.setGame(cfg.get('activeMessage'))
+    bot.user.setActivity(cfg.get('activeMessage'))
       .then(() => console.log('Set game status.'))
       .catch(err => console.log('Game couldn\'t be set. ' + err))
   }
