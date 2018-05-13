@@ -37,7 +37,8 @@ function logMessage (status, message = null) {
  * @param {Message} message
  */
 function messageSummary (message) {
-  return `${message.guild.name}: ${message.content.substr(0, 100)}`
+  let guildName = message.guild ? message.guild.name : 'unknown guild'
+  return `${guildName}: ${message.content.substr(0, 100)}`
 }
 
 /**
