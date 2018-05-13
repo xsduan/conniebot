@@ -25,6 +25,13 @@ github: <https://github.com/xsduan/conniebot>
 come discuss: https://discord.gg/MvWMH3z`]
 ]
 
+/**
+ * @typedef {Discord.User} User
+ * @typedef {Discord.RichEmbed} RichEmbed
+ * @typedef {Discord.Channel} Channel
+ * @typedef {Promise<Message | Message[]>} SentMessagePromise
+ */
+
 /*
  * functions
  */
@@ -51,8 +58,9 @@ function createEmbed (user) {
 
 /**
  * Sends a help message.
+ *
  * @param {Channel} channel Channel to send to
- * @param {User} user Who the sender is
- * @returns {(Promise<(Message|Array<Message>)>)|null} Whatever message needs handling
+ * @param {User} user User to put as head
+ * @returns {?SentMessagePromise} Whatever message needs handling
  */
 exports.help = (channel, user) => embed.send(channel, createEmbed(user))

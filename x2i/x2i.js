@@ -9,10 +9,39 @@ const fs = require('fs')
 const xre = require('xregexp')
 const yaml = require('js-yaml')
 
+/**
+ * @callback matchFunction
+ * @param {{inside: string}} match Matched string to manipulate.
+ * @returns {string} Transformed string.
+ *
+ * @callback joinFunction
+ * @param {string} left Left bracket.
+ * @param {string} match Match text.
+ * @param {string} right Right bracket.
+ * @returns {string} Joined string.
+ *
+ * @typedef {[string, string]} KeyTrans
+ * @typedef {KeyTrans|KeyNest} KeyConfig
+ *
+ * @typedef KeyNest
+ * @type {object}
+ * @property {[string, string]} delimiters Left and right delimiters (eg <, >).
+ * Delimited matches are not perfectly recursive.
+ * @property {KeyConfig[]} translations What should be done to the text inside.
+ *
+ * @typedef {[xre, string, 'all']} CompiledKeyTrans
+ * @typedef {[xre, matchFunction, 'all']} CompiledKeyNest
+ * @typedef {CompiledKeyTrans|CompiledKeyNest} CompiledKeyConfig
+ */
+
 // consts
 // regex match indices: 2 = key (to lower), 3 = bracket left, 4 = body, 5 = bracket right, (end)
 const regex = /(?:(^|\s|`))([A-Za-z]+?)([/[])(\S|\S.*?\S)([/\]])(?=($|\s|[`.,?!;:]))/gm
+
+/** @type {joinFunction} */
 const defaultMatchAction = (left, match, right) => left + match + right
+
+/** @type {{keys: CompiledKeyNest, join: ?joinFunction}} */
 const matchType = {
   x: {
     keys: readKeys('./x2i/x2i-keys.yaml')
@@ -33,7 +62,8 @@ const matchType = {
 /**
  * Read translation keys from file. Escapes strings first.
  *
- * @param {String} fpath File to key definitions. (yaml, utf8)
+ * @param {string} fpath File to key definitions. (yaml, utf8)
+ * @returns {CompiledKeyConfig[]} Compiled keys.
  */
 function readKeys (fpath) {
   return yaml
@@ -44,9 +74,8 @@ function readKeys (fpath) {
 /**
  * Compiles a plain object into a regexp thing.
  *
- * Delimited matches are not perfectly recursive.
- *
- * @param {Array|Object} entry Regex and replacement pair, or delimited match object.
+ * @param {KeyNest[]} entry Regex and replacement pair, or delimited match object.
+ * @returns {CompiledKeyConfig[]} A list of things to execute to transform.
  */
 function compileKey (entry) {
   if (Array.isArray(entry)) {
@@ -59,12 +88,13 @@ function compileKey (entry) {
         translations
       } = entry
 
-      left = xre.escape(left)
-      right = xre.escape(right)
       translations = translations.map(compileKey)
-      return [xre(`${left}(?<tones>.*?)${right}`), function (match) {
-        return xre.replaceEach(match.tones, translations)
-      }, 'all']
+      return [
+        xre(`${xre.escape(left)}(?<inside>.*?)${xre.escape(right)}`),
+        function (match) {
+          return xre.replaceEach(match.inside, translations)
+        },
+        'all']
     } catch (e) {
       console.log(`${entry} is not an array or a proper object, ignoring`)
       return ['', '']
@@ -79,18 +109,18 @@ function compileKey (entry) {
 /**
   * Convert four-tuple of Strings into a specified "official" representation
   *
-  * @param {String} key What kind of conversion key is appropriate
-  * @param {String} left Left bracket
-  * @param {String} match Body
-  * @param {String} right Right bracket
-  * @returns {String?} Converted item or empty string
+  * @param {string} key What kind of conversion key is appropriate
+  * @param {string} left Left bracket
+  * @param {string} match Body
+  * @param {string} right Right bracket
+  * @returns {?string} Converted item, if any.
   */
-exports.force = function (key, left, match, right) {
+exports.force = function force (key, left, match, right) {
   let lowerKey = key.toLowerCase()
   if (lowerKey in matchType) {
-    let { keys, join: action } = matchType[lowerKey]
+    let { keys, join } = matchType[lowerKey]
     if (keys) {
-      action = action || defaultMatchAction
+      let action = join || defaultMatchAction
       return action(left, xre.replaceEach(match, keys), right)
     }
   }
@@ -98,14 +128,14 @@ exports.force = function (key, left, match, right) {
 
 /**
  * Grab all x2i strings in message string.
- * @param {String} content Full message that may or may not contain x2i strings
- * @returns {String} Converted representations
+ * @param {string} content Full message that may or may not contain x2i strings
+ * @returns {string} Converted representations
  */
-exports.x2i = function (content) {
+exports.x2i = function x2i (content) {
   let results = []
   xre.forEach(content, regex, function (match) {
     let parts = match.slice(2, 6)
-    let converted = exports.force(...parts)// x, [, text, ]
+    let converted = exports.force(...parts) // x, [, text, ]
 
     results.push(converted || `couldn't understand: ${parts.join('')}`)
   })

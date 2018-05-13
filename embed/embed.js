@@ -7,15 +7,22 @@
 // libraries
 const config = require('config')
 
+/**
+ * @typedef {Discord.RichEmbed} RichEmbed
+ * @typedef {Discord.Channel} Channel
+ * @typedef {Promise<Message | Message[]>} SentMessagePromise
+ */
+
 /*
  * functions
  */
 
 /**
  * Grabs body from RichEmbed, optionally discarding headers
+ *
  * @param {RichEmbed} message Message to grab body text from
  * @param {boolean} [headersImportant] Should keep headers?
- * @returns {String} Body of RichEmbed
+ * @returns {string} Body of RichEmbed
  */
 function handleBody (message, headersImportant) {
   let body = []
@@ -30,9 +37,10 @@ function handleBody (message, headersImportant) {
 
 /**
  * Convert RichEmbed to String
+ *
  * @param {RichEmbed} message Message to convert
  * @param {boolean} [headersImportant] Should keep headers?
- * @returns {String} String representation of RichEmbed
+ * @returns {string} String representation of RichEmbed
  */
 function strip (message, headersImportant) {
   let title = message.title ? `**${message.title}**\n` : ''
@@ -48,10 +56,11 @@ function strip (message, headersImportant) {
 
 /**
   * Send message to channel
+  *
   * @param {Channel} channel Channel to send message to
-  * @param {(RichEmbed|String)} message Message to send
+  * @param {RichEmbed|string} message Message to send
   * @param {boolean} headersImportant Should keep headers if converted?
-  * @returns {(Promise<(Message|Array<Message>)>)|null} Whatever message needs handling
+  * @returns {?SentMessagePromise} Whatever message needs handling
   */
 exports.send = function (channel, message, headersImportant = true) {
   return channel.send(config.get('embeds.active')

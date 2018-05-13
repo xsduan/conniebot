@@ -17,16 +17,21 @@ const help = require('./help/help')
 // lifetime objects
 const bot = new Discord.Client()
 
+/**
+ * @typedef {Discord.Message} Message
+ * @typedef {Promise<Message | Message[]>} SentMessagePromise
+ */
+
 /*
  * functions
  */
 
 /**
  * Prints a formatted message with a related object.
- * @param {String} status Status logged as "(<status>)"
- * @param {Object} [message] Optional object to log after status
+ * @param {string} status Status logged as "(<status>)"
+ * @param {*} [message] Object to log after status
  */
-function logMessage (status, message = null) {
+function logMessage (status, message) {
   let log = message ? ` ${message}` : ''
   console.log(`(${status})${log}`)
 }
@@ -35,6 +40,7 @@ function logMessage (status, message = null) {
  * Convert a message object into a string in the form of guildname: message{0, 100}
  *
  * @param {Message} message
+ * @return {string} Message summary (guild name: message snippet)
  */
 function messageSummary (message) {
   let guildName = message.guild ? message.guild.name : 'unknown guild'
@@ -43,6 +49,7 @@ function messageSummary (message) {
 
 /**
  * Acts for a response to a message.
+ *
  * @param {Message} message Message to parse for responses
  */
 function parse (message) {
@@ -61,12 +68,13 @@ function parse (message) {
 }
 
 /**
- * Looks for a message.
+ * Looks for a reply message.
+ *
  * @param {Message} message Message to parse for responses
- * @returns {(Promise<(Message|Array<Message>)>)|null} Whatever message needs handling
+ * @returns {?SentMessagePromise} Whatever message needs handling
  */
 function command (message) {
-  let promise = null
+  let promise
 
   // commands
   const prefixRegex = xre.build(`(?:^${xre.escape(config.get('prefix'))})(\\S*)`)
@@ -105,7 +113,7 @@ function ping (message) {
 /**
  * Sends an x2i string (but also could be used for simple embeds)
  * @param {Message} message Message to reply to
- * @returns {(Promise<(Message|Array<Message>)>)|null} Whatever message needs handling
+ * @returns {?SentMessagePromise} Whatever message needs handling
  */
 function x2iExec (message) {
   let promise = null
