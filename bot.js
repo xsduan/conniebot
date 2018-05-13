@@ -7,6 +7,7 @@
 // libraries
 const Discord = require('discord.js')
 const config = require('config')
+const xre = require('xregexp')
 
 // local modules
 const embed = require('./embed/embed')
@@ -26,13 +27,8 @@ const bot = new Discord.Client()
  * @param {Object} [message] Optional object to log after status
  */
 function logMessage (status, message = null) {
-  let log = '(' + status + ')'
-
-  if (message != null) {
-    log += ' ' + message
-  }
-
-  console.log(log)
+  let log = message ? ` ${message}` : ''
+  console.log(`(${status})${log}`)
 }
 
 /**
@@ -41,7 +37,7 @@ function logMessage (status, message = null) {
  * @param {Message} message
  */
 function messageSummary (message) {
-  return message.guild.name + ': ' + message.content.substr(0, 100)
+  return `${message.guild.name}: ${message.content.substr(0, 100)}`
 }
 
 /**
@@ -72,7 +68,7 @@ function command (message) {
   let promise = null
 
   // commands
-  const prefixRegex = new RegExp('(?:^' + config.get('prefix') + ')(\\S*)')
+  const prefixRegex = xre.build(`(?:^${xre.escape(config.get('prefix'))})(\\S*)`)
   let command = message.content.match(prefixRegex)
   if (command) {
     command = command[1]
@@ -100,8 +96,8 @@ function command (message) {
  */
 function ping (message) {
   const elapsed = new Date().getTime() - message.createdTimestamp
-  message.channel.send('I\'m alive! (' + elapsed + ' ms)')
-    .then(() => logMessage('success:command/ping/' + elapsed + 'ms'))
+  message.channel.send(`I'm alive! (${elapsed} ms)`)
+    .then(() => logMessage(`success:command/ping/${elapsed}ms`))
     .catch(err => logMessage('error:command/ping', err))
 }
 
@@ -114,15 +110,15 @@ function x2iExec (message) {
   let promise = null
 
   let results = x2i.x2i(message.content)
-  if (results !== undefined && results.length !== 0) {
+  if (results && results.length !== 0) {
     let response = new Discord.RichEmbed()
       .setColor(config.get('embeds.colors.success'))
     let logCode = 'all'
 
     // check timeout
-    let timedOut = results.length > config.get('embeds.timeoutChars')
-    if (timedOut) {
-      results = results.slice(0, config.get('embeds.timeoutChars') - 1) + '…'
+    let charMax = config.get('embeds.timeoutChars')
+    if (results.length > charMax) {
+      results = `${results.slice(0, charMax - 1)}…`
 
       response.addField('Timeout', config.get('embeds.timeoutMessage'))
         .setColor(config.get('embeds.colors.warning'))
@@ -132,7 +128,7 @@ function x2iExec (message) {
 
     response.setDescription(results)
 
-    logMessage('processed:x2i/' + logCode, messageSummary(message))
+    logMessage(`processed:x2i/${logCode}`, messageSummary(message))
     promise = embed.send(message.channel, response)
   }
 
@@ -150,7 +146,7 @@ bot.on('ready', () => {
     console.log('Changing game status...')
     bot.user.setActivity(config.get('activeMessage'))
       .then(() => console.log('Set game status.'))
-      .catch(err => console.log('Game couldn\'t be set. ' + err))
+      .catch(err => console.log(`Status couldn't be set. ${err}`))
   }
 }).on('message', message => {
   if (!message.author.bot) {
@@ -159,7 +155,7 @@ bot.on('ready', () => {
 })
 
 if (!config.has('token')) {
-  console.error('Couldn\'t find a token to connect with.')
+  console.error("Couldn't find a token to connect with.")
 }
 
 bot.login(config.get('token'))

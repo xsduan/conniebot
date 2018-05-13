@@ -29,18 +29,6 @@ function handleBody (message, headersImportant) {
 }
 
 /**
- * Choose appropriate message format depending on if settings is active
- * @param {RichEmbed} message Message to convert
- * @param {boolean} [headersImportant] Should keep headers?
- * @returns {(RichEmbed|String)} Message converted to appropriate format
- */
-function output (message, headersImportant) {
-  return config.get('embeds.active')
-    ? message
-    : strip(message, headersImportant)
-}
-
-/**
  * Convert RichEmbed to String
  * @param {RichEmbed} message Message to convert
  * @param {boolean} [headersImportant] Should keep headers?
@@ -66,5 +54,7 @@ function strip (message, headersImportant) {
   * @returns {(Promise<(Message|Array<Message>)>)|null} Whatever message needs handling
   */
 exports.send = function (channel, message, headersImportant = true) {
-  return channel.send(output(message, headersImportant))
+  return channel.send(config.get('embeds.active')
+    ? message
+    : strip(message, headersImportant))
 }
