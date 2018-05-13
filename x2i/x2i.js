@@ -11,7 +11,7 @@ const yaml = require('js-yaml')
 
 // consts
 // regex match indices: 2 = key (to lower), 3 = bracket left, 4 = body, 5 = bracket right, (end)
-const regex = /(?:(^|\s|`))([A-Za-z]*?)([/[])(\S|\S.*?\S)([/\]])(?=($|\s|`))/gm
+const regex = /(?:(^|\s|`))([A-Za-z]+?)([/[])(\S|\S.*?\S)([/\]])(?=($|\s|[`.,?!;:]))/gm
 const defaultMatchAction = (left, match, right) => left + match + right
 const matchType = {
   x: {
