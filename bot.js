@@ -6,12 +6,12 @@
 
 // libraries
 const Discord = require('discord.js')
-var cfg = require('config')
+const config = require('config')
 
 // local modules
-const embed = require('./embed/embed.js')
-const x2i = require('./x2i/x2i.js')
-const help = require('./help/help.js')
+const embed = require('./embed/embed')
+const x2i = require('./x2i/x2i')
+const help = require('./help/help')
 
 // lifetime objects
 const bot = new Discord.Client()
@@ -26,7 +26,7 @@ const bot = new Discord.Client()
  * @param {Object} [message] Optional object to log after status
  */
 function logMessage (status, message = null) {
-  var log = '(' + status + ')'
+  let log = '(' + status + ')'
 
   if (message != null) {
     log += ' ' + message
@@ -49,15 +49,15 @@ function messageSummary (message) {
  * @param {Message} message Message to parse for responses
  */
 function parse (message) {
-  var x2iPromise = x2iExec(message)
-  if (x2iPromise != null) {
+  let x2iPromise = x2iExec(message)
+  if (x2iPromise) {
     x2iPromise.then(() => logMessage('success:x2i'))
       .catch(err => logMessage('error:x2i', err))
     return
   }
 
-  var promise = command(message)
-  if (promise !== null) {
+  let promise = command(message)
+  if (promise) {
     promise.then(() => logMessage('success:command'))
       .catch(err => logMessage('error:command', err))
   }
@@ -69,12 +69,12 @@ function parse (message) {
  * @returns {(Promise<(Message|Array<Message>)>)|null} Whatever message needs handling
  */
 function command (message) {
-  var promise = null
+  let promise = null
 
   // commands
-  const prefixRegex = new RegExp('(?:^' + cfg.get('prefix') + ')(\\S*)')
-  var command = message.content.match(prefixRegex)
-  if (command !== null) {
+  const prefixRegex = new RegExp('(?:^' + config.get('prefix') + ')(\\S*)')
+  let command = message.content.match(prefixRegex)
+  if (command) {
     command = command[1]
 
     switch (command) {
@@ -111,21 +111,21 @@ function ping (message) {
  * @returns {(Promise<(Message|Array<Message>)>)|null} Whatever message needs handling
  */
 function x2iExec (message) {
-  var promise = null
+  let promise = null
 
-  var results = x2i.grab(message.content)
+  let results = x2i.x2i(message.content)
   if (results !== undefined && results.length !== 0) {
-    var response = new Discord.RichEmbed()
-      .setColor(cfg.get('embeds.colors.success'))
-    var logCode = 'all'
+    let response = new Discord.RichEmbed()
+      .setColor(config.get('embeds.colors.success'))
+    let logCode = 'all'
 
     // check timeout
-    var timedOut = results.length > cfg.get('embeds.timeoutChars')
+    let timedOut = results.length > config.get('embeds.timeoutChars')
     if (timedOut) {
-      results = results.slice(0, cfg.get('embeds.timeoutChars') - 1) + '…'
+      results = results.slice(0, config.get('embeds.timeoutChars') - 1) + '…'
 
-      response.addField('Timeout', cfg.get('embeds.timeoutMessage'))
-        .setColor(cfg.get('embeds.colors.warning'))
+      response.addField('Timeout', config.get('embeds.timeoutMessage'))
+        .setColor(config.get('embeds.colors.warning'))
 
       logCode = 'partial'
     }
@@ -146,9 +146,9 @@ function x2iExec (message) {
 bot.on('ready', () => {
   console.log('Bot ready. Setting up...')
 
-  if (cfg.has('activeMessage')) {
+  if (config.has('activeMessage')) {
     console.log('Changing game status...')
-    bot.user.setActivity(cfg.get('activeMessage'))
+    bot.user.setActivity(config.get('activeMessage'))
       .then(() => console.log('Set game status.'))
       .catch(err => console.log('Game couldn\'t be set. ' + err))
   }
@@ -158,8 +158,8 @@ bot.on('ready', () => {
   }
 })
 
-if (!cfg.has('token')) {
+if (!config.has('token')) {
   console.error('Couldn\'t find a token to connect with.')
 }
 
-bot.login(cfg.get('token'))
+bot.login(config.get('token'))

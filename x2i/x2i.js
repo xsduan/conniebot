@@ -4,8 +4,8 @@
  * vars
  */
 
-// data files
-const cfg = require('config')
+// libraries
+const config = require('config')
 
 // consts
 // regex match indices: 2 = key (to lower), 3 = bracket left, 4 = body, 5 = bracket right, (end)
@@ -53,7 +53,7 @@ function convert (raw, keys) {
  * exports
  */
 
- /**
+/**
   * Convert four-tuple of Strings into a specified "official" representation
   * @param {String} key What kind of conversion key is appropriate
   * @param {String} left Left bracket
@@ -62,7 +62,7 @@ function convert (raw, keys) {
   * @returns {String} Converted item or empty string
   */
 exports.force = function (key, left, match, right) {
-  var matchActions = matchType[key.toLowerCase()]
+  let matchActions = matchType[key.toLowerCase()]
   if (matchActions !== undefined) {
     match = convert(match, matchActions.keys)
     return matchActions.join(left, match, right)
@@ -76,17 +76,18 @@ exports.force = function (key, left, match, right) {
  * @param {String} content Full message that may or may not contain x2i strings
  * @returns {String} Converted representations
  */
-exports.grab = function (content) {
-  var matches = []
-  var match
-  var length = 0
-  while (length < cfg.get('embeds.timeoutChars') && (match = regex.exec(content))) {
+exports.x2i = function (content) {
+  let matches = []
+  let match
+  let length = 0
+  while (length < config.get('embeds.timeoutChars') && (match = regex.exec(content))) {
     match = match.slice(2)
-    if (match[1] !== '') {
+    if (match[1]) {
       const converted = exports.force(...match)
-      if (converted !== '') {
+      if (converted) {
         length += converted.length
         matches.push(converted)
+        console.log(converted)
       }
     }
   }

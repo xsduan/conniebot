@@ -4,36 +4,12 @@
  * vars
  */
 
-// data files
-var cfg = require('config')
+// libraries
+const config = require('config')
 
 /*
  * functions
  */
-
- /**
-  * Grab title from RichEmbed
-  * @param {RichEmbed} message Message to grab title from
-  * @returns {String} Title of RichEmbed
-  */
-function handleTitle (message) {
-  var title = ''
-  if (message.title !== undefined) {
-    title = '**' + message.title + '**\n'
-  }
-  return title
-}
-
-/**
- * Grab description from RichEmbed
- * @param {RichEmbed} message Message to grab description from
- * @returns {String} Description of RichEmbed
- */
-function handleDescription (message) {
-  return message.description !== undefined
-    ? message.description + '\n\n'
-    : '\n'
-}
 
 /**
  * Grabs body from RichEmbed, optionally discarding headers
@@ -42,16 +18,11 @@ function handleDescription (message) {
  * @returns {String} Body of RichEmbed
  */
 function handleBody (message, headersImportant) {
-  var body = []
-  if (message.fields !== undefined) {
+  let body = []
+  if (message.fields) {
     message.fields.forEach(function (field) {
-      var fieldString = ''
-
-      if (headersImportant) {
-        fieldString += '**' + field.name + '**\n'
-      }
-
-      body.push(fieldString + field.value)
+      let fieldString = headersImportant ? `**${field.name}**\n` : ''
+      body.push(`${fieldString}${field.value}`)
     })
   }
   return body.join('\n\n')
@@ -63,8 +34,8 @@ function handleBody (message, headersImportant) {
  * @param {boolean} [headersImportant] Should keep headers?
  * @returns {(RichEmbed|String)} Message converted to appropriate format
  */
-function output (message, headersImportant = true) {
-  return cfg.get('embeds.active')
+function output (message, headersImportant) {
+  return config.get('embeds.active')
     ? message
     : strip(message, headersImportant)
 }
@@ -75,15 +46,19 @@ function output (message, headersImportant = true) {
  * @param {boolean} [headersImportant] Should keep headers?
  * @returns {String} String representation of RichEmbed
  */
-function strip (message, headersImportant = true) {
-  return handleTitle(message) + handleDescription(message) + handleBody(message, headersImportant)
+function strip (message, headersImportant) {
+  let title = message.title ? `**${message.title}**\n` : ''
+  let desc = message.description ? `${message.description}\n` : ''
+  let body = handleBody(message, headersImportant)
+
+  return `${title}${desc}\n${body}`
 }
 
 /*
  * exports
  */
 
- /**
+/**
   * Send message to channel
   * @param {Channel} channel Channel to send message to
   * @param {(RichEmbed|String)} message Message to send

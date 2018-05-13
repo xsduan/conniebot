@@ -6,23 +6,23 @@
 
 // libraries
 const Discord = require('discord.js')
+const config = require('config')
 
 // local modules
-const embed = require('../embed/embed.js')
-
-// data files
-var cfg = require('config')
+const embed = require('../embed/embed')
 
 const help = [
   ['x,z,p[phonetic] or x,z,p/phonemic/',
     'Converts XSAMPA, ZSAMPA, or APIE. Hopefully.'],
-  [cfg.get('prefix') + 'help',
+  [config.get('prefix') + 'help',
     'Reply with this message.'],
   ['About these conversions', `<https://en.wikipedia.org/wiki/X-SAMPA>
 <http://www.kneequickie.com/kq/Z-SAMPA>
 <https://pastebin.com/eSyXwg1Z>`],
   ['\u200B',
-    'found a bug or want to suggest a feature?\ngithub: <https://github.com/xsduan/conniebot>\ncome discuss: https://discord.gg/MvWMH3z']
+    `found a bug or want to suggest a feature?
+github: <https://github.com/xsduan/conniebot>
+come discuss: https://discord.gg/MvWMH3z`]
 ]
 
 /*
@@ -35,8 +35,8 @@ const help = [
  * @returns {RichEmbed} Help message
  */
 function createEmbed (user) {
-  var helpEmbed = new Discord.RichEmbed()
-    .setColor(cfg.get('embeds.colors.success'))
+  let helpEmbed = new Discord.RichEmbed()
+    .setColor(config.get('embeds.colors.success') || [152, 219, 52])
     .setAuthor(user.username, user.avatarURL)
     .setTitle('Commands')
 
