@@ -63,3 +63,5 @@ config/default.yaml
 
 # autorun
 autorun.sh
+
+.vscode
