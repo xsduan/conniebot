@@ -136,8 +136,10 @@ exports.x2i = function x2i (content) {
   xre.forEach(content, regex, function (match) {
     let parts = match.slice(2, 6)
     let converted = exports.force(...parts) // x, [, text, ]
-
-    results.push(converted || `couldn't understand: ${parts.join('')}`)
+    
+    if (converted) {
+      results.push(converted)
+    }
   })
 
   return results.join('\n')
