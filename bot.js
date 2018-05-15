@@ -17,9 +17,11 @@ const help = require('./help/help')
 
 // lifetime objects
 const bot = new Discord.Client()
+const db = new NeDB({ filename: config.get('database'), autoload: true })
 const commands = {
   ping: ping, // ping command is special case response.
   help: message => help.help(message.channel, bot.user),
+  notif: setChannel
 }
 
 /**
@@ -142,19 +144,88 @@ function x2iExec (message) {
   return promise
 }
 
-/*
- * main
+/**
+ * Sets a event notification channel.
+ *
+ * @param {Message} message Command message.
+ * @param {string} event Event to register.
+ * @returns {SentMessagePromise} Whatever message needs handling.
  */
+function setChannel (message, event) {
+  if (message.author.id === config.get('owner')) {
+    if (!event) {
+      return message.channel.send('Sorry, you need to specify an event.')
+    }
 
-bot.on('ready', () => {
-  console.log('Bot ready. Setting up...')
+    let query = {}
+    query[event] = message.channel.id
 
+    console.log(message.channel.id)
+    db.update({ config: config.get('owner') },
+      { $set: { notifs: query } },
+      { upsert: true },
+      (err, numReplaced) => {
+        if (err) {
+          return console.log(err)
+        }
+        console.log(`Updated ${numReplaced} for ${event} notification.`)
+      })
+    return message.channel
+      .send(`Got it! Will send notifications for ${event} to ${message.channel}.`)
+  }
+  return message.reply("Sorry, but you don't have permissions to do that.")
+}
+
+/**
+ * Update activity of bot.
+ */
+function updateActivity () {
   if (config.has('activeMessage')) {
     console.log('Changing game status...')
     bot.user.setActivity(config.get('activeMessage'))
       .then(() => console.log('Set game status.'))
       .catch(err => console.log(`Status couldn't be set. ${err}`))
   }
+}
+
+/**
+ * Send notification to channel for reboot.
+ */
+function notifyRestart () {
+  if (config.has('owner')) {
+    db.findOne(
+      { config: config.get('owner') },
+      { 'notifs.restart': 1, _id: 0 },
+      (err, doc) => {
+        if (err) {
+          return console.log(err)
+        }
+
+        if (!Object.keys(doc).length) {
+          return console.log("Couldn't find channel to notify.")
+        }
+
+        let channel = bot.channels.get(doc.notifs.restart)
+
+        channel.send(`Rebooted at ${new Date()}.`)
+          .then(() => {
+            console.log(`Notified ${channel} (#${channel.name}) of restart.`)
+          })
+          .catch(err => console.log(err))
+      })
+  } else {
+    console.log("Owner key doesn't exist.")
+  }
+}
+
+/*
+ * main
+ */
+
+bot.on('ready', () => {
+  console.log('Bot ready. Setting up...')
+  updateActivity()
+  notifyRestart()
 }).on('message', message => {
   if (!message.author.bot) {
     parse(message)

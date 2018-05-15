@@ -13,6 +13,7 @@
     "config": "^1.30.0",
     "discord.js": "^11.3.2",
     "js-yaml": "^3.11.0",
+    "nedb": "^1.8.0",
     "xregexp": "^4.1.1"
   },
   "devDependencies": {

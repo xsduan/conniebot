@@ -60,6 +60,7 @@ typings/
 # for the love of god don't include this
 # this contains all private data such as ssh keys and tokens
 config/default.yaml
+db.json
 
 # autorun
 autorun.sh

@@ -8,6 +8,10 @@ token: 000000000000000000000000.000000.000000000000000000000000000
 activeMessage: x/help for info
 prefix: x/
 
+# owner id, only responds to admin commands if author is this person.
+owner: '207600419659186176'
+database: ./db.json
+
 # embed options (ie the fancy posts only bots can do)
 # they mess with e-readers and logging apparently so you might want to turn it =
 # off if that's a thing you need to worry about
