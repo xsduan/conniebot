@@ -85,7 +85,7 @@ function command (message) {
 
   // commands
   const prefixRegex = xre
-    .build(`(?:^${xre.escape(config.get('prefix'))})(\\S*) (.*)`)
+    .build(`(?:^${xre.escape(config.get('prefix'))})(\\S*) ?(.*)`)
   let toks = message.content.match(prefixRegex)
   if (toks) {
     let [, cmd, args] = toks
