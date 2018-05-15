@@ -5,8 +5,9 @@
  */
 
 // libraries
-const Discord = require('discord.js')
 const config = require('config')
+const Discord = require('discord.js')
+const NeDB = require('nedb')
 const xre = require('xregexp')
 
 // local modules
@@ -16,6 +17,10 @@ const help = require('./help/help')
 
 // lifetime objects
 const bot = new Discord.Client()
+const commands = {
+  ping: ping, // ping command is special case response.
+  help: message => help.help(message.channel, bot.user),
+}
 
 /**
  * @typedef {Discord.Message} Message
@@ -77,23 +82,16 @@ function command (message) {
   let promise
 
   // commands
-  const prefixRegex = xre.build(`(?:^${xre.escape(config.get('prefix'))})(\\S*)`)
-  let command = message.content.match(prefixRegex)
-  if (command) {
-    command = command[1]
-
-    switch (command) {
-      // ping command is special case response.
-      case 'ping':
-        ping(message)
-        break
-      // all the following commands are handled the same.
-      case 'help':
-        promise = help.help(message.channel, bot.user)
-        break
+  const prefixRegex = xre
+    .build(`(?:^${xre.escape(config.get('prefix'))})(\\S*) (.*)`)
+  let toks = message.content.match(prefixRegex)
+  if (toks) {
+    let [, cmd, args] = toks
+    if (cmd in commands) {
+      promise = commands[cmd](message, ...args.split(' '))
     }
 
-    logMessage('processed:command/' + command, messageSummary(message))
+    logMessage('processed:command/' + cmd, messageSummary(message))
   }
 
   return promise
