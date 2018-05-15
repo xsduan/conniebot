@@ -17,8 +17,7 @@ const help = [
   [`${config.get('prefix')}help`,
     'Reply with this message.'],
   ['About these conversions', `<https://en.wikipedia.org/wiki/X-SAMPA>
-<http://www.kneequickie.com/kq/Z-SAMPA>
-<https://pastebin.com/eSyXwg1Z>`],
+<http://www.kneequickie.com/kq/Z-SAMPA>`],
   ['\u200B',
     `found a bug or want to suggest a feature?
 github: <https://github.com/xsduan/conniebot>
