@@ -201,7 +201,7 @@ function notifyRestart () {
           return console.log(err)
         }
 
-        if (!Object.keys(doc).length) {
+        if (!doc || !Object.keys(doc).length) {
           return console.log("Couldn't find channel to notify.")
         }
 
