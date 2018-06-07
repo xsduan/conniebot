@@ -5,7 +5,7 @@
  */
 
 // libraries
-const config = require('config')
+import config from 'config'
 
 /**
  * @typedef {Discord.RichEmbed} RichEmbed
@@ -25,14 +25,10 @@ const config = require('config')
  * @returns {string} Body of RichEmbed
  */
 function handleBody (message, headersImportant) {
-  let body = []
-  if (message.fields) {
-    message.fields.forEach(function (field) {
-      let fieldString = headersImportant ? `**${field.name}**\n` : ''
-      body.push(`${fieldString}${field.value}`)
-    })
-  }
-  return body.join('\n\n')
+  return (message.fields || []).map(field => {
+    let fieldString = headersImportant ? `**${field.name}**\n` : ''
+    return `${fieldString}${field.value}`
+  })
 }
 
 /**
@@ -62,7 +58,7 @@ function strip (message, headersImportant) {
   * @param {boolean} headersImportant Should keep headers if converted?
   * @returns {?SentMessagePromise} Whatever message needs handling
   */
-exports.send = function (channel, message, headersImportant = true) {
+export default function send (channel, message, headersImportant = true) {
   return channel.send(config.get('embeds.active')
     ? message
     : strip(message, headersImportant))

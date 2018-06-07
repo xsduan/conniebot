@@ -5,22 +5,22 @@
  */
 
 // libraries
-const config = require('config')
-const Discord = require('discord.js')
-const NeDB = require('nedb')
-const xre = require('xregexp')
+import config from 'config'
+import Discord from 'discord.js'
+import NeDB from 'nedb'
+import xre from 'xregexp'
 
 // local modules
-const embed = require('./embed')
-const x2i = require('./x2i')
-const help = require('./help')
+import embed from './embed'
+import x2i from './x2i'
+import help from './help'
 
 // lifetime objects
 const bot = new Discord.Client()
 const db = new NeDB({ filename: config.get('database'), autoload: true })
 const commands = {
   ping: ping, // ping command is special case response.
-  help: message => help.help(message.channel, bot.user),
+  help: message => help(message.channel, bot.user),
   notif: setChannel
 }
 
@@ -118,7 +118,7 @@ function ping (message) {
 function x2iExec (message) {
   let promise = null
 
-  let results = x2i.x2i(message.content)
+  let results = x2i(message.content)
   if (results && results.length !== 0) {
     let response = new Discord.RichEmbed()
       .setColor(config.get('embeds.colors.success'))

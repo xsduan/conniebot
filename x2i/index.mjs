@@ -5,9 +5,9 @@
  */
 
 // libraries
-const fs = require('fs')
-const xre = require('xregexp')
-const yaml = require('js-yaml')
+import fs from 'fs'
+import xre from 'xregexp'
+import yaml from 'js-yaml'
 
 /**
  * @callback matchFunction
@@ -91,13 +91,11 @@ function compileKey (entry) {
       translations = translations.map(compileKey)
       return [
         xre(`${xre.escape(left)}(?<inside>.*?)${xre.escape(right)}`),
-        function (match) {
-          return xre.replaceEach(match.inside, translations)
-        },
+        (match) => xre.replaceEach(match.inside, translations),
         'all']
     } catch (e) {
       console.log(`${entry} is not an array or a proper object, ignoring`)
-      return ['', '']
+      return new Array(2).fill('')
     }
   }
 }
@@ -115,7 +113,7 @@ function compileKey (entry) {
   * @param {string} right Right bracket
   * @returns {?string} Converted item, if any.
   */
-exports.force = function force (key, left, match, right) {
+export function force (key, left, match, right) {
   let lowerKey = key.toLowerCase()
   if (lowerKey in matchType) {
     let { keys, join } = matchType[lowerKey]
@@ -131,12 +129,12 @@ exports.force = function force (key, left, match, right) {
  * @param {string} content Full message that may or may not contain x2i strings
  * @returns {string} Converted representations
  */
-exports.x2i = function x2i (content) {
+export default function x2i (content) {
   let results = []
-  xre.forEach(content, regex, function (match) {
+  xre.forEach(content, regex, match => {
     let parts = match.slice(2, 6)
     let converted = exports.force(...parts) // x, [, text, ]
-    
+
     if (converted) {
       results.push(converted)
     }

@@ -5,13 +5,13 @@
  */
 
 // libraries
-const Discord = require('discord.js')
-const config = require('config')
+import Discord from 'discord.js'
+import config from 'config'
 
 // local modules
-const embed = require('./embed')
+import embed from './embed'
 
-const help = [
+const helpMessage = [
   ['x,z,p[phonetic] or x,z,p/phonemic/',
     'Converts XSAMPA, ZSAMPA, or APIE. Hopefully.'],
   [`${config.get('prefix')}help`,
@@ -46,7 +46,7 @@ function createEmbed (user) {
     .setAuthor(user.username, user.avatarURL)
     .setTitle('Commands')
 
-  help.forEach(entry => helpEmbed.addField(...entry))
+  helpMessage.forEach(entry => helpEmbed.addField(...entry))
 
   return helpEmbed
 }
@@ -62,4 +62,4 @@ function createEmbed (user) {
  * @param {User} user User to put as head
  * @returns {?SentMessagePromise} Whatever message needs handling
  */
-exports.help = (channel, user) => embed.send(channel, createEmbed(user))
+export default (channel, user) => embed(channel, createEmbed(user))
