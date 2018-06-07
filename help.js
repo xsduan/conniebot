@@ -9,7 +9,7 @@ const Discord = require('discord.js')
 const config = require('config')
 
 // local modules
-const embed = require('../embed/embed')
+const embed = require('./embed')
 
 const help = [
   ['x,z,p[phonetic] or x,z,p/phonemic/',

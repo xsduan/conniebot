@@ -11,9 +11,9 @@ const NeDB = require('nedb')
 const xre = require('xregexp')
 
 // local modules
-const embed = require('./embed/embed')
-const x2i = require('./x2i/x2i')
-const help = require('./help/help')
+const embed = require('./embed')
+const x2i = require('./x2i')
+const help = require('./help')
 
 // lifetime objects
 const bot = new Discord.Client()
