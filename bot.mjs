@@ -157,15 +157,14 @@ function setChannel (message, event) {
       return message.channel.send('Sorry, you need to specify an event.')
     }
 
-    let query = {}
-    query[event] = message.channel.id
-
     console.log(message.channel.id)
     db.update({ config: config.get('owner') },
-      { $set: { notifs: query } },
+      { $set: { [`notifs.${event}`]: message.channel.id } },
       { upsert: true },
       (err, numReplaced) => {
         if (err) {
+          message.channel
+            .send('Something went wrong while trying to set notifications.')
           return console.log(err)
         }
         console.log(`Updated ${numReplaced} for ${event} notification.`)
@@ -218,19 +217,136 @@ function notifyRestart () {
   }
 }
 
+function notifyNewErrors () {
+  // TODO: use best practices, don't c+p code
+  db.find({ error: 'unsentErrors' }, (err, [docs] = []) => {
+    let unsentErrors
+    if (docs && docs.errors.length) {
+      unsentErrors = docs.errors
+    } else {
+      unsentErrors = []
+    }
+
+    if (err) {
+      return console.log(err)
+    }
+
+    if (!unsentErrors.length) {
+      return
+    }
+
+    // oh good, callback hell
+    db.findOne(
+      { config: config.get('owner') },
+      { 'notifs.errors': 1, _id: 0 },
+      async (err, { notifs: { errors: errorChannel } = {} }) => {
+        if (err) {
+          return console.log(err)
+        }
+
+        if (!errorChannel) {
+          return console.log("Couldn't find error channel.")
+        }
+
+        let channel = bot.channels.get(errorChannel)
+
+        // TODO: update all promises into async/await
+        let sentErrors = []
+        let retryErrors = []
+        let newErrors = []
+
+        let sendMessage = async (msg) => {
+          try {
+            // don't really care about the message
+            await channel.send(msg)
+            return true
+          } catch (channelErr) {
+            newErrors.push(channelErr.stack)
+            return false
+          }
+        }
+
+        sendMessage(`Found ${unsentErrors.length} error(s) on recovery.`)
+
+        for (let recordErr of unsentErrors) {
+          if (await sendMessage(`\`\`\`\n${recordErr}\`\`\``)) {
+            sentErrors.push(recordErr)
+          } else {
+            retryErrors.push(recordErr)
+          }
+        }
+
+        if (newErrors.length) {
+          console.log(`${newErrors.length} errors occured while sending messages.`)
+        }
+
+        // only save the first few errors, since if there are more than
+        // that it's probably a recurring issue.
+        retryErrors.push(...newErrors.slice(0, 5))
+
+        if (sentErrors.length) {
+          db.update({ error: 'sentErrors' },
+            { $push: { errors: { $each: sentErrors } } },
+            { upsert: true },
+            err => {
+              if (err) {
+                return console.log(err)
+              }
+              console.log(`Reported on ${sentErrors.length} error(s).`)
+            })
+        }
+
+        db.update({ error: 'unsentErrors' },
+          { $set: { errors: retryErrors } },
+          err => {
+            if (err) {
+              return console.log(err)
+            }
+            if (retryErrors.length) {
+              console.log(`Retrying ${retryErrors.length} error(s) later.`)
+            } else {
+              console.log('Cleared unsent errors.')
+            }
+          })
+      })
+  })
+}
+
+/**
+ * Record the error and proceed to crash.
+ *
+ * @param {Error} err The error to catch.
+ */
+function panicResponsibly (err) {
+  console.log(err)
+  db.update({ error: 'unsentErrors' },
+    { $push: { errors: err.stack } },
+    { upsert: true },
+    (err, numReplaced) => {
+      if (err) {
+        console.log(err)
+      }
+      console.log(`Recorded ${numReplaced} error(s). Now crashing.`)
+      process.exit(1)
+    })
+}
+
 /*
  * main
  */
+
+process.once('uncaughtException', panicResponsibly)
 
 bot.on('ready', () => {
   console.log('Bot ready. Setting up...')
   updateActivity()
   notifyRestart()
+  notifyNewErrors()
 }).on('message', message => {
   if (!message.author.bot) {
     parse(message)
   }
-})
+}).on('error', panicResponsibly)
 
 if (!config.has('token')) {
   console.error("Couldn't find a token to connect with.")
