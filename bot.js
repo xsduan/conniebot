@@ -219,7 +219,7 @@ function notifyRestart () {
 
 function notifyNewErrors () {
   // TODO: use best practices, don't c+p code
-  db.find({ error: 'unsentErrors' }, (err, docs) => {
+  db.find({ error: 'unsentErrors' }, (err, [docs] = []) => {
     let unsentErrors
     if (docs && docs.length) {
       unsentErrors = docs.errors
@@ -288,11 +288,11 @@ function notifyNewErrors () {
           db.update({ error: 'sentErrors' },
             { $push: { errors: { $each: sentErrors } } },
             { upsert: true },
-            (err, numReplaced) => {
+            err => {
               if (err) {
                 return console.log(err)
               }
-              console.log(`Reported on ${numReplaced} error(s).`)
+              console.log(`Reported on ${sentErrors.length} error(s).`)
             })
         }
 
