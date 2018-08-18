@@ -221,7 +221,7 @@ function notifyNewErrors () {
   // TODO: use best practices, don't c+p code
   db.find({ error: 'unsentErrors' }, (err, [docs] = []) => {
     let unsentErrors
-    if (docs && docs.length) {
+    if (docs && docs.errors.length) {
       unsentErrors = docs.errors
     } else {
       unsentErrors = []
