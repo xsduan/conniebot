@@ -219,8 +219,13 @@ function notifyRestart () {
 
 function notifyNewErrors () {
   // TODO: use best practices, don't c+p code
-  db.find({ error: 'unsentErrors' }, (err, [docs] = [{}]) => {
-    let unsentErrors = docs.errors || []
+  db.find({ error: 'unsentErrors' }, (err, docs) => {
+    let unsentErrors
+    if (docs && docs.length) {
+      unsentErrors = docs.errors
+    } else {
+      unsentErrors = []
+    }
 
     if (err) {
       return console.log(err)
