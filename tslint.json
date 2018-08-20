@@ -1,0 +1,77 @@
+{
+  "lintOptions": {
+    "typeCheck": true
+  },
+  "rules": {
+    "array-type": [
+      true,
+      "array"
+    ],
+    "arrow-parens": false,
+    "arrow-return-shorthand": true,
+    "curly": [
+      true,
+      "ignore-same-line"
+    ],
+    "max-line-length": [
+      true,
+      100
+    ],
+    "match-default-export-name": true,
+    "member-ordering": [
+      true,
+      {
+        "order": [
+          "public-static-field",
+          "protected-static-field",
+          "private-static-field",
+          "public-instance-field",
+          "protected-instance-field",
+          "private-instance-field",
+          "public-constructor",
+          "protected-constructor",
+          "private-constructor",
+          "private-instance-method",
+          "protected-instance-method",
+          "public-instance-method"
+        ]
+      }
+    ],
+    "no-console": false,
+    "no-construct": true,
+    "no-redundant-jsdoc": true,
+    "no-unnecessary-callback-wrapper": true,
+    "no-unnecessary-qualifier": true,
+    "no-unnecessary-type-assertion": true,
+    "indent": [
+      true,
+      "spaces",
+      2
+    ],
+    "only-arrow-functions": [
+      true,
+      "allow-declarations",
+      "allow-named-functions"
+    ],
+    "prefer-method-signature": true,
+    "trailing-comma": [
+      true,
+      {
+        "multiline": "always",
+        "singleline": "never",
+        "esSpecCompliant": true
+      }
+    ],
+    "typedef": false
+  },
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "plugins": [
+    "react"
+  ],
+  "extends": [
+    "tslint:recommended"
+  ]
+}
