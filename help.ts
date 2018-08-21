@@ -1,7 +1,8 @@
 import c from "config";
-import { RichEmbed, User } from "discord.js";
+import { Channel, RichEmbed, User } from "discord.js";
 
 import embed from "./embed";
+import { isTextChannel } from "./utils";
 
 const helpMessage: [string, string][] = [
   ["x,z,p[phonetic] or x,z,p/phonemic/",
@@ -48,6 +49,9 @@ function createEmbed(user: User) {
  * @param channel Channel to send to
  * @param user User to put as head
  */
-export default async function help<T>(channel: any, user: User) {
-  embed(channel, createEmbed(user));
+export default async function help(channel: Channel, user: User) {
+  if (!isTextChannel(channel)) {
+    throw new TypeError(`${channel} is not a text channel`);
+  }
+  return embed(channel, createEmbed(user));
 }

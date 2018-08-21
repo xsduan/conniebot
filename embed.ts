@@ -1,5 +1,7 @@
 import c from "config";
-import { RichEmbed } from "discord.js";
+import { Channel, RichEmbed } from "discord.js";
+
+import { isTextChannel } from "./utils";
 
 /**
  * Grabs body from RichEmbed, optionally discarding headers
@@ -12,7 +14,7 @@ function handleBody(message: RichEmbed, headersImportant = false) {
   return (message.fields || []).map(field => {
     const fieldString = headersImportant ? `**${field.name}**\n` : "";
     return `${fieldString}${field.value}`;
-  }).join('\n');
+  }).join("\n");
 }
 
 /**
@@ -42,11 +44,16 @@ function strip(message: RichEmbed, headersImportant = false) {
  * @param headersImportant Should keep headers if converted?
  */
 export default function embed(
-  channel: any,
+  channel: Channel,
   message: RichEmbed | string,
   headersImportant = true,
 ) {
+  if (!isTextChannel(channel)) {
+    throw new TypeError(`${channel} is not a text channel`);
+  }
+
   return channel.send(c.get("embeds.active") || typeof message === "string"
     ? message
     : strip(message, headersImportant));
+
 }
