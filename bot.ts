@@ -22,23 +22,6 @@ function messageSummary({ guild, content }: Message) {
 }
 
 /**
- * Acts for a response to a message.
- *
- * @param message Message to parse for responses
- */
-async function parse(message: Message) {
-  if (message.author.bot) {
-    return;
-  }
-
-  if (await x2iExec(message)) {
-    return logMessage("success:x2i");
-  }
-
-  await command(message);
-}
-
-/**
  * Looks for a reply message.
  *
  * @param message Received message.
@@ -50,15 +33,11 @@ async function command(message: Message) {
   );
 
   const toks = message.content.match(prefixRegex);
-  if (!toks) {
-    return false;
-  }
+  if (!toks) return;
 
   const [, cmd, args] = toks;
   const cb = commands[cmd];
-  if (!cb) {
-    return false;
-  }
+  if (!cb) return;
 
   try {
     const log = await cb(message, db, ...args.split(" "));
@@ -67,13 +46,11 @@ async function command(message: Message) {
     // TODO: error reporting
     logMessage(`error:command/${cmd}`, err);
   }
-
-  logMessage("processed:command/" + cmd, messageSummary(message));
-  return true;
 }
 
 /**
  * Sends an x2i string (but also could be used for simple embeds)
+ *
  * @param message Message to reply to
  */
 async function x2iExec(message: Message) {
@@ -109,6 +86,17 @@ async function x2iExec(message: Message) {
   }
 
   return parsed;
+}
+
+/**
+ * Acts for a response to a message.
+ *
+ * @param message Message to parse for responses
+ */
+async function parse(message: Message) {
+  if (message.author.bot) return;
+  if (await x2iExec(message)) return;
+  await command(message);
 }
 
 /**
