@@ -9,8 +9,8 @@
   "scripts": {
     "lint": "tslint -p . -c tslint.json -e './**/*.json'",
     "fix": "tslint --fix -p . -c tslint.json -e './**/*.json'",
-    "start": "nodemon --exitcrash --ignore *.sqlite -x ts-node",
-    "forever": "forever start --uid conniebot --killSignal=SIGTERM -l test.log -a -c \"npm start --\" bot.ts"
+    "start": "nodemon --exitcrash --ignore *.sqlite -x ts-node bot.ts --files",
+    "forever": "forever start --uid conniebot --killSignal=SIGTERM -l test.log -a -c \"npm start\" ./"
   },
   "description": "Does various language stuff.",
   "main": "bot.js",
