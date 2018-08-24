@@ -31,17 +31,13 @@ it does various cool language things. currently:
 
 - run `npm install` (`npm install --production` or `npm ci --only=production`
   if you're not planning on doing any code changes)
-- run `node bot`
+- run `node bot` (or `npm run forever` if you want to run it in the background)
 - pray to whatever god that it doesn't nuke your computer
 
 ## contributing
 
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-
-I use standard js as a linter (finally, huh?). just run `npm run lint` before
-committing (and if you don't, I'll run it before merging anyways). I'm not too
-attached to any standard specifically so if you can come up with a good reason
-to switch to another style then I'll consider it.
+the formatting rules can be found in the [tslint config](./tslint.json). please
+run `npm run fix` to lint all the files before committing.
 
 as a minimum, please don't use too many blank lines or tabs, and keep all
 variable names sane. don't use anything unreadably terse or minified (whether
