@@ -84,7 +84,7 @@ export default class ConniebotDatabase {
   public async addError(err: any) {
     return (await this.db).run(
       SQL`INSERT INTO unsentErrors(date, stacktrace, message)
-        VALUES(${new Date()}, ${String(err)}, ${err.stack})`,
+        VALUES(${new Date()}, ${err.message || String(err)}, ${err.stack})`,
     );
   }
 
