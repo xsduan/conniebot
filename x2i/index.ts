@@ -27,7 +27,7 @@ interface IMatchInstructions {
 
 const regex = OuterXRegExp(
   `(?:(^|[\`\\p{White_Space}]))   # must be preceded by whitespace or surrounded by code brackets
-  ([A-Za-z]+)                     # key, to lower (2)
+  ([A-Za-z]*)                     # key, to lower (2)
   ([/[])                          # bracket left  (3)
   (\\S|\\S.*?\\S)                 # body          (4)
   ([/\\]])                        # bracket right (5)
@@ -109,13 +109,13 @@ function compileKey(entry: Replacer): CompiledReplacer | undefined {
  */
 export function force(key: string, left: string, match: string, right: string) {
   const lowerKey = key.toLowerCase();
-  if (lowerKey in matchType) {
-    const { keys, join } = matchType[lowerKey];
-    if (keys) {
-      const action = join || defaultMatchAction;
-      // need to use `as (RegExp | string)[][]` because the provided typings are too generic
-      return action(left, OuterXRegExp.replaceEach(match, keys as (RegExp | string)[][]), right);
-    }
+  if (!(lowerKey in matchType)) return;
+
+  const { keys, join } = matchType[lowerKey];
+  if (keys) {
+    const action = join || defaultMatchAction;
+    // need to use `as (RegExp | string)[][]` because the provided typings are too generic
+    return action(left, OuterXRegExp.replaceEach(match, keys as (RegExp | string)[][]), right);
   }
 }
 
