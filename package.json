@@ -26,7 +26,8 @@
     "forever": "^0.15.3",
     "js-yaml": "^3.11.0",
     "nodemon": "^1.18.3",
-    "sqlite3": "^4.0.2",
+    "sql-template-strings": "^2.2.2",
+    "sqlite": "^3.0.0",
     "ts-node": "^7.0.1",
     "typescript": "^3.0.1",
     "xregexp": "^4.1.1"

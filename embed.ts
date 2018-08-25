@@ -32,10 +32,6 @@ function strip(message: RichEmbed, headersImportant = false) {
   return `${title}${desc}\n${body}`;
 }
 
-/*
- * exports
- */
-
 /**
  * Send message to channel
  *
