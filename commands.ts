@@ -12,15 +12,33 @@ interface ICommands {
 
 /**
  * Tries to respond in a timely fashion.
+ *
  * @param message Message to respond to (read time)
+ * @param roundtrip Should the heartbeat be sent to the message ("roundtrip")
  */
-async function ping(message: Message) {
-  const elapsed = Date.now() - message.createdTimestamp;
-  const elapsedMsg = `${elapsed} ms`;
-  await message.channel.send(`I'm alive! (${elapsedMsg})`);
-  return elapsedMsg;
+async function ping(message: Message, _: any, roundtrip?: string) {
+  // received message
+  const created = message.createdTimestamp;
+  const elapsedMsg = `${Date.now() - created} ms`;
+
+  // wait for send
+  const pingReturn = await message.channel.send(`I'm alive! (${elapsedMsg})`);
+  const pingMsg = Array.isArray(pingReturn) ? pingReturn[0] : pingReturn;
+  const roundtripMsg = `${Date.now() - created} ms`;
+
+  if (roundtrip === "roundtrip") {
+    pingMsg.edit(`${pingMsg}, roundtrip ${roundtripMsg}`);
+  }
+
+  return `${elapsedMsg}, ${roundtripMsg}`;
 }
 
+/**
+ * Set channel for an arbitrary event (currently only uses `restart` and `events`)
+ *
+ * @param db Database instance.
+ * @param event The event name (only the first 50 characters are used)
+ */
 async function setChannel(message: Message, db: ConniebotDatabase, event: string) {
   if (message.author.id !== c.get("owner")) {
     return message.reply("Sorry, but you don't have permissions to do that.");

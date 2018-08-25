@@ -25,8 +25,14 @@ interface IMatchInstructions {
   join?(left: string, match: string, right: string): string;
 }
 
-// regex match indices: 2 = key (to lower), 3 = bracket left, 4 = body, 5 = bracket right, (end)
-const regex = /(?:(^|\s|`))([A-Za-z]+?)([/[])(\S|\S.*?\S)([/\]])(?=($|\s|[`.,?!;:]))/gm;
+const regex = OuterXRegExp(
+  `(?:(^|[\`\\p{White_Space}]))   # must be preceded by whitespace or surrounded by code brackets
+  ([A-Za-z]*)                     # key, to lower (2)
+  ([/[])                          # bracket left  (3)
+  (\\S|\\S.*?\\S)                 # body          (4)
+  ([/\\]])                        # bracket right (5)
+  (?=$|[\`\\p{White_Space}\\pP])  # must be followed by a white space or punctuation`,
+  "gmx");
 
 const defaultMatchAction = (left: string, match: string, right: string) => left + match + right;
 
@@ -49,7 +55,7 @@ const matchType: { [key: string]: IMatchInstructions } = {
  * @param fpath File to key definitions. (yaml, utf8)
  * @returns Compiled keys.
  */
-function readKeys(fpath) {
+function readKeys(fpath: string) {
   return yaml
     .safeLoad(fs.readFileSync(fpath, "utf8"))
     .map(compileKey)
@@ -103,13 +109,13 @@ function compileKey(entry: Replacer): CompiledReplacer | undefined {
  */
 export function force(key: string, left: string, match: string, right: string) {
   const lowerKey = key.toLowerCase();
-  if (lowerKey in matchType) {
-    const { keys, join } = matchType[lowerKey];
-    if (keys) {
-      const action = join || defaultMatchAction;
-      // need to use `as (RegExp | string)[][]` because the provided typings are too generic
-      return action(left, OuterXRegExp.replaceEach(match, keys as (RegExp | string)[][]), right);
-    }
+  if (!(lowerKey in matchType)) return;
+
+  const { keys, join } = matchType[lowerKey];
+  if (keys) {
+    const action = join || defaultMatchAction;
+    // need to use `as (RegExp | string)[][]` because the provided typings are too generic
+    return action(left, OuterXRegExp.replaceEach(match, keys as (RegExp | string)[][]), right);
   }
 }
 

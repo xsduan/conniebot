@@ -1,6 +1,6 @@
 {
   "name": "conniebot",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "tslint -p . -c tslint.json -e './**/*.json'",
     "fix": "tslint --fix -p . -c tslint.json -e './**/*.json'",
-    "start": "nodemon --exitcrash --ignore *.sqlite -x ts-node bot.ts --files",
+    "start": "nodemon --exitcrash --ignore *.sqlite -x ts-node bot.ts",
     "forever": "forever start --uid conniebot --killSignal=SIGTERM -a -c \"npm start\" ./"
   },
   "description": "Does various language stuff.",
@@ -26,7 +26,8 @@
     "forever": "^0.15.3",
     "js-yaml": "^3.11.0",
     "nodemon": "^1.18.3",
-    "sqlite3": "^4.0.2",
+    "sql-template-strings": "^2.2.2",
+    "sqlite": "^3.0.0",
     "ts-node": "^7.0.1",
     "typescript": "^3.0.1",
     "xregexp": "^4.1.1"
