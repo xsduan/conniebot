@@ -25,8 +25,14 @@ interface IMatchInstructions {
   join?(left: string, match: string, right: string): string;
 }
 
-// regex match indices: 2 = key (to lower), 3 = bracket left, 4 = body, 5 = bracket right, (end)
-const regex = /(?:(^|\s|`))([A-Za-z]+?)([/[])(\S|\S.*?\S)([/\]])(?=($|\s|[`.,?!;:]))/gm;
+const regex = OuterXRegExp(
+  `(?:(^|[\`\\p{White_Space}]))   # must be preceded by whitespace or surrounded by code brackets
+  ([A-Za-z]+)                     # key, to lower (2)
+  ([/[])                          # bracket left  (3)
+  (\\S|\\S.*?\\S)                 # body          (4)
+  ([/\\]])                        # bracket right (5)
+  (?=$|[\`\\p{White_Space}\\pP])  # must be followed by a white space or punctuation`,
+  "gmx");
 
 const defaultMatchAction = (left: string, match: string, right: string) => left + match + right;
 
