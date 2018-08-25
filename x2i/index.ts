@@ -55,7 +55,7 @@ const matchType: { [key: string]: IMatchInstructions } = {
  * @param fpath File to key definitions. (yaml, utf8)
  * @returns Compiled keys.
  */
-function readKeys(fpath) {
+function readKeys(fpath: string) {
   return yaml
     .safeLoad(fs.readFileSync(fpath, "utf8"))
     .map(compileKey)

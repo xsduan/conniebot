@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "tslint -p . -c tslint.json -e './**/*.json'",
     "fix": "tslint --fix -p . -c tslint.json -e './**/*.json'",
-    "start": "nodemon --exitcrash --ignore *.sqlite -x ts-node bot.ts --files",
+    "start": "nodemon --exitcrash --ignore *.sqlite -x ts-node bot.ts",
     "forever": "forever start --uid conniebot --killSignal=SIGTERM -a -c \"npm start\" ./"
   },
   "description": "Does various language stuff.",
