@@ -1,7 +1,7 @@
 import c from "config";
 
-import Conniebot from "./bot";
-import commands from "./commands";
+import Conniebot from "./src";
+import commands from "./src/commands";
 
 const token = "token";
 const database = "database";

@@ -1,7 +1,7 @@
 import c from "config";
 import { Message } from "discord.js";
 
-import { ICommands } from "./bot";
+import { ICommands } from ".";
 import help from "./help";
 
 /**

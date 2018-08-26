@@ -1,4 +1,6 @@
 import fs from "fs";
+import path from "path";
+
 import yaml from "js-yaml";
 import OuterXRegExp from "xregexp";
 
@@ -50,25 +52,25 @@ const defaultMatchAction = (left: string, match: string, right: string) => left 
 const matchType: { [key: string]: IMatchInstructions } = {
   p: {
     join: (_, match) => `*${match}`,
-    keys: readKeys("./x2i/apie-keys.yaml"),
+    keys: readKeys("./apie-keys.yaml"),
   },
   x: {
-    keys: readKeys("./x2i/x2i-keys.yaml"),
+    keys: readKeys("./x2i-keys.yaml"),
   },
   z: {
-    keys: readKeys("./x2i/z2i-keys.yaml"),
+    keys: readKeys("./z2i-keys.yaml"),
   },
 };
 
 /**
  * Read translation keys from file. Escapes strings first.
  *
- * @param fpath File to key definitions. (yaml, utf8)
+ * @param fpath File to key definitions. (yaml, utf8) Relative to {@link __dirname}.
  * @returns Compiled keys.
  */
 function readKeys(fpath: string) {
   return yaml
-    .safeLoad(fs.readFileSync(fpath, "utf8"))
+    .safeLoad(fs.readFileSync(path.join(__dirname, fpath), "utf8"))
     .map(compileKey)
     .filter(Boolean) as CompiledReplacer[];
 }
