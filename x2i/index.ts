@@ -26,12 +26,23 @@ interface IMatchInstructions {
 }
 
 const regex = OuterXRegExp(
-  `(?:(^|[\`\\p{White_Space}]))   # must be preceded by whitespace or surrounded by code brackets
-  ([A-Za-z]*)                     # key, to lower (2)
-  ([/[])                          # bracket left  (3)
-  (\\S|\\S.*?\\S)                 # body          (4)
-  ([/\\]])                        # bracket right (5)
-  (?=$|[\`\\p{White_Space}\\pP])  # must be followed by a white space or punctuation`,
+  `# must be preceded by whitespace or surrounded by code brackets, or on its own line
+  (?:(^|[\`\\p{White_Space}]))
+
+  # ($2) key, to lower
+  ([A-Za-z]*) # consumes non-tagged brackets to avoid reading the insides accidentally
+  # ($3) bracket left
+  ([/[])
+  # ($4) body
+  (
+    \\S                         # single character (eg x/t/)
+    |\\S.*?[^_\p{White_Space}]  # any characters not surrounded by whitespace, ignores _/
+  )
+  # ($5) bracket right
+  ([/\\]])
+
+  # must be followed by a white space or punctuation (lookahead)
+  (?=$|[\`\\p{White_Space}\\pP])`,
   "gmx");
 
 const defaultMatchAction = (left: string, match: string, right: string) => left + match + right;
