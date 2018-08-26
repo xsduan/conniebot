@@ -3,23 +3,28 @@ import { Client, ClientOptions, Message, RichEmbed } from "discord.js";
 import process from "process";
 import OuterXRegExp from "xregexp";
 
-import commands from "./commands";
 import ConniebotDatabase from "./db-management";
 import embed from "./embed";
 import startup from "./startup";
 import { logMessage, messageSummary } from "./utils";
 import x2i from "./x2i";
 
-const bot = new Client();
-const db = new ConniebotDatabase();
+export type CommandCallback =
+  (this: Conniebot, message: Message, ...args: string[]) => Promise<any>;
 
-export class Conniebot {
+export interface ICommands {
+  [key: string]: CommandCallback;
+}
+
+export default class Conniebot {
   public bot: Client;
   public db: ConniebotDatabase;
+  private commands: ICommands;
 
   constructor(token: string, dbFile: string, clientOptions?: ClientOptions) {
     this.bot = new Client(clientOptions);
     this.db = new ConniebotDatabase(dbFile);
+    this.commands = {};
 
     this.bot.on("ready", () => startup(this.bot, this.db))
       .on("message", this.parse)
@@ -61,13 +66,15 @@ export class Conniebot {
 
     const toks = message.content.match(prefixRegex);
     if (!toks) return;
-
     const [, cmd, args] = toks;
-    const cb = commands[cmd];
+
+    // assume that command has already been bound
+    // no way currently to express this without clearing the types
+    const cb: any = this.commands[cmd];
     if (!cb) return;
 
     try {
-      const log = await cb(message, this.db, ...args.split(" "));
+      const log = await cb(message, ...args.split(" "));
       logMessage(`success:command/${cmd}`, log);
     } catch (err) {
       // TODO: error reporting
@@ -125,16 +132,23 @@ export class Conniebot {
     if (await this.x2iExec(message)) return;
     await this.command(message);
   }
-}
 
-export default function init() {
-  if (!c.has("token")) {
-    throw new TypeError("Couldn't find a token to connect with.");
+  /**
+   * Register multiple commands at once.
+   */
+  public registerCommands(callbacks: ICommands) {
+    for (const [name, cmd] of Object.entries(callbacks)) {
+      this.register(name, cmd);
+    }
   }
 
-  if (!c.has("database")) {
-    throw new TypeError("No database filename listed.");
+  /**
+   * Register a single custom command.
+   *
+   * @param command Command name that comes after prefix. Name must be `\S+`.
+   * @param callback Callback upon seeing the name. `this` will be bound automatically.
+   */
+  public register(command: string, callback: CommandCallback) {
+    this.commands[command] = callback.bind(this);
   }
-
-  return new Conniebot(c.get("token"), c.get("database"));
 }

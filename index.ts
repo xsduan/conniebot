@@ -1,6 +1,7 @@
 import c from "config";
 
 import Conniebot from "./bot";
+import commands from "./commands";
 
 const token = "token";
 const database = "database";
@@ -14,3 +15,4 @@ if (!c.has(database)) {
 }
 
 const conniebot = new Conniebot(c.get(token), c.get(database));
+conniebot.registerCommands(commands);

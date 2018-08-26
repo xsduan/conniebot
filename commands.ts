@@ -1,71 +1,75 @@
 import c from "config";
 import { Message } from "discord.js";
 
-import ConniebotDatabase from "./db-management";
+import { ICommands } from "./bot";
 import help from "./help";
 
-type Command = (message: Message, db: ConniebotDatabase, ...args: string[]) => Promise<any>;
-
-interface ICommands {
-  [key: string]: Command;
-}
-
 /**
- * Tries to respond in a timely fashion.
+ * Extension methods for different reply commands.
  *
- * @param message Message to respond to (read time)
- * @param roundtrip Should the heartbeat be sent to the message ("roundtrip")
+ * All functions are bound to the instance of the currently running Conniebot.
  */
-async function ping(message: Message, _: any, roundtrip?: string) {
-  // received message
-  const created = message.createdTimestamp;
-  const elapsedMsg = `${Date.now() - created} ms`;
+const commands: ICommands = {
+  /**
+   * Funnels a message object to the actual {@link help} function.
+   */
+  async help({ channel, client }) {
+    help(channel, client.user);
+  },
 
-  // wait for send
-  const pingReturn = await message.channel.send(`I'm alive! (${elapsedMsg})`);
-  const pingMsg = Array.isArray(pingReturn) ? pingReturn[0] : pingReturn;
-  const roundtripMsg = `${Date.now() - created} ms`;
+  /**
+   * Set channel for an arbitrary event
+   *
+   * Currently used events:
+   * - `restart`: Notify restart.
+   * - `errors`: Notify errors. (may want to keep stack traces secret, etc)
+   *
+   * @param event The event name (only the first 50 characters are used)
+   */
+  async notif(message: Message, event: string) {
+    if (message.author.id !== c.get("owner")) {
+      return message.reply("Sorry, but you don't have permissions to do that.");
+    }
 
-  if (roundtrip === "roundtrip") {
-    pingMsg.edit(`${pingMsg}, roundtrip ${roundtripMsg}`);
-  }
+    if (!event) {
+      return message.reply("Sorry, you need to specify an event.");
+    }
 
-  return `${elapsedMsg}, ${roundtripMsg}`;
-}
+    const channel = message.channel;
+    let returnMessage: string;
 
-/**
- * Set channel for an arbitrary event (currently only uses `restart` and `events`)
- *
- * @param db Database instance.
- * @param event The event name (only the first 50 characters are used)
- */
-async function setChannel(message: Message, db: ConniebotDatabase, event: string) {
-  if (message.author.id !== c.get("owner")) {
-    return message.reply("Sorry, but you don't have permissions to do that.");
-  }
+    try {
+      await this.db.setChannel(event.substr(0, 50), channel.id);
+      returnMessage = `Got it! Will send notifications for ${event} to ${message.channel}.`;
+    } catch (err) {
+      console.log(err);
+      returnMessage = "Something went wrong while trying to set notifications.";
+    }
 
-  if (!event) {
-    return message.reply("Sorry, you need to specify an event.");
-  }
+    return channel.send(returnMessage);
+  },
 
-  const channel = message.channel;
-  let returnMessage: string;
+  /**
+   * Tries to respond in a timely fashion.
+   *
+   * @param roundtrip Should the heartbeat be sent to the message ("roundtrip")
+   */
+  async ping(message: Message, roundtrip?: string) {
+    // received message
+    const created = message.createdTimestamp;
+    const elapsedMsg = `${Date.now() - created} ms`;
 
-  try {
-    await db.setChannel(event.substr(0, 50), channel.id);
-    returnMessage = `Got it! Will send notifications for ${event} to ${message.channel}.`;
-  } catch (err) {
-    console.log(err);
-    returnMessage = "Something went wrong while trying to set notifications.";
-  }
+    // wait for send
+    const pingReturn = await message.channel.send(`I'm alive! (${elapsedMsg})`);
+    const pingMsg = Array.isArray(pingReturn) ? pingReturn[0] : pingReturn;
+    const roundtripMsg = `${Date.now() - created} ms`;
 
-  return channel.send(returnMessage);
-}
+    if (roundtrip === "roundtrip") {
+      pingMsg.edit(`${pingMsg}, roundtrip ${roundtripMsg}`);
+    }
 
-const commands = {
-  help: message => help(message.channel, message.client.user),
-  notif: setChannel,
-  ping,
-} as ICommands;
+    return `${elapsedMsg}, ${roundtripMsg}`;
+  },
+};
 
 export default commands;
