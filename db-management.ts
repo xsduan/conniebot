@@ -1,4 +1,3 @@
-import c from "config";
 import SQL from "sql-template-strings";
 import sqlite, { Database } from "sqlite";
 
@@ -21,13 +20,7 @@ interface ISentErrorsRow extends IUnsentErrorsRow {
 export default class ConniebotDatabase {
   private db: Promise<Database>;
 
-  constructor(dbFile?: string) {
-    dbFile = dbFile || c.get("database");
-
-    if (!dbFile) {
-      throw TypeError("No database filename listed.");
-    }
-
+  constructor(dbFile: string) {
     if (!dbFile.endsWith(".sqlite")) {
       console.log("Database file is not marked as `.sqlite`.");
     }

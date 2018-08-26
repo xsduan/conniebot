@@ -1,4 +1,4 @@
-import { Channel, TextChannel } from "discord.js";
+import { Channel, Message, TextChannel } from "discord.js";
 
 /**
  * Prints a formatted message with a related object.
@@ -31,4 +31,12 @@ export async function sendMessage(msg: string, channel: TextChannel) {
     console.log(err);
     return false;
   }
+}
+
+/**
+ * Convert a message object into a string in the form of guildname: message{0, 100}
+ */
+export function messageSummary({ guild, content }: Message) {
+  const guildName = guild ? guild.name : "unknown guild";
+  return `${guildName}: ${content.substr(0, 100)}`;
 }
