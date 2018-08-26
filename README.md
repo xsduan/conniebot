@@ -15,49 +15,27 @@ it does various cool language things. currently:
 
 #### on the discord website
 
-- set up [an application][application setup] and all that stuff
-- set up [oauth][oauth docs] or let it run loose (whatever your wallet can
-  afford)
+- do the [application setup] and all that stuff
+- set up [oauth] or let it run loose (whatever your wallet can afford)
 
 #### here in ground control
 
-- download and install [node.js and npm](https://nodejs.org/) if you haven't
-  already (duh)
-- set up `default.yaml` using your bot token (i've provided
-  [an example](./config/default-example.yaml))
+- download and install [node] if you haven't already (duh)
+- set up `default.yaml` using your bot token ([example config])
 - maybe look at the other settings?
 
 ### deployment
 
 - run `npm install` (`npm install --production` or `npm ci --only=production`
   if you're not planning on doing any code changes)
-- run `node bot` (or `npm run forever` if you want to run it in the background)
+- run `npm start` (or `npm run forever` if you want to run it in the background)
 - pray to whatever god that it doesn't nuke your computer
-
-## contributing
-
-the formatting rules can be found in the [tslint config](./tslint.json). please
-run `npm run fix` to lint all the files before committing.
-
-as a minimum, please don't use too many blank lines or tabs, and keep all
-variable names sane. don't use anything unreadably terse or minified (whether
-formatting or code itself) but don't make it more verbose than it has to be.
-I'm not really serious about this project so as long as it passes the standard
-js linter and isn't too weird I'll let it pass.
-
-### issues & pull requests
-
-when opening issues please state which module or file this concerns (separating
-multiple by commas only if it makes sense). `*.js` or `*` is assumed if there's
-no file extension so please leave js files extensionless.
-
-please only work on one module at a time for pull requests if you can.
-
-thank you for contributing!
 
 ### have a comment?
 
 join me on discord: https://discord.gg/MvWMH3z
 
 [application setup]: https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
-[oauth docs]: https://discordapp.com/developers/tools/oauth2-url-generator
+[oauth]: https://discordapp.com/developers/tools/oauth2-url-generator
+[node]: https://nodejs.org/
+[example config]: ./config/default-example.yaml
