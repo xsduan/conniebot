@@ -47,8 +47,6 @@ const regex = OuterXRegExp(
   (?=$|[\`\\p{White_Space}\\pP])`,
   "gmx");
 
-const defaultMatchAction = (left: string, match: string, right: string) => left + match + right;
-
 const matchType: { [key: string]: IMatchInstructions } = {
   p: {
     join: (_, match) => `*${match}`,
@@ -61,6 +59,10 @@ const matchType: { [key: string]: IMatchInstructions } = {
     keys: readKeys("./z2i-keys.yaml"),
   },
 };
+
+function defaultMatchAction(left: string, match: string, right: string) {
+  return left + match + right;
+}
 
 /**
  * Read translation keys from file. Escapes strings first.
