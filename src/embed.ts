@@ -4,7 +4,7 @@ import { Channel, RichEmbed } from "discord.js";
 import { isTextChannel } from "./utils";
 
 /**
- * Grabs body from RichEmbed, optionally discarding headers
+ * Grabs body from RichEmbed, optionally discarding headers.
  *
  * @param message Message to grab body text from
  * @param headersImportant Should keep headers?
@@ -18,7 +18,7 @@ function handleBody(message: RichEmbed, headersImportant = false) {
 }
 
 /**
- * Convert RichEmbed to String
+ * Convert RichEmbed to String.
  *
  * @param message Message to grab body text from
  * @param headersImportant Should keep headers?
@@ -33,7 +33,7 @@ function strip(message: RichEmbed, headersImportant = false) {
 }
 
 /**
- * Send message to channel
+ * Send message to channel.
  *
  * @param channel Channel to send message to
  * @param message Message to send

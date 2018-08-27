@@ -13,7 +13,7 @@ export function logMessage(status: string, message?: any) {
 
 /**
  * Check if channel is a TextChannel. Technically it can be a guild, dm or group dm channel, but
- * the default discord.js type for a text based channel is not actually a type and so must have
+ * the default discord.js type for a text based channel is not actually a type, so we have to have
  * this workaround.
  */
 export function isTextChannel(channel: Channel): channel is TextChannel {

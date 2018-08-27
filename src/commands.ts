@@ -1,5 +1,4 @@
 import c from "config";
-import { Message } from "discord.js";
 
 import { ICommands } from ".";
 import help from "./help";
@@ -13,20 +12,16 @@ const commands: ICommands = {
   /**
    * Funnels a message object to the actual {@link help} function.
    */
-  async help({ channel, client }) {
-    help(channel, client.user);
+  async help(message) {
+    help(message.channel, message.client.user);
   },
 
   /**
-   * Set channel for an arbitrary event
-   *
-   * Currently used events:
-   * - `restart`: Notify restart.
-   * - `errors`: Notify errors. (may want to keep stack traces secret, etc)
+   * Set channel for an arbitrary event. (see {@link INotifRow})
    *
    * @param event The event name (only the first 50 characters are used)
    */
-  async notif(message: Message, event: string) {
+  async notif(message, event) {
     if (message.author.id !== c.get("owner")) {
       return message.reply("Sorry, but you don't have permissions to do that.");
     }
@@ -39,7 +34,7 @@ const commands: ICommands = {
     let returnMessage: string;
 
     try {
-      await this.db.setChannel(event.substr(0, 50), channel.id);
+      await this.db.setChannel(event, channel.id);
       returnMessage = `Got it! Will send notifications for ${event} to ${message.channel}.`;
     } catch (err) {
       console.log(err);
@@ -54,7 +49,7 @@ const commands: ICommands = {
    *
    * @param roundtrip Should the heartbeat be sent to the message ("roundtrip")
    */
-  async ping(message: Message, roundtrip?: string) {
+  async ping(message, roundtrip?) {
     // received message
     const created = message.createdTimestamp;
     const elapsedMsg = `${Date.now() - created} ms`;
