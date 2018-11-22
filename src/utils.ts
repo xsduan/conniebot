@@ -8,7 +8,7 @@ import { Channel, Message, TextChannel } from "discord.js";
  */
 export function logMessage(status: string, message?: any) {
   const log = message ? ` ${message}` : "";
-  console.log(`(${status})${log}`);
+  console.log(`[${(new Date()).toISOString()}] (${status})${log}`);
 }
 
 /**
