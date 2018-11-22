@@ -27,6 +27,9 @@ async function notifyRestart(bot: Client, db: ConniebotDatabase) {
   }
 }
 
+/**
+ * Notify channel of any new errors that haven't been able to send.
+ */
 async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
   const [errors, errorChannelId] = await Promise.all(
     [db.getUnsentErrors(), db.getChannel("errors")],
@@ -67,6 +70,9 @@ async function updateActivity(bot: Client) {
   }
 }
 
+/**
+ * Run through {@link updateActivity}, {@link notifyRestart}, {@link notifyNewErrors}.
+ */
 export default async function startup(bot: Client, db: ConniebotDatabase) {
   console.log("Bot ready. Setting up...");
   await Promise.all([updateActivity, notifyRestart, notifyNewErrors].map(fn => fn(bot, db)));

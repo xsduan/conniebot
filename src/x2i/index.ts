@@ -1,4 +1,6 @@
 import fs from "fs";
+import path from "path";
+
 import yaml from "js-yaml";
 import OuterXRegExp from "xregexp";
 
@@ -26,38 +28,51 @@ interface IMatchInstructions {
 }
 
 const regex = OuterXRegExp(
-  `(?:(^|[\`\\p{White_Space}]))   # must be preceded by whitespace or surrounded by code brackets
-  ([A-Za-z]*)                     # key, to lower (2)
-  ([/[])                          # bracket left  (3)
-  (\\S|\\S.*?\\S)                 # body          (4)
-  ([/\\]])                        # bracket right (5)
-  (?=$|[\`\\p{White_Space}\\pP])  # must be followed by a white space or punctuation`,
-  "gmx");
+  `# must be preceded by whitespace or surrounded by code brackets, or on its own line
+  (?:(^|[\`\\p{White_Space}]))
 
-const defaultMatchAction = (left: string, match: string, right: string) => left + match + right;
+  # ($2) key, to lower
+  ([A-Za-z]*) # consumes non-tagged brackets to avoid reading the insides accidentally
+  # ($3) bracket left
+  ([/[])
+  # ($4) body
+  (
+    \\S                         # single character (eg x/t/)
+    |\\S.*?[^_\p{White_Space}]  # any characters not surrounded by whitespace, ignores _/
+  )
+  # ($5) bracket right
+  ([/\\]])
+
+  # must be followed by a white space or punctuation (lookahead)
+  (?=$|[\`\\p{White_Space}\\pP])`,
+  "gmx");
 
 const matchType: { [key: string]: IMatchInstructions } = {
   p: {
     join: (_, match) => `*${match}`,
-    keys: readKeys("./x2i/apie-keys.yaml"),
+    keys: readKeys("./apie-keys.yaml"),
   },
   x: {
-    keys: readKeys("./x2i/x2i-keys.yaml"),
+    keys: readKeys("./x2i-keys.yaml"),
   },
   z: {
-    keys: readKeys("./x2i/z2i-keys.yaml"),
+    keys: readKeys("./z2i-keys.yaml"),
   },
 };
+
+function defaultMatchAction(left: string, match: string, right: string) {
+  return left + match + right;
+}
 
 /**
  * Read translation keys from file. Escapes strings first.
  *
- * @param fpath File to key definitions. (yaml, utf8)
+ * @param fpath File to key definitions. (yaml, utf8) Relative to {@link __dirname}.
  * @returns Compiled keys.
  */
 function readKeys(fpath: string) {
   return yaml
-    .safeLoad(fs.readFileSync(fpath, "utf8"))
+    .safeLoad(fs.readFileSync(path.join(__dirname, fpath), "utf8"))
     .map(compileKey)
     .filter(Boolean) as CompiledReplacer[];
 }
