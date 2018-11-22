@@ -17,10 +17,6 @@ github: <https://github.com/xsduan/conniebot>
 come discuss: https://discord.gg/MvWMH3z`],
 ];
 
-/*
- * functions
- */
-
 /**
  * Return Help message, nicely formatted.
  *
