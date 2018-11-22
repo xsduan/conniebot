@@ -1,6 +1,8 @@
 import SQL from "sql-template-strings";
 import sqlite, { Database } from "sqlite";
 
+import { logMessage } from "./utils";
+
 /**
  * Key-value table of events.
  *
@@ -81,7 +83,7 @@ export default class ConniebotDatabase {
    */
   constructor(dbFile: string) {
     if (!dbFile.endsWith(".sqlite")) {
-      console.log("Database file is not marked as `.sqlite`.");
+      logMessage("warning", "Database file is not marked as `.sqlite`.");
     }
 
     this.db = this.init(dbFile);

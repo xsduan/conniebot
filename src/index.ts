@@ -30,7 +30,7 @@ export default class Conniebot {
       .on("message", this.parse)
       .on("error", err => {
         if (err && err.message && err.message.includes("ECONNRESET")) {
-          return console.log("connection reset. oops!");
+          return logMessage("warning", "connection reset. oops!");
         }
         this.panicResponsibly(err);
       })
@@ -46,7 +46,7 @@ export default class Conniebot {
    * @param exit Should exit? (eg ECONNRESET would not require reset)
    */
   private panicResponsibly = async (err: any, exit = true) => {
-    console.log(err);
+    logMessage("error", err);
     await this.db.addError(err);
     if (exit) {
       process.exit(1);

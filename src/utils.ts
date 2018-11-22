@@ -6,9 +6,12 @@ import { Channel, Message, TextChannel } from "discord.js";
  * @param status Status logged as "(<status>)"
  * @param message Object to log after status
  */
-export function logMessage(status: string, message?: any) {
-  const log = message ? ` ${message}` : "";
-  console.log(`[${(new Date()).toISOString()}] (${status})${log}`);
+export function logMessage(status: string, ...message: any[]) {
+  console.log(
+    `[${(new Date()).toISOString()}]`,
+    `(${status})`,
+    ...message,
+    );
 }
 
 /**
@@ -28,7 +31,7 @@ export async function sendMessage(msg: string, channel: TextChannel) {
     await channel.send(msg);
     return true;
   } catch (err) {
-    console.log(err);
+    logMessage("error", err);
     return false;
   }
 }
