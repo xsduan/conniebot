@@ -6,7 +6,7 @@ import OuterXRegExp from "xregexp";
 import ConniebotDatabase from "./db-management";
 import embed from "./embed";
 import startup from "./startup";
-import { logMessage, messageSummary } from "./utils";
+import { log, messageSummary } from "./utils";
 import x2i from "./x2i";
 
 export type CommandCallback =
@@ -30,7 +30,7 @@ export default class Conniebot {
       .on("message", this.parse)
       .on("error", err => {
         if (err && err.message && err.message.includes("ECONNRESET")) {
-          return logMessage("warn", "connection reset. oops!");
+          return log("warn", "connection reset. oops!");
         }
         this.panicResponsibly(err);
       })
@@ -46,7 +46,7 @@ export default class Conniebot {
    * @param exit Should exit? (eg ECONNRESET would not require reset)
    */
   private panicResponsibly = async (err: any, exit = true) => {
-    logMessage("error", err);
+    log("error", err);
     await this.db.addError(err);
     if (exit) {
       process.exit(1);
@@ -75,9 +75,9 @@ export default class Conniebot {
 
     try {
       const logItem = await cb(message, ...args.split(" "));
-      logMessage(`success:command/${cmd}`, logItem);
+      log(`success:command/${cmd}`, logItem);
     } catch (err) {
-      logMessage(`error:command/${cmd}`, err);
+      log(`error:command/${cmd}`, err);
     }
   }
 
@@ -110,7 +110,7 @@ export default class Conniebot {
       response.setDescription(results);
 
       const respond = (stat: string, ...ms: any[]) =>
-        logMessage(`${stat}:x2i/${logCode}`, messageSummary(message), ...ms);
+        log(`${stat}:x2i/${logCode}`, messageSummary(message), ...ms);
 
       try {
         await embed(message.channel, response);

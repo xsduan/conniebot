@@ -1,15 +1,15 @@
 import { Channel, Message, TextChannel } from "discord.js";
 
-import log from "npmlog";
+import npmlog from "npmlog";
 
 // init log style
-Object.defineProperty(log, "heading", { get: () => `[${new Date().toISOString()}]` });
-log.headingStyle = { fg: "blue" };
-log.levels = new Proxy(log.levels, {
+Object.defineProperty(npmlog, "heading", { get: () => `[${new Date().toISOString()}]` });
+npmlog.headingStyle = { fg: "blue" };
+npmlog.levels = new Proxy(npmlog.levels, {
   get: (o, k) => o[k] || o.info,
   has: () => true,
 });
-log.style = new Proxy(log.style, {
+npmlog.style = new Proxy(npmlog.style, {
   get: (o, k) => o[k] || o.info,
 });
 
@@ -29,8 +29,8 @@ function splitPrefix(status: string): [string, string] {
  * `success:command/ping`)
  * @param message Object to log after status.
  */
-export function logMessage(status: string, message: string, ...args: any[]) {
-  log.log(...splitPrefix(status), message, ...args);
+export function log(status: string, message: string, ...args: any[]) {
+  npmlog.log(...splitPrefix(status), message, ...args);
 }
 
 /**
@@ -50,7 +50,7 @@ export async function sendMessage(msg: string, channel: TextChannel) {
     await channel.send(msg);
     return true;
   } catch (err) {
-    logMessage("error", err);
+    log("error", err);
     return false;
   }
 }
