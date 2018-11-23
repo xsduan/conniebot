@@ -1,44 +1,36 @@
 import { Channel, Message, TextChannel } from "discord.js";
 
-import colors from "colors";
-import c from "config";
+import log from "npmlog";
 
-let logTheme: { [k: string]: string } = {};
+// init log style
+Object.defineProperty(log, "heading", { get: () => `[${new Date().toISOString()}]` });
+log.headingStyle = { fg: "blue" };
+log.levels = new Proxy(log.levels, {
+  get: (o, k) => o[k] || o.info,
+  has: () => true,
+});
+log.style = new Proxy(log.style, {
+  get: (o, k) => o[k] || o.info,
+});
 
-if (c.has("logColors")) {
-  logTheme = c.get("logColors");
-  colors.setTheme(logTheme);
-}
-
-function colorLog(msg: string, level: string): string | void {
-  if (logTheme.hasOwnProperty(level)) {
-    return (msg as any)[level];
+function splitPrefix(status: string): [string, string] {
+  const sepIndex = status.indexOf(":");
+  if (sepIndex === -1) {
+    return [status, ""];
   }
-}
-
-function colorType(status: string) {
-  for (const k of Object.keys(logTheme)) {
-    if (status.search(`${k}:`) === 0) {
-      return k;
-    }
-  }
-  return "info";
+  return [status.substr(0, sepIndex), status.substr(sepIndex + 1)];
 }
 
 /**
  * Prints a formatted message with a related object.
  *
- * @param level Similar to log level in a proper system, but only affects color.
- * @param message Object to log after status
+ * @param status A log level or log prefix. A log prefix that doesn't have a `prefix:status` that
+ * is also a log level will default to level info. (eg `error:command/ping` vs
+ * `success:command/ping`)
+ * @param message Object to log after status.
  */
-export function logMessage(level: string, ...message: any[]) {
-  const ts = `[${(new Date()).toISOString()}]`;
-
-  console.log(
-    colorLog(ts, "debug") || ts.blue,
-    colorLog(level, level) || colorLog(level, colorType(level)) || level.green,
-    ...message,
-  );
+export function logMessage(status: string, message: string, ...args: any[]) {
+  log.log(...splitPrefix(status), message, ...args);
 }
 
 /**

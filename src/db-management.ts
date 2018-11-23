@@ -83,7 +83,7 @@ export default class ConniebotDatabase {
    */
   constructor(dbFile: string) {
     if (!dbFile.endsWith(".sqlite")) {
-      logMessage("warning", "Database file is not marked as `.sqlite`.");
+      logMessage("warn", "Database file is not marked as `.sqlite`.");
     }
 
     this.db = this.init(dbFile);

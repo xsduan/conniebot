@@ -10,20 +10,17 @@ import { isTextChannel, logMessage, sendMessage } from "./utils";
 async function notifyRestart(bot: Client, db: ConniebotDatabase) {
   const channelId = await db.getChannel("restart");
   if (!channelId) {
-    return logMessage("warning", "Couldn't find channel to notify.");
+    return logMessage("warn", "Couldn't find channel to notify.");
   }
 
   const channel = bot.channels.get(channelId);
   if (!channel || !isTextChannel(channel)) {
-    return logMessage("warning", `Channel ${channelId} doesn't exist or is not a text channel.`);
+    return logMessage("warn", `Channel ${channelId} doesn't exist or is not a text channel.`);
   }
 
   try {
     await channel.send(`Rebooted at ${new Date()}.`);
-    logMessage(
-      "info",
-      `Notified ${channel} (#${channel.name || "??"}) of restart.`,
-    );
+    logMessage("info", `Notified ${channel} (#${channel.name || "??"}) of restart.`);
   } catch (err) {
     logMessage("error", err);
   }
@@ -39,12 +36,12 @@ async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
 
   if (!errors.length) return;
   if (!errorChannelId) {
-    return logMessage("warning", "Couldn't find error channel.");
+    return logMessage("warn", "Couldn't find error channel.");
   }
 
   const errorChannel = bot.channels.get(errorChannelId);
   if (!errorChannel || !isTextChannel(errorChannel)) {
-    return logMessage("warning", "Can't use listed error channel. (nonexistent or not text)");
+    return logMessage("warn", "Can't use listed error channel. (nonexistent or not text)");
   }
 
   sendMessage(`Found ${errors.length} errors on startup.`, errorChannel);

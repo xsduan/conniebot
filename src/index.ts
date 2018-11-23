@@ -30,7 +30,7 @@ export default class Conniebot {
       .on("message", this.parse)
       .on("error", err => {
         if (err && err.message && err.message.includes("ECONNRESET")) {
-          return logMessage("warning", "connection reset. oops!");
+          return logMessage("warn", "connection reset. oops!");
         }
         this.panicResponsibly(err);
       })
@@ -74,8 +74,8 @@ export default class Conniebot {
     if (!cb) return;
 
     try {
-      const log = await cb(message, ...args.split(" "));
-      logMessage(`success:command/${cmd}`, log);
+      const logItem = await cb(message, ...args.split(" "));
+      logMessage(`success:command/${cmd}`, logItem);
     } catch (err) {
       logMessage(`error:command/${cmd}`, err);
     }
