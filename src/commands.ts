@@ -2,6 +2,7 @@ import c from "config";
 
 import { ICommands } from ".";
 import help from "./help";
+import { log } from "./utils";
 
 /**
  * Extension methods for different reply commands.
@@ -37,7 +38,7 @@ const commands: ICommands = {
       await this.db.setChannel(event, channel.id);
       returnMessage = `Got it! Will send notifications for ${event} to ${message.channel}.`;
     } catch (err) {
-      console.log(err);
+      log("error", err);
       returnMessage = "Something went wrong while trying to set notifications.";
     }
 

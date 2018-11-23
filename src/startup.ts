@@ -2,7 +2,7 @@ import c from "config";
 import { Client } from "discord.js";
 
 import ConniebotDatabase from "./db-management";
-import { isTextChannel, sendMessage } from "./utils";
+import { isTextChannel, log, sendMessage } from "./utils";
 
 /**
  * Send notification to channel for reboot.
@@ -10,20 +10,19 @@ import { isTextChannel, sendMessage } from "./utils";
 async function notifyRestart(bot: Client, db: ConniebotDatabase) {
   const channelId = await db.getChannel("restart");
   if (!channelId) {
-    return console.log("Couldn't find channel to notify.");
+    return log("warn", "Couldn't find channel to notify.");
   }
 
   const channel = bot.channels.get(channelId);
   if (!channel || !isTextChannel(channel)) {
-    return console.log(`Channel ${channelId} doesn't exist or is not a text channel.`);
+    return log("warn", `Channel ${channelId} doesn't exist or is not a text channel.`);
   }
 
   try {
     await channel.send(`Rebooted at ${new Date()}.`);
-    console.log(
-      `Notified ${channel} (#${channel.name || "??"}) of restart.`);
+    log("info", `Notified ${channel} (#${channel.name || "??"}) of restart.`);
   } catch (err) {
-    console.log(err);
+    log("error", err);
   }
 }
 
@@ -37,12 +36,12 @@ async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
 
   if (!errors.length) return;
   if (!errorChannelId) {
-    return console.log("Couldn't find error channel.");
+    return log("warn", "Couldn't find error channel.");
   }
 
   const errorChannel = bot.channels.get(errorChannelId);
   if (!errorChannel || !isTextChannel(errorChannel)) {
-    return console.log("Can't use listed error channel. (nonexistent or not text)");
+    return log("warn", "Can't use listed error channel. (nonexistent or not text)");
   }
 
   sendMessage(`Found ${errors.length} errors on startup.`, errorChannel);
@@ -60,12 +59,12 @@ async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
  */
 async function updateActivity(bot: Client) {
   if (c.has("activeMessage")) {
-    console.log("Changing game status...");
+    log("info", "Changing game status...");
     try {
       await bot.user.setActivity(c.get("activeMessage"));
-      console.log("Set game status.");
+      log("info", "Set game status.");
     } catch (err) {
-      console.log(`Status couldn't be set. ${err}`);
+      log("error", `Status couldn't be set. ${err}`);
     }
   }
 }
@@ -74,6 +73,6 @@ async function updateActivity(bot: Client) {
  * Run through {@link updateActivity}, {@link notifyRestart}, {@link notifyNewErrors}.
  */
 export default async function startup(bot: Client, db: ConniebotDatabase) {
-  console.log("Bot ready. Setting up...");
+  log("info", "Bot ready. Setting up...");
   await Promise.all([updateActivity, notifyRestart, notifyNewErrors].map(fn => fn(bot, db)));
 }

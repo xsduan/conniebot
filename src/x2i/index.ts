@@ -4,6 +4,8 @@ import path from "path";
 import yaml from "js-yaml";
 import OuterXRegExp from "xregexp";
 
+import { log } from "../utils";
+
 interface IRawReplaceKey {
   raw: ReplaceKey;
 }
@@ -108,8 +110,8 @@ function compileKey(entry: Replacer): CompiledReplacer | undefined {
         translations.map(compileKey) as (RegExp | string)[][],
       ),
       "all"];
-  } catch (e) {
-    console.log(`${entry} is not an array or a proper object, ignoring`);
+  } catch {
+    log("error", `${entry} is not an array or a proper object, ignoring`);
   }
 }
 
