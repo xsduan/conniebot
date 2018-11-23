@@ -1,17 +1,44 @@
 import { Channel, Message, TextChannel } from "discord.js";
 
+import colors from "colors";
+import c from "config";
+
+let logTheme: { [k: string]: string } = {};
+
+if (c.has("logColors")) {
+  logTheme = c.get("logColors");
+  colors.setTheme(logTheme);
+}
+
+function colorLog(msg: string, level: string): string | void {
+  if (logTheme.hasOwnProperty(level)) {
+    return (msg as any)[level];
+  }
+}
+
+function colorType(status: string) {
+  for (const k of Object.keys(logTheme)) {
+    if (status.search(`${k}:`) === 0) {
+      return k;
+    }
+  }
+  return "info";
+}
+
 /**
  * Prints a formatted message with a related object.
  *
- * @param status Status logged as "(<status>)"
+ * @param level Similar to log level in a proper system, but only affects color.
  * @param message Object to log after status
  */
-export function logMessage(status: string, ...message: any[]) {
+export function logMessage(level: string, ...message: any[]) {
+  const ts = `[${(new Date()).toISOString()}]`;
+
   console.log(
-    `[${(new Date()).toISOString()}]`,
-    `(${status})`,
+    colorLog(ts, "debug") || ts.blue,
+    colorLog(level, level) || colorLog(level, colorType(level)) || level.green,
     ...message,
-    );
+  );
 }
 
 /**
