@@ -110,7 +110,7 @@ function compileKey(entry: Replacer): CompiledReplacer | undefined {
         translations.map(compileKey) as (RegExp | string)[][],
       ),
       "all"];
-  } catch (e) {
+  } catch {
     logMessage("error", `${entry} is not an array or a proper object, ignoring`);
   }
 }
