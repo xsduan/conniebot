@@ -77,7 +77,6 @@ export default class Conniebot {
       const log = await cb(message, ...args.split(" "));
       logMessage(`success:command/${cmd}`, log);
     } catch (err) {
-      // TODO: error reporting
       logMessage(`error:command/${cmd}`, err);
     }
   }
@@ -109,13 +108,15 @@ export default class Conniebot {
       }
 
       response.setDescription(results);
-      logMessage(`processed:x2i/${logCode}`, messageSummary(message));
+
+      const respond = (stat: string, ...ms: any[]) =>
+        logMessage(`${stat}:x2i/${logCode}`, messageSummary(message), ...ms);
 
       try {
         await embed(message.channel, response);
-        logMessage("success:x2i");
+        respond("success");
       } catch (err) {
-        logMessage("error:x2i", err);
+        respond("error", err);
       }
     }
 
