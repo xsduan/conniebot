@@ -8,12 +8,18 @@ token: 000000000000000000000000.000000.000000000000000000000000000
 activeMessage: x/help for info
 prefix: x/
 
+# relative to the cwd() of running process, which should usually be the top
+# level of this repository.
+dirs:
+  data: data
+  dist: dist
+
 # owner id, only responds to admin commands if author is this person.
 owner: '207600419659186176'
-database: ./db.sqlite
+database: db.sqlite
 
 # embed options (ie the fancy posts only bots can do)
-# they mess with e-readers and logging apparently so you might want to turn it =
+# they mess with e-readers and logging apparently so you might want to turn it
 # off if that's a thing you need to worry about
 # (they look so pretty though…)
 embeds:

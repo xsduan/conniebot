@@ -1,10 +1,9 @@
 import fs from "fs";
-import path from "path";
 
 import yaml from "js-yaml";
 import OuterXRegExp from "xregexp";
 
-import { log } from "../utils";
+import { log, resolveDatapath } from "./utils";
 
 interface IRawReplaceKey {
   raw: ReplaceKey;
@@ -52,13 +51,13 @@ const regex = OuterXRegExp(
 const matchType: { [key: string]: IMatchInstructions } = {
   p: {
     join: (_, match) => `*${match}`,
-    keys: readKeys("./apie-keys.yaml"),
+    keys: readKeys("apie-keys.yaml"),
   },
   x: {
-    keys: readKeys("./x2i-keys.yaml"),
+    keys: readKeys("x2i-keys.yaml"),
   },
   z: {
-    keys: readKeys("./z2i-keys.yaml"),
+    keys: readKeys("z2i-keys.yaml"),
   },
 };
 
@@ -74,7 +73,7 @@ function defaultMatchAction(left: string, match: string, right: string) {
  */
 function readKeys(fpath: string) {
   return yaml
-    .safeLoad(fs.readFileSync(path.join(__dirname, fpath), "utf8"))
+    .safeLoad(fs.readFileSync(resolveDatapath("x2i", fpath), "utf8"))
     .map(compileKey)
     .filter(Boolean) as CompiledReplacer[];
 }
