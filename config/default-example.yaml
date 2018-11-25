@@ -18,6 +18,9 @@ dirs:
 owner: '207600419659186176'
 database: db.sqlite
 
+# which directory to keep x2i keys (sub dirs.data)
+x2i: x2i
+
 # embed options (ie the fancy posts only bots can do)
 # they mess with e-readers and logging apparently so you might want to turn it
 # off if that's a thing you need to worry about

@@ -1,33 +1,34 @@
 const spawn = require('child_process').spawn
 const argv = require('minimist')(process.argv)
+const c = require('config')
 
 const { data, dist } = {
   data: 'data',
   dist: 'dist',
-  ...require('config').get('dirs')
+  ...c.get('dirs')
 }
 
-function run(command,) {
+function run(command) {
   console.log('>>', command)
   const [file, ...args] = command.split(' ')
   return new Promise((y, n) => {
     let proc = spawn(file, args)
     proc.stdout.on('data', b => process.stdout.write(`${b}`))
     proc.stderr.on('data', b => process.stderr.write(`${b}`))
-    proc.on('close', c => c !== 0
-      ? n(new Error(`Command ended with code ${c}`))
+    proc.on('close', code => code !== 0
+      ? n(new Error(`Command ended with code ${code}`))
       : y()
     )
   })
 }
 
 async function build() {
-  for (const c of [
+  for (const command of [
     `npx tsc --outDir ${dist}`,
     `mkdir -pv ${data}`,
-    `cp -aRv x2i-data ${data}/x2i`,
+    `cp -aRv x2i-data/ ${data}/${c.get('x2i')}/`,
   ]) {
-    await run(c)
+    await run(command)
   }
 }
 
