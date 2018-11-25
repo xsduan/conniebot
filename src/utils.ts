@@ -16,6 +16,7 @@ npmlog.style = new Proxy(npmlog.style, {
   get: (o, k) => o[k] || o.info,
 });
 npmlog.enableColor();
+npmlog.level = c.has("level") ? c.get("level") : "info";
 
 function splitPrefix(status: string): [string, string] {
   const sepIndex = status.indexOf(":");
