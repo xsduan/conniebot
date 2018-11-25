@@ -1,7 +1,7 @@
 import c from "config";
 import { Channel, RichEmbed } from "discord.js";
 
-import { isTextChannel } from "./utils";
+import { isTextChannel } from "./helper/utils";
 
 /**
  * Grabs body from RichEmbed, optionally discarding headers.

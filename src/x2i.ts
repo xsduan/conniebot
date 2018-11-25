@@ -5,7 +5,7 @@ import c from "config";
 import yaml from "js-yaml";
 import OuterXRegExp from "xregexp";
 
-import { log, resolveDatapath } from "./utils";
+import { log, resolveDatapath } from "./helper/utils";
 
 interface IRawReplaceKey {
   raw: ReplaceKey;

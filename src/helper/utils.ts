@@ -6,7 +6,12 @@ import { Channel, Message, TextChannel } from "discord.js";
 import npmlog from "npmlog";
 
 // init log style
-Object.defineProperty(npmlog, "heading", { get: () => `[${new Date().toISOString()}]` });
+Object.defineProperty(npmlog, "heading", {
+  get: () => `[${new Date().toISOString()}]`,
+  /* tslint:disable:no-empty */
+  set: () => {}, // ignore sets since we just need it to be a timestamp
+  /* tslint:enable:no-empty */
+});
 npmlog.headingStyle = { fg: "blue" };
 npmlog.levels = new Proxy(npmlog.levels, {
   get: (o, k) => o[k] || o.info,

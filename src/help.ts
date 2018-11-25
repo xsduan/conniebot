@@ -2,7 +2,7 @@ import c from "config";
 import { Channel, RichEmbed, User } from "discord.js";
 
 import embed from "./embed";
-import { isTextChannel } from "./utils";
+import { isTextChannel } from "./helper/utils";
 
 const helpMessage: [string, string][] = [
   ["x,z,p[phonetic] or x,z,p/phonemic/",
