@@ -59,7 +59,8 @@ jspm_packages/
 config/default.yaml
 *.sqlite
 
-# autorun
-autorun.sh
-
 .vscode
+
+# default "compiled" directories
+dist
+data

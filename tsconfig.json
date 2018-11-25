@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "typeRoots" : ["./node_modules/@types", "./typings"],
     "target": "es2017",
     "module": "commonjs",
     "strict": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
     "moduleResolution": "node"
-  }
+  },
+  "include": ["src"]
 }

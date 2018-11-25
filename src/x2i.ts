@@ -1,10 +1,11 @@
 import fs from "fs";
 import path from "path";
 
+import c from "config";
 import yaml from "js-yaml";
 import OuterXRegExp from "xregexp";
 
-import { log } from "../utils";
+import { log, resolveDatapath } from "./helper/utils";
 
 interface IRawReplaceKey {
   raw: ReplaceKey;
@@ -25,58 +26,61 @@ type CompiledReplacer = [
 ];
 
 interface IMatchInstructions {
+  fullName: string;
   keys: CompiledReplacer[];
-  join?(left: string, match: string, right: string): string;
+  join(parts: string[]): string;
 }
 
-const regex = OuterXRegExp(
-  `# must be preceded by whitespace or surrounded by code brackets, or on its own line
-  (?:(^|[\`\\p{White_Space}]))
+const regex = OuterXRegExp(`
+# must be preceded by whitespace or surrounded by code brackets, or on its own line
+(?:(^|[\`\\p{White_Space}]))
 
-  # ($2) key, to lower
-  ([A-Za-z]*) # consumes non-tagged brackets to avoid reading the insides accidentally
-  # ($3) bracket left
-  ([/[])
-  # ($4) body
-  (
-    \\S                         # single character (eg x/t/)
-    |\\S.*?[^_\\p{White_Space}]  # any characters not surrounded by whitespace, ignores _/
-  )
-  # ($5) bracket right
-  ([/\\]])
+# ($2) key, to lower
+([A-Za-z]*) # consumes non-tagged brackets to avoid reading the insides accidentally
+# ($3) bracket left
+([/[])
+# ($4) body
+(
+  \\S                         # single character (eg x/t/)
+  |\\S.*?[^_\\p{White_Space}]  # any characters not surrounded by whitespace, ignores _/
+)
+# ($5) bracket right
+([/\\]])
 
-  # must be followed by a white space or punctuation (lookahead)
-  (?=$|[\`\\p{White_Space}\\pP])`,
-  "gmx");
+# must be followed by a white space or punctuation (lookahead)
+(?=$|[\`\\p{White_Space}\\pP])
+  `, "gmx");
 
-const matchType: { [key: string]: IMatchInstructions } = {
-  p: {
-    join: (_, match) => `*${match}`,
-    keys: readKeys("./apie-keys.yaml"),
-  },
-  x: {
-    keys: readKeys("./x2i-keys.yaml"),
-  },
-  z: {
-    keys: readKeys("./z2i-keys.yaml"),
-  },
-};
+const matchType = loadKeys();
 
-function defaultMatchAction(left: string, match: string, right: string) {
-  return left + match + right;
+/**
+ * Create a callback that joins a result based on "template" string ($0 for global, $1, $2, ...)
+ */
+function joinResult(format: string) {
+  return (parts: string[]) => OuterXRegExp.replaceEach(format, [
+    [/\$0/g, parts.join(""), "all"],
+    ...parts.map((p, i) => [OuterXRegExp(OuterXRegExp.escape(`$${i + 1}`)), p, "all"]),
+  ]);
 }
 
 /**
- * Read translation keys from file. Escapes strings first.
- *
- * @param fpath File to key definitions. (yaml, utf8) Relative to {@link __dirname}.
- * @returns Compiled keys.
+ * Load keys from files in the x2i data folder.
  */
-function readKeys(fpath: string) {
-  return yaml
-    .safeLoad(fs.readFileSync(path.join(__dirname, fpath), "utf8"))
-    .map(compileKey)
-    .filter(Boolean) as CompiledReplacer[];
+function loadKeys() {
+  const x2iDir = resolveDatapath(c.get<string>("x2i"));
+  return fs.readdirSync(x2iDir).reduce(
+    (acc, fname) => {
+      const { prefix, format, replacers } = yaml.safeLoad(
+        fs.readFileSync(path.resolve(x2iDir, fname), "utf8"));
+      acc[prefix] = {
+        fullName: path.basename(fname, path.extname(fname)),
+        join: format && joinResult(format),
+        keys: replacers.map(compileKey).filter(Boolean) as CompiledReplacer[],
+      };
+      return acc;
+    },
+    {} as { [key: string]: IMatchInstructions },
+  );
 }
 
 /**
@@ -130,9 +134,9 @@ export function force(key: string, left: string, match: string, right: string) {
 
   const { keys, join } = matchType[lowerKey];
   if (keys) {
-    const action = join || defaultMatchAction;
     // need to use `as (RegExp | string)[][]` because the provided typings are too generic
-    return action(left, OuterXRegExp.replaceEach(match, keys as (RegExp | string)[][]), right);
+    const parts = [left, OuterXRegExp.replaceEach(match, keys as (RegExp | string)[][]), right];
+    return join ? join(parts) : parts.join("");
   }
 }
 

@@ -1,7 +1,7 @@
 import c from "config";
 
-import { ICommands } from ".";
-import help from "./help";
+import { ICommands } from "../conniebot";
+import help from "../help";
 import { log } from "./utils";
 
 /**
