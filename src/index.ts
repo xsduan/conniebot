@@ -22,6 +22,8 @@ export default class Conniebot {
   private commands: ICommands;
 
   constructor(token: string, dbFile: string, clientOptions?: ClientOptions) {
+    log("verbose", "Starting to load bot...");
+
     this.bot = new Client(clientOptions);
     this.db = new ConniebotDatabase(dbFile);
     this.commands = {};
