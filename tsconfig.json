@@ -5,7 +5,8 @@
     "strict": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "strictBindCallApply": true
   },
   "include": ["src"]
 }
