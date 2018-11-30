@@ -5,7 +5,7 @@ const c = require('config')
 const { data, dist } = {
   data: 'data',
   dist: 'dist',
-  ...c.get('dirs')
+  ...c.get('dirs'),
 }
 
 function run(command) {
@@ -45,8 +45,6 @@ async function start() {
 
   if (start && forever) {
     throw new Error('Simultaneous start and forever. Pick one!!')
-  } else if (!start && !forever) {
-    return
   } else if (start) {
     return run(fmtNoInstall(
       `npx nodemon --watch ${dist} --watch ${data} -x node ${dist}`, noInstall))
