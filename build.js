@@ -17,9 +17,7 @@ function getSpawnArgs(command) {
 function run(command) {
   return new Promise((y, n) => {
     const [f, a] = getSpawnArgs(command)
-    let proc = spawn(f, a)
-    proc.stdout.on('data', b => process.stdout.write(`${b}`))
-    proc.stderr.on('data', b => process.stderr.write(`${b}`))
+    let proc = spawn(f, a, { stdio: 'inherit' })
     proc.on('close', code => code !== 0
       ? n(new Error(`Command ended with code ${code}`))
       : y()
