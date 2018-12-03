@@ -8,11 +8,16 @@ const { data, dist } = {
   ...c.get('dirs'),
 }
 
-function run(command) {
+function getSpawnArgs(command) {
   console.log('>>', command)
   const [file, ...args] = command.split(' ')
+  return [file, args]
+}
+
+function run(command) {
   return new Promise((y, n) => {
-    let proc = spawn(file, args)
+    const [f, a] = getSpawnArgs(command)
+    let proc = spawn(f, a)
     proc.stdout.on('data', b => process.stdout.write(`${b}`))
     proc.stderr.on('data', b => process.stderr.write(`${b}`))
     proc.on('close', code => code !== 0
@@ -20,6 +25,15 @@ function run(command) {
       : y()
     )
   })
+}
+
+function execvp(command) {
+  try {
+    const kexec = require('kexec')
+    kexec(...getSpawnArgs(command))
+  } catch (e) {
+    return run(command)
+  }
 }
 
 async function build() {
@@ -46,11 +60,11 @@ async function start() {
   if (start && forever) {
     throw new Error('Simultaneous start and forever. Pick one!!')
   } else if (start) {
-    return run(fmtNoInstall(
+    return execvp(fmtNoInstall(
       `npx nodemon --watch ${dist} --watch ${data} -x node ${dist}`, noInstall))
   } else if (forever) {
     const name = argv.n || argv.name || 'conniebot'
-    return run(fmtNoInstall(`npx pm2 start ${dist} -n ${name}`, noInstall))
+    return execvp(fmtNoInstall(`npx pm2 start ${dist} -n ${name}`, noInstall))
   }
 }
 
