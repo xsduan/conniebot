@@ -9,6 +9,10 @@ it does various cool language things. currently:
 - xsampa & zsampa to ipa (try it out with `x[Eks "s{mp_h@ tu aI_^pi:Ei_^]`)
 - fun ascii pie notation (try it out with `p/g'hm"o:/`)
 
+lookie:
+
+![preview](./static/preview.png)
+
 ## setup
 
 ### pre flight checklist
@@ -16,20 +20,20 @@ it does various cool language things. currently:
 #### on the discord website
 
 - do the [application setup] and all that stuff
-- set up [oauth] or let it run loose (whatever your wallet can afford)
+- set up [oauth] or let it run loose
 
 #### here in ground control
 
-- download and install [node] if you haven't already (duh)
+- download and install [node] if you haven't already
 - set up `default.yaml` using your bot token ([example config])
 - maybe look at the other settings?
 
 ### deployment
 
-- run `npm install` (`npm install --production` or `npm ci --only=production`
-  if you're not planning on doing any code changes)
-- run `npm start` (or `npm run forever` for production; see [pm2 docs] for 
-  further configuration options)
+- run `npm install`, or `npm install --production` or `npm ci --only=production`
+  if you're not planning on doing any code changes
+- run `npm start`, or `npm run forever` for production; see [pm2 docs] for
+  further configuration options
   - due to the fact `npx` prefers system commands, if you want to add config to
     the process (eg log rotation) you should install pm2 globally beforehand.
     how convenient for you!
@@ -50,9 +54,10 @@ conniebot build script.
                 nodemon or pm2.
 ```
 
-### have a comment?
+### community
 
-join me on discord: https://discord.gg/MvWMH3z
+discord support server: https://discord.gg/MvWMH3z
+bots.gg: https://discord.bots.gg/bots/398298688142704640
 
 [application setup]: https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
 [oauth]: https://discordapp.com/developers/tools/oauth2-url-generator
