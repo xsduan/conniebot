@@ -5,16 +5,19 @@ const c = require('config')
 const { data, dist } = {
   data: 'data',
   dist: 'dist',
-  ...c.get('dirs')
+  ...c.get('dirs'),
+}
+
+function getSpawnArgs(command) {
+  console.log('>>', command)
+  const [file, ...args] = command.split(' ')
+  return [file, args]
 }
 
 function run(command) {
-  console.log('>>', command)
-  const [file, ...args] = command.split(' ')
   return new Promise((y, n) => {
-    let proc = spawn(file, args)
-    proc.stdout.on('data', b => process.stdout.write(`${b}`))
-    proc.stderr.on('data', b => process.stderr.write(`${b}`))
+    const [f, a] = getSpawnArgs(command)
+    let proc = spawn(f, a, { stdio: 'inherit' })
     proc.on('close', code => code !== 0
       ? n(new Error(`Command ended with code ${code}`))
       : y()
@@ -22,10 +25,19 @@ function run(command) {
   })
 }
 
+function execvp(command) {
+  try {
+    const kexec = require('kexec')
+    kexec(...getSpawnArgs(command))
+  } catch (e) {
+    return run(command)
+  }
+}
+
 async function build() {
   const x2iDir = `${data}/${c.get('x2i')}`
   for (const command of [
-    `npx tsc --outDir ${dist}`,
+    `npx typescript --outDir ${dist}`,
     `mkdir -pv ${data}`,
     `rm -rf ${x2iDir}`,
     `cp -aRv x2i-data ${x2iDir}`,
@@ -45,14 +57,12 @@ async function start() {
 
   if (start && forever) {
     throw new Error('Simultaneous start and forever. Pick one!!')
-  } else if (!start && !forever) {
-    return
   } else if (start) {
-    return run(fmtNoInstall(
+    return execvp(fmtNoInstall(
       `npx nodemon --watch ${dist} --watch ${data} -x node ${dist}`, noInstall))
   } else if (forever) {
     const name = argv.n || argv.name || 'conniebot'
-    return run(fmtNoInstall(`npx pm2 start ${dist} -n ${name}`, noInstall))
+    return execvp(fmtNoInstall(`npx pm2 start ${dist} -n ${name}`, noInstall))
   }
 }
 

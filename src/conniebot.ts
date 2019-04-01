@@ -70,9 +70,7 @@ export default class Conniebot {
     if (!toks) return;
     const [, cmd, args] = toks;
 
-    // assume that command has already been bound
-    // no way currently to express this without clearing the types
-    const cb: any = this.commands[cmd];
+    const cb = this.commands[cmd].bind(this);
     if (!cb) return;
 
     try {
@@ -152,6 +150,6 @@ export default class Conniebot {
    * @param callback Callback upon seeing the name. `this` will be bound automatically.
    */
   public register(command: string, callback: CommandCallback) {
-    this.commands[command] = callback.bind(this);
+    this.commands[command] = callback;
   }
 }
