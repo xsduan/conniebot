@@ -3,10 +3,10 @@ import { Client, ClientOptions, Message, RichEmbed } from "discord.js";
 import process from "process";
 import OuterXRegExp from "xregexp";
 
-import embed from "./embed";
 import ConniebotDatabase from "./helper/db-management";
 import startup from "./helper/startup";
 import { log, messageSummary } from "./helper/utils";
+import { formatObject } from "./helper/utils/format";
 import x2i from "./x2i";
 
 export type CommandCallback =
@@ -87,33 +87,35 @@ export default class Conniebot {
    * @param message Message to reply to
    */
   private async x2iExec(message: Message) {
-    let results = x2i(message.content);
+    const results = x2i(message.content);
     const parsed = Boolean(results && results.length !== 0);
     if (parsed) {
-      const response = new RichEmbed().setColor(
-        c.get("embeds.colors.success"),
-      );
+      let responses: (RichEmbed | string)[] = [results];
       let logCode = "all";
 
       // check timeout
-      const charMax = parseInt(c.get("embeds.timeoutChars"), 10);
+      const charMax: number = c.get("timeoutChars");
       if (results.length > charMax) {
-        results = `${results.slice(0, charMax - 1)}…`;
-
-        response
-          .addField("Timeout", c.get("embeds.timeoutMessage"))
-          .setColor(c.get("embeds.colors.warning"));
-
+        const timeoutMessage = formatObject(
+          c.get("timeoutMessage"),
+          { user: message.client.user, config: c},
+        );
+        responses = [
+          `${results.slice(0, charMax - 1)}…`,
+          typeof timeoutMessage === "string"
+            ? timeoutMessage
+            : new RichEmbed(timeoutMessage),
+        ];
         logCode = "partial";
       }
-
-      response.setDescription(results);
 
       const respond = (stat: string, ...ms: any[]) =>
         log(`${stat}:x2i/${logCode}`, messageSummary(message), ...ms);
 
       try {
-        await embed(message.channel, response);
+        for (const response of responses) {
+          await message.channel.send(response);
+        }
         respond("success");
       } catch (err) {
         respond("error", err);

@@ -94,3 +94,13 @@ embeds:
     success: [152, 219, 52]
     warning: [219, 119, 52]
     fail: [219, 52, 152]
+
+# currently absolute timeout is 2048 because the largest field is 2048
+# characters long, and the longest normal message is only allowed to be 2000
+# characters (I think?) however if you really wanted to you could set it
+# farther, but you'll have some rejections from the api server. (or you
+# somehow purchased an override from Discord)
+timeoutChars: 2040
+timeoutMessage: |
+  **Timeout**
+  Could not send all output as there were too many in a single message.
