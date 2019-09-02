@@ -1,8 +1,9 @@
 import c from "config";
+import { RichEmbed } from "discord.js";
 
 import { ICommands } from "../conniebot";
-import help from "../help";
 import { log } from "./utils";
+import { formatObject } from "./utils/format";
 
 /**
  * Extension methods for different reply commands.
@@ -11,10 +12,16 @@ import { log } from "./utils";
  */
 const commands: ICommands = {
   /**
-   * Funnels a message object to the actual {@link help} function.
+   * Sends a help message, formatted with the client `user` and `config`.
    */
   async help(message) {
-    help(message.channel, message.client.user);
+    const data = formatObject(
+      c.get("help"),
+      { user: message.client.user, config: c },
+    );
+    return message.channel.send(
+      typeof data === "string" ? data : new RichEmbed(data),
+    );
   },
 
   /**

@@ -9,7 +9,7 @@ import npmlog from "npmlog";
 Object.defineProperty(npmlog, "heading", {
   get: () => `[${new Date().toISOString()}]`,
   /* tslint:disable:no-empty */
-  set: () => {}, // ignore sets since we just need it to be a timestamp
+  set: () => { }, // ignore sets since we just need it to be a timestamp
   /* tslint:enable:no-empty */
 });
 npmlog.headingStyle = { fg: "blue" };

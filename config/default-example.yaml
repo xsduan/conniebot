@@ -24,6 +24,53 @@ x2i: x2i
 # logging level; see npmlog.level
 level: info
 
+# help string
+# can be object for embed, see [RichEmbed](https://discord.js.org/#/docs/main/stable/class/RichEmbed)
+# for more info about how the object should be structured.
+
+# additionally, you can use string substitution with `user` and `config` objects
+# supplied, of the User object and configuration respectively. Use like
+# `{foo.bar}` or `{foo[0]}`. (see `utils.strFormat` for more info.)
+
+# objects will recursively look through values for strings to replace.
+help: |
+  **Commands**
+
+  **x,z,p[phonetic] or x,z,p/phonemic/**
+  Converts XSAMPA, ZSAMPA, or APIE. Hopefully.
+  **{config.prefix}help**
+  Reply with this message.
+  **About these conversions**
+  <https://en.wikipedia.org/wiki/X-SAMPA>
+  <http://www.kneequickie.com/kq/Z-SAMPA>
+
+  found a bug or want to suggest a feature?
+  github: <https://github.com/xsduan/conniebot>
+  come discuss: https://discord.gg/MvWMH3z
+
+# alternatively, if you wanted to have a rich embed as a help message
+
+# help:
+#   color: 10017588
+#   author:
+#     name: '{user.username}'
+#     icon_url: '{user.avatarURL}'
+#   title: 'Commands'
+#   fields:
+#     - name: x,z,p[phonetic] or x,z,p/phonemic/
+#       value: Converts XSAMPA, ZSAMPA, or APIE. Hopefully.
+#     - name: '{config.prefix}help'
+#       value: Reply with this message.
+#     - name: About these conversions
+#       value: |
+#         <https://en.wikipedia.org/wiki/X-SAMPA>
+#         <http://www.kneequickie.com/kq/Z-SAMPA>
+#     - name: "\u200B"
+#       value: |
+#         found a bug or want to suggest a feature?
+#         github: <https://github.com/xsduan/conniebot>
+#         come discuss: https://discord.gg/MvWMH3z
+
 # embed options (ie the fancy posts only bots can do)
 # they mess with e-readers and logging apparently so you might want to turn it
 # off if that's a thing you need to worry about
