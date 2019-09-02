@@ -70,8 +70,8 @@ export default class Conniebot {
     if (!toks) return;
     const [, cmd, args] = toks;
 
+    if (!(cmd in this.commands)) return;
     const cb = this.commands[cmd].bind(this);
-    if (!cb) return;
 
     try {
       const logItem = await cb(message, ...args.split(" "));
