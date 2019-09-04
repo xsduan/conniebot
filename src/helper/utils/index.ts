@@ -13,13 +13,8 @@ Object.defineProperty(npmlog, "heading", {
   /* tslint:enable:no-empty */
 });
 npmlog.headingStyle = { fg: "blue" };
-npmlog.levels = new Proxy(npmlog.levels, {
-  get: (o, k) => o[k] || o.info,
-  has: () => true,
-});
-npmlog.style = new Proxy(npmlog.style, {
-  get: (o, k) => o[k] || o.info,
-});
+npmlog.levels = new Proxy(npmlog.levels, { get: (o, k) => o[k] || o.info, has: () => true });
+npmlog.style = new Proxy(npmlog.style, { get: (o, k) => o[k] || o.info });
 npmlog.enableColor();
 npmlog.level = c.has("level") ? c.get("level") : "info";
 

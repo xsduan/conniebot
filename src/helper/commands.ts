@@ -15,13 +15,8 @@ const commands: ICommands = {
    * Sends a help message, formatted with the client `user` and `config`.
    */
   async help(message) {
-    const data = formatObject(
-      this.config.help,
-      { user: message.client.user, config: c },
-    );
-    return message.channel.send(
-      typeof data === "string" ? data : new RichEmbed(data),
-    );
+    const data = formatObject(this.config.help, { user: message.client.user, config: c });
+    return message.channel.send(typeof data === "string" ? data : new RichEmbed(data));
   },
 
   /**

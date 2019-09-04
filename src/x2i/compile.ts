@@ -43,9 +43,6 @@ export default function compileKey(entry: Replacer): CompiledReplacer {
 
   return [
     OuterXRegExp(`${OuterXRegExp.escape(left)}(?<inside>.*?)${OuterXRegExp.escape(right)}`),
-    m => OuterXRegExp.replaceEach(
-      m.inside,
-      translations.map(compileKey) as (RegExp | string)[][],
-    ),
+    m => OuterXRegExp.replaceEach(m.inside, translations.map(compileKey) as (RegExp | string)[][]),
     "all"];
 }

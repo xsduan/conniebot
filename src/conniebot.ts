@@ -162,9 +162,7 @@ export default class Conniebot {
         );
         responses = [
           `${results.slice(0, this.config.timeoutChars)}…`,
-          typeof timeoutMessage === "string"
-            ? timeoutMessage
-            : new RichEmbed(timeoutMessage),
+          typeof timeoutMessage === "string" ? timeoutMessage : new RichEmbed(timeoutMessage),
         ];
         logCode = "partial";
       }

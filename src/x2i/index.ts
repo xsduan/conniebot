@@ -37,7 +37,7 @@ export default class X2IMatcher {
   ([/[])
   # ($4) body
   (
-    \\S                         # single character (eg x/t/)
+    \\S                          # single character (eg x/t/)
     |\\S.*?[^_\\p{White_Space}]  # any characters not surrounded by whitespace, ignores _/
   )
   # ($5) bracket right
