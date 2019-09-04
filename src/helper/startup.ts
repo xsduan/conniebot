@@ -1,4 +1,3 @@
-import c from "config";
 import { Client } from "discord.js";
 
 import ConniebotDatabase from "./db-management";
@@ -7,7 +6,7 @@ import { isTextChannel, log, sendMessage } from "./utils";
 /**
  * Send notification to channel for reboot.
  */
-async function notifyRestart(bot: Client, db: ConniebotDatabase) {
+export async function notifyRestart(bot: Client, db: ConniebotDatabase) {
   const channelId = await db.getChannel("restart");
   if (!channelId) {
     return log("warn", "Couldn't find channel to notify.");
@@ -29,7 +28,7 @@ async function notifyRestart(bot: Client, db: ConniebotDatabase) {
 /**
  * Notify channel of any new errors that haven't been able to send.
  */
-async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
+export async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
   const [errors, errorChannelId] = await Promise.all(
     [db.getUnsentErrors(), db.getChannel("errors")],
   );
@@ -57,22 +56,12 @@ async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
 /**
  * Update activity of bot.
  */
-async function updateActivity(bot: Client) {
-  if (c.has("activeMessage")) {
-    log("info", "Changing game status...");
-    try {
-      await bot.user.setActivity(c.get("activeMessage"));
-      log("info", "Set game status.");
-    } catch (err) {
-      log("error", `Status couldn't be set. ${err}`);
-    }
+export async function updateActivity(bot: Client, activeMessage: string) {
+  log("info", "Changing game status: \x1b[95m%s\x1b[0m...", activeMessage);
+  try {
+    await bot.user.setActivity(activeMessage);
+    log("info", "Set game status.");
+  } catch (err) {
+    log("error", `Status couldn't be set. ${err}`);
   }
-}
-
-/**
- * Run through {@link updateActivity}, {@link notifyRestart}, {@link notifyNewErrors}.
- */
-export default async function startup(bot: Client, db: ConniebotDatabase) {
-  log("info", "Bot ready. Setting up...");
-  await Promise.all([updateActivity, notifyRestart, notifyNewErrors].map(fn => fn(bot, db)));
 }

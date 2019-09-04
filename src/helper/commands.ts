@@ -16,7 +16,7 @@ const commands: ICommands = {
    */
   async help(message) {
     const data = formatObject(
-      c.get("help"),
+      this.config.help,
       { user: message.client.user, config: c },
     );
     return message.channel.send(
@@ -30,7 +30,7 @@ const commands: ICommands = {
    * @param event The event name (only the first 50 characters are used)
    */
   async notif(message, event) {
-    if (message.author.id !== c.get("owner")) {
+    if (message.author.id !== this.config.owner) {
       return message.reply("Sorry, but you don't have permissions to do that.");
     }
 

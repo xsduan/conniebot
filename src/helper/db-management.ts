@@ -1,7 +1,7 @@
 import SQL from "sql-template-strings";
 import sqlite, { Database } from "sqlite";
 
-import { log, resolveDatapath } from "./utils";
+import { log } from "./utils";
 
 /**
  * Key-value table of events.
@@ -95,7 +95,7 @@ export default class ConniebotDatabase {
    * @param fname Database filename. Relative to command directory.
    */
   private async init(fname: string) {
-    const db = await sqlite.open(resolveDatapath(fname));
+    const db = await sqlite.open(fname);
 
     await Promise.all([
       db.run(`CREATE TABLE IF NOT EXISTS notifs (

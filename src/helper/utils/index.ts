@@ -72,12 +72,3 @@ export function messageSummary({ guild, content }: Message) {
   const guildName = guild ? guild.name : "unknown guild";
   return `${guildName}: ${content.substr(0, 100)}`;
 }
-
-/**
- * Resolve filepath for data directory.
- *
- * @param parts See {@link path.resolve}. Prepends with cwd and dataDirectory from the config.
- */
-export function resolveDatapath(...parts: string[]) {
-  return path.resolve(process.cwd(), c.get("dirs.data"), ...parts);
-}
