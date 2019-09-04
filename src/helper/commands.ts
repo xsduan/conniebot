@@ -1,4 +1,3 @@
-import c from "config";
 import { RichEmbed } from "discord.js";
 
 import { ICommands } from "../conniebot";
@@ -12,10 +11,10 @@ import { formatObject } from "./utils/format";
  */
 const commands: ICommands = {
   /**
-   * Sends a help message, formatted with the client `user` and `config`.
+   * Sends a help message, formatted with the client `user` and bot config `config`.
    */
   async help(message) {
-    const data = formatObject(this.config.help, { user: message.client.user, config: c });
+    const data = formatObject(this.config.help, { user: message.client.user, config: this.config });
     return message.channel.send(typeof data === "string" ? data : new RichEmbed(data));
   },
 

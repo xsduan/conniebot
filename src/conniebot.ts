@@ -2,7 +2,6 @@ import { readdir, readFile } from "fs";
 import path from "path";
 import { promisify } from "util";
 
-import c from "config";
 import { Client, ClientOptions, Message, RichEmbed, RichEmbedOptions } from "discord.js";
 import yaml from "js-yaml";
 import process from "process";
@@ -158,7 +157,7 @@ export default class Conniebot {
       if (results.length > this.config.timeoutChars) {
         const timeoutMessage = formatObject(
           this.config.timeoutMessage,
-          { user: message.client.user, config: c},
+          { user: message.client.user, config: this.config},
         );
         responses = [
           `${results.slice(0, this.config.timeoutChars)}…`,

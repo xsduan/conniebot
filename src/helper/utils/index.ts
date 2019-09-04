@@ -1,5 +1,3 @@
-import path from "path";
-
 import c from "config";
 import { Channel, Message, TextChannel } from "discord.js";
 
