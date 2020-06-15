@@ -5,52 +5,43 @@ const c = require('config')
 const { data, dist } = {
   data: 'data',
   dist: 'dist',
-  ...c.get('dirs'),
+  ...c.get('dirs')
 }
 
-function getSpawnArgs(command) {
+function getSpawnArgs (command) {
   console.log('>>', command)
   const [file, ...args] = command.split(' ')
   return [file, args]
 }
 
-function run(command) {
-  return new Promise((y, n) => {
+function run (command) {
+  return new Promise((resolve, reject) => {
     const [f, a] = getSpawnArgs(command)
     let proc = spawn(f, a, { stdio: 'inherit' })
     proc.on('close', code => code !== 0
-      ? n(new Error(`Command ended with code ${code}`))
-      : y()
+      ? reject(new Error(`Command ended with code ${code}`))
+      : resolve()
     )
   })
 }
 
-function execvp(command) {
-  try {
-    const kexec = require('kexec')
-    kexec(...getSpawnArgs(command))
-  } catch (e) {
-    return run(command)
-  }
-}
-
-async function build() {
+async function build () {
   const x2iDir = `${data}/${c.get('x2i')}`
   for (const command of [
     `npx typescript --outDir ${dist}`,
     `mkdir -pv ${data}`,
     `rm -rf ${x2iDir}`,
-    `cp -aRv x2i-data ${x2iDir}`,
+    `cp -aRv x2i-data ${x2iDir}`
   ]) {
     await run(command)
   }
 }
 
-function fmtNoInstall(str, noInstall) {
-  return str + (noInstall ? ' --no-install': '')
+function fmtNoInstall (str, noInstall) {
+  return str + (noInstall ? ' --no-install' : '')
 }
 
-async function start() {
+async function start () {
   const start = argv.s || argv.start
   const forever = argv.f || argv.forever
   const noInstall = argv['no-install']
@@ -58,11 +49,11 @@ async function start() {
   if (start && forever) {
     throw new Error('Simultaneous start and forever. Pick one!!')
   } else if (start) {
-    return execvp(fmtNoInstall(
+    return run(fmtNoInstall(
       `npx nodemon --watch ${dist} --watch ${data} -x node ${dist}`, noInstall))
   } else if (forever) {
     const name = argv.n || argv.name || 'conniebot'
-    return execvp(fmtNoInstall(`npx pm2 start ${dist} -n ${name}`, noInstall))
+    return run(fmtNoInstall(`npx pm2 start ${dist} -n ${name}`, noInstall))
   }
 }
 

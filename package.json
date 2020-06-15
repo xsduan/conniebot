@@ -33,7 +33,6 @@
     "@types/node": "^10.17.26",
     "@types/ws": "^7.2.5",
     "@types/xregexp": "^3.0.30",
-    "kexec": "^3.0.0",
     "minimist": "^1.2.5",
     "standard": "^11.0.1",
     "tslint": "^5.20.1",
