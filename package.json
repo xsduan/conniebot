@@ -19,23 +19,23 @@
   "author": "Shane Duan",
   "dependencies": {
     "config": "^1.31.0",
-    "discord.js": "^11.5.1",
-    "js-yaml": "^3.13.1",
+    "discord.js": "^11.6.4",
+    "js-yaml": "^3.14.0",
     "npmlog": "^4.1.2",
     "sql-template-strings": "^2.2.2",
-    "sqlite": "^3.0.3",
-    "xregexp": "^4.2.4"
+    "sqlite": "^3.0.6",
+    "xregexp": "^4.3.0"
   },
   "devDependencies": {
     "@types/config": "0.0.34",
-    "@types/js-yaml": "^3.12.1",
-    "@types/node": "^10.14.17",
+    "@types/js-yaml": "^3.12.4",
+    "@types/node": "^10.17.26",
     "@types/xregexp": "^3.0.30",
     "kexec": "^3.0.0",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.5",
     "standard": "^11.0.1",
-    "tslint": "^5.19.0",
-    "typescript": "^3.6.2"
+    "tslint": "^5.20.1",
+    "typescript": "^3.9.5"
   },
   "nodemonConfig": {
     "ignore": [
