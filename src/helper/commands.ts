@@ -1,4 +1,4 @@
-import { RichEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 
 import { ICommands } from "../conniebot";
 import { log } from "./utils";
@@ -15,7 +15,7 @@ const commands: ICommands = {
    */
   async help(message) {
     const data = formatObject(this.config.help, { user: message.client.user, config: this.config });
-    return message.channel.send(typeof data === "string" ? data : new RichEmbed(data));
+    return message.channel.send(typeof data === "string" ? data : new MessageEmbed(data));
   },
 
   /**

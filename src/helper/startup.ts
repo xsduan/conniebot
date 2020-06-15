@@ -12,7 +12,7 @@ export async function notifyRestart(bot: Client, db: ConniebotDatabase) {
     return log("warn", "Couldn't find channel to notify.");
   }
 
-  const channel = bot.channels.get(channelId);
+  const channel = await bot.channels.fetch(channelId);
   if (!channel || !isTextChannel(channel)) {
     return log("warn", `Channel ${channelId} doesn't exist or is not a text channel.`);
   }
@@ -38,7 +38,7 @@ export async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
     return log("warn", "Couldn't find error channel.");
   }
 
-  const errorChannel = bot.channels.get(errorChannelId);
+  const errorChannel = await bot.channels.fetch(errorChannelId);
   if (!errorChannel || !isTextChannel(errorChannel)) {
     return log("warn", "Can't use listed error channel. (nonexistent or not text)");
   }
@@ -59,7 +59,7 @@ export async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
 export async function updateActivity(bot: Client, activeMessage: string) {
   log("info", "Changing game status: \x1b[95m%s\x1b[0m...", activeMessage);
   try {
-    await bot.user.setActivity(activeMessage);
+    await bot?.user?.setActivity(activeMessage);
     log("info", "Set game status.");
   } catch (err) {
     log("error", `Status couldn't be set. ${err}`);

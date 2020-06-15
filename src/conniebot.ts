@@ -2,7 +2,7 @@ import { readdir, readFile } from "fs";
 import path from "path";
 import { promisify } from "util";
 
-import { Client, ClientOptions, Message, RichEmbed, RichEmbedOptions } from "discord.js";
+import { Client, ClientOptions, Message, MessageEmbed, MessageEmbedOptions, MessageReaction, PartialUser, User } from "discord.js";
 import yaml from "js-yaml";
 import process from "process";
 import OuterXRegExp from "xregexp";
@@ -20,11 +20,12 @@ export interface IConniebotConfig {
   activeMessage: string;
   clientOptions?: ClientOptions;
   database: string;
-  help: RichEmbedOptions | string;
+  deleteEmoji: string;
+  help: MessageEmbedOptions | string;
   owner: string;
   prefix: string;
   timeoutChars: number;
-  timeoutMessage: RichEmbedOptions | string;
+  timeoutMessage: MessageEmbedOptions | string;
   token: string;
   x2iFiles: string;
 }
@@ -67,6 +68,11 @@ export default class Conniebot {
           return log("warn", "connection reset. oops!");
         }
         this.panicResponsibly(err);
+      })
+      .on("messageReactionAdd", async (message, user) => {
+        if (this.ready) {
+          return this.reactDeleteMessage(message, user);
+        }
       })
       .login(this.config.token);
 
@@ -150,7 +156,7 @@ export default class Conniebot {
     const results = this.x2i ? this.x2i.search(message.content).join("\n") : "";
     const parsed = Boolean(results && results.length !== 0);
     if (parsed) {
-      let responses: (RichEmbed | string)[] = [results];
+      let responses: (MessageEmbed | string)[] = [results];
       let logCode = "all";
 
       // check timeout
@@ -161,7 +167,7 @@ export default class Conniebot {
         );
         responses = [
           `${results.slice(0, this.config.timeoutChars)}…`,
-          typeof timeoutMessage === "string" ? timeoutMessage : new RichEmbed(timeoutMessage),
+          typeof timeoutMessage === "string" ? timeoutMessage : new MessageEmbed(timeoutMessage),
         ];
         logCode = "partial";
       }
@@ -170,9 +176,13 @@ export default class Conniebot {
         log(`${stat}:x2i/${logCode}`, messageSummary(message), ...ms);
 
       try {
+        const responseMessages = [];
         for (const response of responses) {
-          await message.channel.send(response);
+          const responseMessage = await message.channel.send(response);
+          responseMessage.react(this.config.deleteEmoji); // don't care about response
+          responseMessages.push(responseMessage);
         }
+        await this.db.addMessage(message, responseMessages);
         respond("success");
       } catch (err) {
         respond("error", err);
@@ -191,6 +201,21 @@ export default class Conniebot {
     if (message.author.bot) return;
     if (await this.x2iExec(message)) return;
     await this.command(message);
+  }
+
+  /**
+   * Acts for a reaction to potentially delete a message.
+   * 
+   * @param reaction Message reaction event.
+   * @param user User that prompted reaction.
+   */
+  protected reactDeleteMessage = async (reaction: MessageReaction, user: User | PartialUser) => {
+    if (user.id === this.bot.user?.id
+        || user.id !== await this.db.getMessageAuthor(reaction.message)
+        || reaction.emoji.name !== this.config.deleteEmoji) { return; }
+
+    await reaction.message.delete();
+    await this.db.deleteMessage(reaction.message);
   }
 
   /**

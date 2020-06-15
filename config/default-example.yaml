@@ -25,6 +25,10 @@ conniebot:
   owner: '207600419659186176'
   database: data/db.sqlite # relative to cwd
 
+  # discord.js config
+  clientOptions:
+    partials: ['MESSAGE', 'CHANNEL', 'REACTION']
+
   # where x2i data should be read from
   x2iFiles: data/x2i
 
@@ -84,3 +88,5 @@ conniebot:
   timeoutMessage: |
     **Timeout**
     Could not send all output as there were too many in a single message.
+
+  deleteEmoji: 🗑
