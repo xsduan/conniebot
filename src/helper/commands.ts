@@ -1,8 +1,8 @@
-import c from "config";
+import { MessageEmbed } from "discord.js";
 
 import { ICommands } from "../conniebot";
-import help from "../help";
 import { log } from "./utils";
+import { formatObject } from "./utils/format";
 
 /**
  * Extension methods for different reply commands.
@@ -11,10 +11,11 @@ import { log } from "./utils";
  */
 const commands: ICommands = {
   /**
-   * Funnels a message object to the actual {@link help} function.
+   * Sends a help message, formatted with the client `user` and bot config `config`.
    */
   async help(message) {
-    help(message.channel, message.client.user);
+    const data = formatObject(this.config.help, { user: message.client.user, config: this.config });
+    return message.channel.send(typeof data === "string" ? data : new MessageEmbed(data));
   },
 
   /**
@@ -23,7 +24,7 @@ const commands: ICommands = {
    * @param event The event name (only the first 50 characters are used)
    */
   async notif(message, event) {
-    if (message.author.id !== c.get("owner")) {
+    if (message.author.id !== this.config.owner) {
       return message.reply("Sorry, but you don't have permissions to do that.");
     }
 

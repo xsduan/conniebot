@@ -1,49 +1,92 @@
 ---
-# set up your own token here:
-# https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
-token: 000000000000000000000000.000000.000000000000000000000000000
-
-# you can just leave this off if you want, but I suggest including it because
-# it's useful
-activeMessage: x/help for info
-prefix: x/
-
 # relative to the cwd() of running process, which should usually be the top
 # level of this repository.
 dirs:
   data: data
   dist: dist
 
-# owner id, only responds to admin commands if author is this person.
-owner: '207600419659186176'
-database: db.sqlite
-
-# which directory to keep x2i keys (sub dirs.data)
+# which directory to keep x2i keys in
 x2i: x2i
 
 # logging level; see npmlog.level
 level: info
 
-# embed options (ie the fancy posts only bots can do)
-# they mess with e-readers and logging apparently so you might want to turn it
-# off if that's a thing you need to worry about
-# (they look so pretty though…)
-embeds:
+conniebot:
+  # set up your own token here:
+  # https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
+  token: 000000000000000000000000.000000.000000000000000000000000000
 
-  # if false then all embeds get converted into plain discord markup
-  active: true
-  
+  # you can just leave this off if you want, but I suggest including it because
+  # it's useful
+  activeMessage: x/help for info
+  prefix: x/
+
+  # owner id, only responds to admin commands if author is this person.
+  owner: '207600419659186176'
+  database: data/db.sqlite # relative to cwd
+
+  # discord.js config
+  clientOptions:
+    partials: ['MESSAGE', 'CHANNEL', 'REACTION']
+
+  # where x2i data should be read from
+  x2iFiles: data/x2i
+
+  # help string
+  # can be object for embed, see [RichEmbed](https://discord.js.org/#/docs/main/stable/class/RichEmbed)
+  # for more info about how the object should be structured.
+
+  # additionally, you can use string substitution with `user` and `config` objects
+  # supplied, of the User object and configuration respectively. Use like
+  # `{foo.bar}` or `{foo[0]}`. (see `utils.strFormat` for more info.)
+
+  # objects will recursively look through values for strings to replace.
+  help: |
+    **Commands**
+
+    **x,z,p[phonetic] or x,z,p/phonemic/**
+    Converts XSAMPA, ZSAMPA, or APIE. Hopefully.
+    **{config.prefix}help**
+    Reply with this message.
+    **About these conversions**
+    <https://en.wikipedia.org/wiki/X-SAMPA>
+    <https://web.archive.org/web/20191116002807/http://kneequickie.com/kq/Z-SAMPA>
+
+    found a bug or want to suggest a feature?
+    github: <https://github.com/xsduan/conniebot>
+    come discuss: https://discord.gg/MvWMH3z
+
+  # alternatively, if you wanted to have a rich embed as a help message
+
+  # help:
+  #   color: 10017588
+  #   author:
+  #     name: '{user.username}'
+  #     icon_url: '{user.avatarURL}'
+  #   title: 'Commands'
+  #   fields:
+  #     - name: x,z,p[phonetic] or x,z,p/phonemic/
+  #       value: Converts XSAMPA, ZSAMPA, or APIE. Hopefully.
+  #     - name: '{config.conniebot.prefix}help'
+  #       value: Reply with this message.
+  #     - name: About these conversions
+  #       value: |
+  #         <https://en.wikipedia.org/wiki/X-SAMPA>
+  #         <http://www.kneequickie.com/kq/Z-SAMPA>
+  #     - name: "\u200B"
+  #       value: |
+  #         found a bug or want to suggest a feature?
+  #         github: <https://github.com/xsduan/conniebot>
+  #         come discuss: https://discord.gg/MvWMH3z
+
   # currently absolute timeout is 2048 because the largest field is 2048
   # characters long, and the longest normal message is only allowed to be 2000
   # characters (I think?) however if you really wanted to you could set it
   # farther, but you'll have some rejections from the api server. (or you
   # somehow purchased an override from Discord)
   timeoutChars: 2040
-  timeoutMessage: Could not send all output as there were too many in a single message.
-  
-  # you can also use hex values (in decimal form)
-  colors:
-    help: [52, 152, 219]
-    success: [152, 219, 52]
-    warning: [219, 119, 52]
-    fail: [219, 52, 152]
+  timeoutMessage: |
+    **Timeout**
+    Could not send all output as there were too many in a single message.
+
+  deleteEmoji: 🗑

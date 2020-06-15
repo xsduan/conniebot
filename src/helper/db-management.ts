@@ -1,7 +1,9 @@
 import SQL from "sql-template-strings";
-import sqlite, { Database } from "sqlite";
+import { open, Database } from "sqlite";
+import sqlite3 from "sqlite3";
 
-import { log, resolveDatapath } from "./utils";
+import { log } from "./utils";
+import { Message } from "discord.js";
 
 /**
  * Key-value table of events.
@@ -92,10 +94,10 @@ export default class ConniebotDatabase {
   /**
    * Open a file and initialize the tables if they haven't already been created.
    *
-   * @param fname Database filename. Relative to command directory.
+   * @param filename Database filename. Relative to command directory.
    */
-  private async init(fname: string) {
-    const db = await sqlite.open(resolveDatapath(fname));
+  private async init(filename: string) {
+    const db = await open({ filename, driver: sqlite3.Database });
 
     await Promise.all([
       db.run(`CREATE TABLE IF NOT EXISTS notifs (
@@ -115,6 +117,10 @@ export default class ConniebotDatabase {
         stacktrace TEXT DEFAULT NULL,
         message TEXT DEFAULT NULL
       );`),
+      db.run(`CREATE TABLE IF NOT EXISTS messageAuthors (
+        message VARCHAR(50) PRIMARY KEY,
+        author VARCHAR(50)
+      );`),
     ]);
 
     return db;
@@ -126,7 +132,7 @@ export default class ConniebotDatabase {
       SQL`SELECT event, channel FROM notifs WHERE event = ${event.substr(0, 50)}`,
     );
 
-    return row.channel;
+    return row?.channel;
   }
 
   public async setChannel(event: string, channel: string) {
@@ -137,7 +143,7 @@ export default class ConniebotDatabase {
   }
 
   public async getUnsentErrors() {
-    return (await this.db).all<IUnsentErrorsRow>(`SELECT * FROM unsentErrors`);
+    return (await this.db).all<IUnsentErrorsRow[]>(`SELECT * FROM unsentErrors`);
   }
 
   public async addError(err: any) {
@@ -155,14 +161,36 @@ export default class ConniebotDatabase {
   public async moveError(id: number) {
     const db = await this.db;
 
-    const { date, stacktrace, message } = await db.get(
+    const unsentErrors = await db.get(
       SQL`SELECT * FROM unsentErrors WHERE id = ${id}`,
     );
+
+    if (!unsentErrors) { return; }
+    const { date, stacktrace, message } = unsentErrors;
 
     await db.run(
       SQL`INSERT OR IGNORE INTO sentErrors(id, date, dateSent, stacktrace, message)
               VALUES(${id}, ${date}, ${new Date()}, ${stacktrace}, ${message})`);
 
     await db.run(SQL`DELETE FROM unsentErrors WHERE id = ${id}`);
+  }
+
+  public async addMessage(original: Message, messages: Message[]) {
+    const statements = messages.map(async msg => {
+      return (await this.db).run(
+        SQL`INSERT INTO messageAuthors(message, author)
+          VALUES(${msg.id}, ${original.author.id})`);
+    });
+    return Promise.all(statements);
+  }
+
+  public async getMessageAuthor(message: Message) {
+    return (await (await this.db).get<{ author: string }>(
+      SQL`SELECT author FROM messageAuthors WHERE message = ${message.id}`
+    ))?.author;
+  }
+
+  public async deleteMessage(message: Message) {
+    return (await this.db).run(SQL`DELETE FROM messageAuthors WHERE message = ${message.id}`);
   }
 }

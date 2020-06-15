@@ -1,4 +1,3 @@
-import c from "config";
 import { Client } from "discord.js";
 
 import ConniebotDatabase from "./db-management";
@@ -7,13 +6,13 @@ import { isTextChannel, log, sendMessage } from "./utils";
 /**
  * Send notification to channel for reboot.
  */
-async function notifyRestart(bot: Client, db: ConniebotDatabase) {
+export async function notifyRestart(bot: Client, db: ConniebotDatabase) {
   const channelId = await db.getChannel("restart");
   if (!channelId) {
     return log("warn", "Couldn't find channel to notify.");
   }
 
-  const channel = bot.channels.get(channelId);
+  const channel = await bot.channels.fetch(channelId);
   if (!channel || !isTextChannel(channel)) {
     return log("warn", `Channel ${channelId} doesn't exist or is not a text channel.`);
   }
@@ -29,7 +28,7 @@ async function notifyRestart(bot: Client, db: ConniebotDatabase) {
 /**
  * Notify channel of any new errors that haven't been able to send.
  */
-async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
+export async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
   const [errors, errorChannelId] = await Promise.all(
     [db.getUnsentErrors(), db.getChannel("errors")],
   );
@@ -39,7 +38,7 @@ async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
     return log("warn", "Couldn't find error channel.");
   }
 
-  const errorChannel = bot.channels.get(errorChannelId);
+  const errorChannel = await bot.channels.fetch(errorChannelId);
   if (!errorChannel || !isTextChannel(errorChannel)) {
     return log("warn", "Can't use listed error channel. (nonexistent or not text)");
   }
@@ -57,22 +56,12 @@ async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
 /**
  * Update activity of bot.
  */
-async function updateActivity(bot: Client) {
-  if (c.has("activeMessage")) {
-    log("info", "Changing game status...");
-    try {
-      await bot.user.setActivity(c.get("activeMessage"));
-      log("info", "Set game status.");
-    } catch (err) {
-      log("error", `Status couldn't be set. ${err}`);
-    }
+export async function updateActivity(bot: Client, activeMessage: string) {
+  log("info", "Changing game status: \x1b[95m%s\x1b[0m...", activeMessage);
+  try {
+    await bot?.user?.setActivity(activeMessage);
+    log("info", "Set game status.");
+  } catch (err) {
+    log("error", `Status couldn't be set. ${err}`);
   }
-}
-
-/**
- * Run through {@link updateActivity}, {@link notifyRestart}, {@link notifyNewErrors}.
- */
-export default async function startup(bot: Client, db: ConniebotDatabase) {
-  log("info", "Bot ready. Setting up...");
-  await Promise.all([updateActivity, notifyRestart, notifyNewErrors].map(fn => fn(bot, db)));
 }

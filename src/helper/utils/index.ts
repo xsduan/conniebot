@@ -1,5 +1,3 @@
-import path from "path";
-
 import c from "config";
 import { Channel, Message, TextChannel } from "discord.js";
 
@@ -9,17 +7,12 @@ import npmlog from "npmlog";
 Object.defineProperty(npmlog, "heading", {
   get: () => `[${new Date().toISOString()}]`,
   /* tslint:disable:no-empty */
-  set: () => {}, // ignore sets since we just need it to be a timestamp
+  set: () => { }, // ignore sets since we just need it to be a timestamp
   /* tslint:enable:no-empty */
 });
 npmlog.headingStyle = { fg: "blue" };
-npmlog.levels = new Proxy(npmlog.levels, {
-  get: (o, k) => o[k] || o.info,
-  has: () => true,
-});
-npmlog.style = new Proxy(npmlog.style, {
-  get: (o, k) => o[k] || o.info,
-});
+npmlog.levels = new Proxy(npmlog.levels, { get: (o, k) => o[k] || o.info, has: () => true });
+npmlog.style = new Proxy(npmlog.style, { get: (o, k) => o[k] || o.info });
 npmlog.enableColor();
 npmlog.level = c.has("level") ? c.get("level") : "info";
 
@@ -71,13 +64,4 @@ export async function sendMessage(msg: string, channel: TextChannel) {
 export function messageSummary({ guild, content }: Message) {
   const guildName = guild ? guild.name : "unknown guild";
   return `${guildName}: ${content.substr(0, 100)}`;
-}
-
-/**
- * Resolve filepath for data directory.
- *
- * @param parts See {@link path.resolve}. Prepends with cwd and dataDirectory from the config.
- */
-export function resolveDatapath(...parts: string[]) {
-  return path.resolve(process.cwd(), c.get("dirs.data"), ...parts);
 }
