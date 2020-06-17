@@ -1,6 +1,6 @@
 ---
 prefix: 'p'
-format: '*$2'
+format: '*$1'
 replacers:
   - - '"a:'
     - ā́
