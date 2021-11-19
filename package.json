@@ -30,18 +30,22 @@
   "devDependencies": {
     "@types/config": "0.0.34",
     "@types/js-yaml": "^3.12.4",
-    "@types/node": "^10.17.26",
+    "@types/node": "^16.6.0",
     "@types/ws": "^7.2.5",
     "@types/xregexp": "^3.0.30",
     "minimist": "^1.2.5",
     "standard": "^11.0.1",
     "tslint": "^5.20.1",
-    "typescript": "^3.9.5"
+    "typescript": "^4.4.4"
   },
   "nodemonConfig": {
     "ignore": [
       "*.sqlite"
     ],
     "exitcrash": true
+  },
+  "engines": {
+    "npm": ">=7.0.0",
+    "node": "^16.6.0"
   }
 }

@@ -47,7 +47,7 @@ export async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
 
   for (const { id, date, stacktrace, message } of errors) {
     const errorMessage = `at ${new Date(date)}:\n\`\`\`${stacktrace || message}\`\`\``;
-    if (sendMessage(errorMessage, errorChannel)) {
+    if (await sendMessage(errorMessage, errorChannel)) {
       await db.moveError(id);
     }
   }
