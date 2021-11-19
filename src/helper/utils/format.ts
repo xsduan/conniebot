@@ -35,13 +35,14 @@ export function strFormat(target: string, args: object) {
  */
 export function formatObject(helpSrc: object | string, env: any) {
   return (function _resolve(subObject: any) {
+    //can't declare block-scoped variables in a switch-case statement
+    const resolved: { [k: string]: any } = {};
     switch (typeof subObject) {
       case "string":
         return strFormat(subObject, env);
       case "object":
         if (!subObject) return `${subObject}`; // null is object, please ignore.
 
-        const resolved: { [k: string]: any } = {};
         for (const [k, v] of Object.entries(subObject)) {
           if (Array.isArray(v)) {
             resolved[k] = v.map(_resolve);

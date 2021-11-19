@@ -2,7 +2,7 @@
 
 ## style
 
-the formatting rules can be found in the [tslint config]. please run `npm run
+the formatting rules can be found in the [eslint config]. please run `npm run
 fix` to lint all the files before committing.
 
 keep names short but not too vague. this isn't really a hard limit so it's
@@ -20,5 +20,5 @@ please only work on one module at a time for pull requests if you can.
 
 thank you for contributing!
 
-[tslint config]: ./tslint.json
+[eslint config]: ./.eslintrc.yaml
 [stage-3]: https://github.com/tc39/proposals#stage-3

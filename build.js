@@ -8,16 +8,16 @@ const { data, dist } = {
   ...c.get('dirs')
 }
 
-function getSpawnArgs(command) {
+function getSpawnArgs (command) {
   console.log('>>', command)
   const [file, ...args] = command.split(' ')
   return [file, args]
 }
 
-function run(command) {
+function run (command) {
   return new Promise((resolve, reject) => {
     const [f, a] = getSpawnArgs(command)
-    let proc = spawn(f, a, { stdio: 'inherit', shell: true })
+    const proc = spawn(f, a, { stdio: 'inherit', shell: true })
     proc.on('close', code => code !== 0
       ? reject(new Error(`Command ended with code ${code}`))
       : resolve()
@@ -25,7 +25,7 @@ function run(command) {
   })
 }
 
-async function build() {
+async function build () {
   const x2iDir = `${data}/${c.get('x2i')}`
   for (const command of [
     `npx tsc --outDir ${dist}`,
@@ -37,11 +37,11 @@ async function build() {
   }
 }
 
-function fmtNoInstall(str, noInstall) {
+function fmtNoInstall (str, noInstall) {
   return str + (noInstall ? ' --no-install' : '')
 }
 
-async function start() {
+async function start () {
   const start = argv.s || argv.start
   const forever = argv.f || argv.forever
   const noInstall = argv['no-install']

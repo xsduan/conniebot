@@ -7,8 +7,8 @@
     "url": "https://github.com/xsduan/conniebot.git"
   },
   "scripts": {
-    "lint": "tslint -p . -c tslint.json -e './**/*.json'",
-    "fix": "tslint --fix -p . -c tslint.json -e './**/*.json'",
+    "lint": "eslint ./",
+    "fix": "eslint ./ --fix",
     "build": "node build",
     "start": "node build -s",
     "forever": "node build -f",
@@ -33,9 +33,12 @@
     "@types/node": "^16.6.0",
     "@types/ws": "^7.2.5",
     "@types/xregexp": "^3.0.30",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/eslint-plugin-tslint": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "eslint": "^8.2.0",
     "minimist": "^1.2.5",
-    "standard": "^11.0.1",
-    "tslint": "^5.20.1",
+    "standard": "^16.0.4",
     "typescript": "^4.4.4"
   },
   "nodemonConfig": {

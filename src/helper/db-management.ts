@@ -1,9 +1,9 @@
 import SQL from "sql-template-strings";
-import { open, Database } from "sqlite";
+import { Database, open } from "sqlite";
 import sqlite3 from "sqlite3";
 
-import { log } from "./utils";
 import { Message } from "discord.js";
+import { log } from "./utils";
 
 /**
  * Key-value table of events.
@@ -39,7 +39,6 @@ interface IUnsentErrorsRow {
    */
   date: Date;
 
-  /* tslint:disable: max-line-length */
   /**
    * Stacktrace, if available. (see
    * [`Error.prototype.stack`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/Stack))
@@ -47,16 +46,13 @@ interface IUnsentErrorsRow {
    * `stack` is technically non-standard, and not every throw will give an Error object, so we
    * default to {@link message}.
    */
-  /* tslint:enable: max-line-length */
   stacktrace: string;
 
-  /* tslint:disable: max-line-length */
   /**
    * Message, if available. (first tries
    * [`Error.message`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/message),
    * then defaults to stringifying)
    */
-  /* tslint:enable: max-line-length */
   message: string;
 }
 
@@ -176,11 +172,9 @@ export default class ConniebotDatabase {
   }
 
   public async addMessage(original: Message, messages: Message[]) {
-    const statements = messages.map(async msg => {
-      return (await this.db).run(
-        SQL`INSERT INTO messageAuthors(message, author)
-          VALUES(${msg.id}, ${original.author.id})`);
-    });
+    const statements = messages.map(async msg => (await this.db).run(
+      SQL`INSERT INTO messageAuthors(message, author)
+          VALUES(${msg.id}, ${original.author.id})`));
     return Promise.all(statements);
   }
 
