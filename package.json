@@ -24,15 +24,14 @@
     "npmlog": "^6.0.0",
     "sql-template-strings": "^2.2.2",
     "sqlite": "^4.0.23",
-    "sqlite3": "^4.2.0",
-    "xregexp": "^4.3.0"
+    "sqlite3": "git@github.com:mapbox/node-sqlite3.git#eb7708a2f10de9009459db230313c5994b9fd719",
+    "xregexp": "^5.1.0"
   },
   "devDependencies": {
     "@types/config": "0.0.34",
     "@types/js-yaml": "3.12.4",
     "@types/node": "^16.6.0",
-    "@types/ws": "^7.2.5",
-    "@types/xregexp": "^3.0.30",
+    "@types/ws": "^7.4.1",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/eslint-plugin-tslint": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",

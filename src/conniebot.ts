@@ -5,7 +5,7 @@ import { promisify } from "util";
 import { Client, ClientOptions, Message, MessageEmbed, MessageEmbedOptions, MessageReaction, PartialUser, User } from "discord.js";
 import yaml from "js-yaml";
 import process from "process";
-import OuterXRegExp from "xregexp";
+import XRegExp from "xregexp";
 
 import ConniebotDatabase from "./helper/db-management";
 import { notifyNewErrors, notifyRestart, updateActivity } from "./helper/startup";
@@ -128,8 +128,8 @@ export default class Conniebot {
    */
   private async command(message: Message) {
     // commands
-    const prefixRegex = OuterXRegExp.build(
-      `(?:^${OuterXRegExp.escape(this.config.prefix)})(\\S*) ?(.*)`, [],
+    const prefixRegex = XRegExp.build(
+      `(?:^${XRegExp.escape(this.config.prefix)})(\\S*) ?(.*)`, {},
     );
 
     const toks = message.content.match(prefixRegex);

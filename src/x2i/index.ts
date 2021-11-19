@@ -1,4 +1,4 @@
-import OuterXRegExp from "xregexp";
+import XRegExp from "xregexp";
 
 import compileKey, { CompiledReplacer, Replacer } from "./compile";
 
@@ -27,7 +27,7 @@ export default class X2IMatcher {
     });
   }
 
-  private static matchRegex = OuterXRegExp(`
+  private static matchRegex = XRegExp(`
   # must be preceded by whitespace or surrounded by code brackets, or on its own line
   (?:(^|[\`\\p{White_Space}]))
 
@@ -59,8 +59,7 @@ export default class X2IMatcher {
     if (!(lowerKey in this.replacers)) return;
 
     const { keys, join } = this.replacers[lowerKey];
-    // need to use `as (RegExp | string)[][]` because the provided typings are too generic
-    const parts = [left, OuterXRegExp.replaceEach(match, keys as (RegExp | string)[][]), right];
+    const parts = [left, XRegExp.replaceEach(match, keys), right];
     return join(parts);
   }
 
@@ -73,7 +72,7 @@ export default class X2IMatcher {
 
   public search(content: string) {
     const results: string[] = [];
-    OuterXRegExp.forEach(content, X2IMatcher.matchRegex, match => {
+    XRegExp.forEach(content, X2IMatcher.matchRegex, match => {
       const parts = match.slice(2, 6);
       if (parts.length === 4) {
         const [k, l, m, r] = parts;
