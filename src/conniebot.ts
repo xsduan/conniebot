@@ -11,7 +11,7 @@ import ConniebotDatabase from "./helper/db-management";
 import { notifyNewErrors, notifyRestart, updateActivity } from "./helper/startup";
 import { log, messageSummary } from "./helper/utils";
 import { formatObject } from "./helper/utils/format";
-import X2IMatcher from "./x2i";
+import X2IMatcher, { IReplaceSource } from "./x2i";
 
 export type CommandCallback =
   (this: Conniebot, message: Message, ...args: string[]) => Promise<any>;
@@ -104,7 +104,7 @@ export default class Conniebot {
     ));
 
     log("info", "X2I keys have been loaded.");
-    return new X2IMatcher(x2iData.map(d => yaml.safeLoad(d)));
+    return new X2IMatcher(x2iData.map(d => yaml.load(d) as IReplaceSource));
   }
 
   /**

@@ -2,7 +2,7 @@ import XRegExp from "xregexp";
 
 import compileKey, { CompiledReplacer, Replacer } from "./compile";
 
-interface IReplaceSource {
+export interface IReplaceSource {
   prefix: string;
   format: string;
   replacers: Replacer[];
