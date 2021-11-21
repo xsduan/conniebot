@@ -29,7 +29,7 @@ async function build() {
   const x2iDir = `${data}/${c.get('x2i')}`
   for (const command of [
     `npx tsc --outDir ${dist}`,
-    `mkdir -pv ${data}`,
+    `[ -d ${data} ] || mkdir ${data}`,
     `rm -rf ${x2iDir}`,
     `cp -aRv x2i-data ${x2iDir}`
   ]) {
