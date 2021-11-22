@@ -44,9 +44,9 @@ conniebot:
   help: |
     **Commands**
 
-    **x,z,p[phonetic] or x,z,p/phonemic/**
-    Converts XSAMPA, ZSAMPA, or APIE. Hopefully.
-    **{config.prefix}help**
+    **`x,z,p[phonetic]`**; **`x,z,p/phonemic/`**; **`x,z,p<orthographic>`**
+    Converts X-SAMPA, Z-SAMPA, or APIE. Hopefully.
+    **`{config.prefix}help`**
     Reply with this message.
     **About these conversions**
     <https://en.wikipedia.org/wiki/X-SAMPA>
