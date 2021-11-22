@@ -2,7 +2,17 @@ import { readdir, readFile } from "fs";
 import path from "path";
 import { promisify } from "util";
 
-import { Client, ClientOptions, Message, MessageEmbed, MessageEmbedOptions, MessageReaction, PartialUser, User } from "discord.js";
+import {
+  Client,
+  ClientOptions,
+  Message,
+  MessageEmbed,
+  MessageEmbedOptions,
+  MessageReaction,
+  PartialUser,
+  User
+} from "discord.js";
+
 import yaml from "js-yaml";
 import process from "process";
 import XRegExp from "xregexp";
@@ -153,8 +163,8 @@ export default class Conniebot {
    * @param message Message to reply to
    */
   private async x2iExec(message: Message) {
-    const results = this.x2i ? this.x2i.search(message.content).join("\n") : "";
-    const parsed = Boolean(results && results.length !== 0);
+    const results = this.x2i?.search(message.content)?.join("\n") ?? "";
+    const parsed = results.length !== 0;
     if (parsed) {
       let responses: (MessageEmbed | string)[] = [results];
       let logCode = "all";
@@ -163,7 +173,7 @@ export default class Conniebot {
       if (results.length > this.config.timeoutChars) {
         const timeoutMessage = formatObject(
           this.config.timeoutMessage,
-          { user: message.client.user, config: this.config},
+          { user: message.client.user, config: this.config },
         );
         responses = [
           `${results.slice(0, this.config.timeoutChars)}…`,

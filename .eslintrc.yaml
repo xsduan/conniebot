@@ -97,9 +97,6 @@ rules:
   max-len:
     - error
     - code: 100
-      ignoreRegExpLiterals: true
-      ignoreStrings: true
-      ignoreTemplateLiterals: true
       ignoreUrls: true
   no-eval: error
   no-irregular-whitespace: 'off'
