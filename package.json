@@ -24,7 +24,7 @@
     "npmlog": "^6.0.0",
     "sql-template-strings": "^2.2.2",
     "sqlite": "^4.0.23",
-    "sqlite3": "git@github.com:mapbox/node-sqlite3.git#eb7708a2f10de9009459db230313c5994b9fd719",
+    "sqlite3": "https://github.com/mapbox/node-sqlite3/tarball/eb7708a2f10de9009459db230313c5994b9fd719",
     "xregexp": "^5.1.0"
   },
   "devDependencies": {
