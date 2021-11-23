@@ -8,12 +8,15 @@ import {
   Message,
   MessageEmbed,
   MessageEmbedOptions,
+  MessageOptions,
   MessageReaction,
+  PartialMessageReaction,
   PartialUser,
   User
 } from "discord.js";
 
 import yaml from "js-yaml";
+import _ from "lodash";
 import process from "process";
 import XRegExp from "xregexp";
 
@@ -28,7 +31,7 @@ export type CommandCallback =
 
 export interface IConniebotConfig {
   activeMessage: string;
-  clientOptions?: ClientOptions;
+  clientOptions: ClientOptions;
   database: string;
   deleteEmoji: string;
   help: MessageEmbedOptions | string;
@@ -62,13 +65,13 @@ export default class Conniebot {
 
     this.config = config;
 
-    this.bot = new Client(this.config.clientOptions);
+    this.bot = new Client(_.cloneDeep(config.clientOptions));
     this.db = new ConniebotDatabase(this.config.database);
     this.commands = {};
 
     this.bot
       .on("ready", () => this.startup())
-      .on("message", async message => {
+      .on("messageCreate", message => {
         if (this.ready) {
           return this.parse(message);
         }
@@ -79,7 +82,7 @@ export default class Conniebot {
         }
         this.panicResponsibly(err);
       })
-      .on("messageReactionAdd", async (message, user) => {
+      .on("messageReactionAdd", (message, user) => {
         if (this.ready) {
           return this.reactDeleteMessage(message, user);
         }
@@ -166,7 +169,7 @@ export default class Conniebot {
     const results = this.x2i?.search(message.content)?.join("\n") ?? "";
     const parsed = results.length !== 0;
     if (parsed) {
-      let responses: (MessageEmbed | string)[] = [results];
+      let responses: (MessageOptions | string)[] = [results];
       let logCode = "all";
 
       // check timeout
@@ -177,7 +180,9 @@ export default class Conniebot {
         );
         responses = [
           `${results.slice(0, this.config.timeoutChars)}…`,
-          typeof timeoutMessage === "string" ? timeoutMessage : new MessageEmbed(timeoutMessage),
+          typeof timeoutMessage === "string"
+            ? timeoutMessage
+            : { embeds: [new MessageEmbed(timeoutMessage)] },
         ];
         logCode = "partial";
       }
@@ -188,7 +193,7 @@ export default class Conniebot {
       try {
         const responseMessages = [];
         for (const response of responses) {
-          const responseMessage = await message.channel.send(response);
+          const responseMessage = await message.reply(response);
           responseMessage.react(this.config.deleteEmoji); // don't care about response
           responseMessages.push(responseMessage);
         }
@@ -219,7 +224,10 @@ export default class Conniebot {
    * @param reaction Message reaction event.
    * @param user User that prompted reaction.
    */
-  protected reactDeleteMessage = async (reaction: MessageReaction, user: User | PartialUser) => {
+  protected reactDeleteMessage = async (
+    reaction: MessageReaction | PartialMessageReaction,
+    user: User | PartialUser
+  ) => {
     if (user.id === this.bot.user?.id
         || user.id !== await this.db.getMessageAuthor(reaction.message)
         || reaction.emoji.name !== this.config.deleteEmoji) { return; }

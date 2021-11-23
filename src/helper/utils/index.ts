@@ -41,7 +41,8 @@ export function log(status: string, message: string, ...args: any[]) {
  * this workaround.
  */
 export function isTextChannel(channel: Channel): channel is TextChannel {
-  return ["dm", "group", "text"].includes(channel.type) && "send" in channel;
+  return ["DM", "GROUP_DM", "GUILD_TEXT", "GUILD_PUBLIC_THREAD"].includes(channel.type)
+    && "send" in channel;
 }
 
 /**

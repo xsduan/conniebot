@@ -2,7 +2,7 @@ import SQL from "sql-template-strings";
 import { Database, open } from "sqlite";
 import sqlite3 from "sqlite3";
 
-import { Message } from "discord.js";
+import { Message, PartialMessage } from "discord.js";
 import { log } from "./utils";
 
 /**
@@ -178,13 +178,13 @@ export default class ConniebotDatabase {
     return Promise.all(statements);
   }
 
-  public async getMessageAuthor(message: Message) {
+  public async getMessageAuthor(message: Message | PartialMessage) {
     return (await (await this.db).get<{ author: string }>(
       SQL`SELECT author FROM messageAuthors WHERE message = ${message.id}`
     ))?.author;
   }
 
-  public async deleteMessage(message: Message) {
+  public async deleteMessage(message: Message | PartialMessage) {
     return (await this.db).run(SQL`DELETE FROM messageAuthors WHERE message = ${message.id}`);
   }
 }

@@ -81,7 +81,7 @@ export default class X2IMatcher {
 ([/\\]>⟩])
 
 # must be followed by a white space or punctuation (lookahead), not including a bracket
-(?=$|[^\\p{L}/[\\]<>⟨⟩])
+(?=$|[^\\pL\\pN/[\\]<>⟨⟩])
       `, "gimux");
     }
 

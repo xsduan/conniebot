@@ -28,6 +28,9 @@ conniebot:
   # discord.js config
   clientOptions:
     partials: ['MESSAGE', 'CHANNEL', 'REACTION']
+    intents: ['DIRECT_MESSAGES', 'DIRECT_MESSAGE_REACTIONS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'GUILDS']
+    allowedMentions:
+      repliedUser: false
 
   # where x2i data should be read from
   x2iFiles: data/x2i
