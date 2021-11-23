@@ -115,7 +115,8 @@ export default class ConniebotDatabase {
       );`),
       db.run(`CREATE TABLE IF NOT EXISTS messageAuthors (
         message VARCHAR(50) PRIMARY KEY,
-        author VARCHAR(50)
+        author VARCHAR(50),
+        original VARCHAR(50)
       );`),
     ]);
 
@@ -173,8 +174,8 @@ export default class ConniebotDatabase {
 
   public async addMessage(original: Message, messages: Message[]) {
     const statements = messages.map(async msg => (await this.db).run(
-      SQL`INSERT INTO messageAuthors(message, author)
-          VALUES(${msg.id}, ${original.author.id})`));
+      SQL`INSERT INTO messageAuthors(message, author, original)
+          VALUES(${msg.id}, ${original.author.id}, ${original.id})`));
     return Promise.all(statements);
   }
 
@@ -182,6 +183,12 @@ export default class ConniebotDatabase {
     return (await (await this.db).get<{ author: string }>(
       SQL`SELECT author FROM messageAuthors WHERE message = ${message.id}`
     ))?.author;
+  }
+
+  public async getReplies(message: Message | PartialMessage) {
+    return (await (await this.db).all<{ message: string }[]>(
+      SQL`SELECT message FROM messageAuthors WHERE original = ${message.id}`
+    ));
   }
 
   public async deleteMessage(message: Message | PartialMessage) {
