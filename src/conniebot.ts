@@ -6,7 +6,6 @@ import {
   Client,
   ClientOptions,
   Message,
-  MessageEditOptions,
   MessageEmbed,
   MessageEmbedOptions,
   MessageOptions,

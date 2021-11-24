@@ -22,13 +22,21 @@ conniebot:
   prefix: x/
 
   # owner id, only responds to admin commands if author is this person.
-  owner: '207600419659186176'
+  owner: '499681310592335892'
   database: data/db.sqlite # relative to cwd
 
   # discord.js config
   clientOptions:
-    partials: ['MESSAGE', 'CHANNEL', 'REACTION']
-    intents: ['DIRECT_MESSAGES', 'DIRECT_MESSAGE_REACTIONS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'GUILDS']
+    partials:
+      - MESSAGE
+      - CHANNEL
+      - REACTION
+    intents: 
+      - DIRECT_MESSAGES
+      - DIRECT_MESSAGE_REACTIONS
+      - GUILD_MESSAGES
+      - GUILD_MESSAGE_REACTIONS
+      - GUILDS
     allowedMentions:
       repliedUser: false
 
@@ -36,7 +44,7 @@ conniebot:
   x2iFiles: data/x2i
 
   # help string
-  # can be object for embed, see [RichEmbed](https://discord.js.org/#/docs/main/stable/class/RichEmbed)
+  # can be object for embed, see [MessageEmbedOptions](https://discord.js.org/#/docs/main/stable/typedef/MessageEmbedOptions)
   # for more info about how the object should be structured.
 
   # additionally, you can use string substitution with `user` and `config` objects
@@ -44,7 +52,7 @@ conniebot:
   # `{foo.bar}` or `{foo[0]}`. (see `utils.strFormat` for more info.)
 
   # objects will recursively look through values for strings to replace.
-  help: |
+  help: |-
     **Commands**
 
     **`x,z,p[phonetic]`**; **`x,z,p/phonemic/`**; **`x,z,p<orthographic>`**
@@ -66,7 +74,7 @@ conniebot:
   #   color: 10017588
   #   author:
   #     name: '{user.username}'
-  #     icon_url: '{user.avatarURL}'
+  #     iconURL: '{user.avatarURL}'
   #   title: 'Commands'
   #   fields:
   #     - name: x,z,p[phonetic] or x,z,p/phonemic/
@@ -74,11 +82,11 @@ conniebot:
   #     - name: '{config.conniebot.prefix}help'
   #       value: Reply with this message.
   #     - name: About these conversions
-  #       value: |
+  #       value: |-
   #         <https://en.wikipedia.org/wiki/X-SAMPA>
   #         <http://www.kneequickie.com/kq/Z-SAMPA>
   #     - name: "\u200B"
-  #       value: |
+  #       value: |-
   #         found a bug or want to suggest a feature?
   #         github: <https://github.com/xsduan/conniebot>
   #         come discuss: https://discord.gg/MvWMH3z
@@ -88,9 +96,9 @@ conniebot:
   # characters (I think?) however if you really wanted to you could set it
   # farther, but you'll have some rejections from the api server. (or you
   # somehow purchased an override from Discord)
-  timeoutChars: 2040
-  timeoutMessage: |
+  timeoutChars: 2000
+  timeoutMessage: |-
     **Timeout**
     Could not send all output as there were too many in a single message.
 
-  deleteEmoji: 🗑
+  deleteEmoji: 🗑️
