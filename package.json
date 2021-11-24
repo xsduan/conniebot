@@ -4,7 +4,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/xsduan/conniebot.git"
+    "url": "https://github.com/bbrk24/conniebot.git"
   },
   "scripts": {
     "lint": "eslint ./",
