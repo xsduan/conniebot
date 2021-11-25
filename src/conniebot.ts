@@ -35,6 +35,7 @@ export interface IConniebotConfig {
   clientOptions: ClientOptions;
   database: string;
   deleteEmoji: string;
+  pingEmoji?: string;
   help: MessageEmbedOptions | string;
   owner: string;
   prefix: string;
@@ -220,7 +221,7 @@ export default class Conniebot {
 
   private async updateReply(oldMsg: Message | PartialMessage, newMsg: Message | PartialMessage) {
     if ((oldMsg.author ?? newMsg.author)?.id === this.bot.user?.id
-      || newMsg.partial) return;
+        || newMsg.partial) return;
 
     const replies = await this.db.getReplies(oldMsg);
     const responses = await this.x2iExec(newMsg, false) as (string | MessageOptions)[];
@@ -253,6 +254,14 @@ export default class Conniebot {
    */
   protected parse = async (message: Message) => {
     if (message.author.bot) return;
+
+    if (this.config.pingEmoji && this.bot.user
+        && message.mentions.has(this.bot.user)
+        && message.mentions.repliedUser?.id !== this.bot.user.id) {
+      message.react(this.config.pingEmoji);
+      return;
+    }
+
     if (await this.x2iExec(message)) return;
     await this.command(message);
   }

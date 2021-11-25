@@ -102,3 +102,8 @@ conniebot:
     Could not send all output as there were too many in a single message.
 
   deleteEmoji: 🗑️
+
+  # If this is included, and the bot has access to it, it will react with this to all messages that
+  # @-mention it. This does not include roles, @everyone, or @here.
+  # It's totally optional, though.
+  pingEmoji: <:wugping:913268541023723570>
