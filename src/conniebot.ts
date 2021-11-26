@@ -52,6 +52,9 @@ export interface ICommands {
 const readdirPromise = promisify(readdir);
 const readFilePromise = promisify(readFile);
 
+// the length of one day, in ms
+const oneDay = 1000 * 60 * 60 * 24;
+
 export default class Conniebot {
   public bot: Client;
   public db: ConniebotDatabase;
@@ -221,14 +224,17 @@ export default class Conniebot {
 
   private async updateReply(oldMsg: Message | PartialMessage, newMsg: Message | PartialMessage) {
     if ((oldMsg.author ?? newMsg.author)?.id === this.bot.user?.id
-        || newMsg.partial) return;
-
+        || newMsg.partial
+        // @ts-expect-error You can subtract dates in JS, but TS doesn't like that.
+        || new Date() - oldMsg.createdAt > oneDay) return;
     const replies = await this.db.getReplies(oldMsg);
+    if (replies.length === 0) return;
+
     const responses = await this.x2iExec(newMsg, false) as (string | MessageOptions)[];
 
     await Promise.all(replies.map(async (el, i) => {
       const message = await newMsg.channel.messages.fetch(el.message);
-      if (responses[i] !== message.content) {
+      if (responses[i] && responses[i] !== message.content) {
         await message.edit(responses[i]);
       } else if (!responses[i]) {
         await message.delete();
