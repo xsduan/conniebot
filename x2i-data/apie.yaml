@@ -32,8 +32,6 @@ replacers:
     - h̥₃
   - - x4.
     - h̥₄
-  - - x5.
-    - h̥₅
   - - x@.
     - h̥ₐ
   - - xx.
@@ -88,8 +86,6 @@ replacers:
     - h₃
   - - x4
     - h₄
-  - - x5
-    - h₅
   - - x@
     - hₐ
   - - xx
