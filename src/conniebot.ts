@@ -228,9 +228,9 @@ export default class Conniebot {
 
     await Promise.all(replies.map(async (el, i) => {
       const message = await newMsg.channel.messages.fetch(el.message);
-      if (responses[i]) {
+      if (responses[i] !== message.content) {
         await message.edit(responses[i]);
-      } else {
+      } else if (!responses[i]) {
         await message.delete();
         await this.db.deleteMessage(message);
       }
