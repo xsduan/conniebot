@@ -14,7 +14,7 @@ export type Replacer = ReplaceKey | INestedKey | IRawReplaceKey;
 
 export type CompiledReplacer = [
   RegExp,
-  string | ((m: { [key: string]: string }) => string),
+  string | ((m: XRegExp.MatchSubString) => string),
   XRegExp.MatchScope
 ];
 
@@ -42,7 +42,11 @@ export default function compileKey(entry: Replacer): CompiledReplacer {
   } = entry;
 
   return [
-    XRegExp(`${XRegExp.escape(left)}(?<inside>.*?)${XRegExp.escape(right)}`),
-    m => XRegExp.replaceEach(m.inside, translations.map(compileKey)),
+    XRegExp(`${XRegExp.escape(left)}(.*?)${XRegExp.escape(right)}`),
+    m => XRegExp.replaceEach(
+      // Apparently captures don't work the way they used to
+      m.substring(left.length, m.length - right.length),
+      translations.map(compileKey)
+    ),
     "all"];
 }

@@ -38,7 +38,6 @@ export default class X2IMatcher {
 
   private decode(key: string, match: string, left: string, right: string) {
     const lowerKey = key.toLowerCase();
-    if (!(lowerKey in this.replacers)) return;
 
     const { keys, join } = this.replacers[lowerKey];
     const parts = [
