@@ -57,16 +57,24 @@ conniebot:
 
     **`x,z,p[phonetic]`**; **`x,z,p/phonemic/`**; **`x,z,p<orthographic>`**
     Converts X-SAMPA, Z-SAMPA, or APIE. Hopefully.
+
     **`{config.prefix}help`**
     Reply with this message.
+
+    **`{config.prefix}invite`**
+    Send a DM with information about adding this bot to other servers.
+
+    **`{config.prefix}ping`**
+    Check whether the bot is alive.
+
     **About these conversions**
-    <https://en.wikipedia.org/wiki/X-SAMPA>
-    <https://web.archive.org/web/20191116002807/http://kneequickie.com/kq/Z-SAMPA>
-    <https://gist.github.com/xsduan/8ebd580be71214c57aa554ec9050916c>
+    X-SAMPA: <https://en.wikipedia.org/wiki/X-SAMPA>
+    Z-SAMPA: <https://web.archive.org/web/20191116002807/http://kneequickie.com/kq/Z-SAMPA>
+    APIE: <https://gist.github.com/xsduan/8ebd580be71214c57aa554ec9050916c>
 
     found a bug or want to suggest a feature?
-    github: <https://github.com/xsduan/conniebot>
-    come discuss: https://discord.gg/MvWMH3z
+    github: <https://github.com/bbrk24/conniebot>
+    come discuss: https://discord.gg/qgCG67knvs
 
   # alternatively, if you wanted to have a rich embed as a help message
 
@@ -90,6 +98,29 @@ conniebot:
   #         found a bug or want to suggest a feature?
   #         github: <https://github.com/xsduan/conniebot>
   #         come discuss: https://discord.gg/MvWMH3z
+
+  invite:
+    # I'm not using >- or |-, since I want to manually specify where line breaks are.
+    "To add {user.username} to a server, click on the link below:\n
+    https://discordapp.com/oauth2/authorize?client_id={user.id}&scope=bot&permissions=274878188608\n
+    You may only add the bot to a server that you have the \"manage server\" permission in.\n
+    \n
+    It will request the following permissions:\n
+    - Read messages\n
+    - Send messages in channels\n
+    - Send messages in threads\n
+    - Embed links\n
+    - Add reactions\n
+    - Use external emojis\n
+    \n
+    In order for the bot to function, at least the \"read messages\" and one of the \"send messages\"
+    permissions must be enabled.\n
+    \"Embed links\" allows the invite to the testing server to have an embed. It is an optional
+    permission.\n
+    \"Add reactions\" is used for the 🗑️ reaction to delete messages. It's not technically required,
+    but I highly recommend enabling it.\n
+    \"Use external emojis\" is only used for reacting with {config.pingEmoji} to @\\-mentions. This is
+    purely optional, and it doesn't do anything if \"add reactions\" is not enabled."
 
   # currently absolute timeout is 2048 because the largest field is 2048
   # characters long, and the longest normal message is only allowed to be 2000

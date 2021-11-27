@@ -69,6 +69,22 @@ const commands: ICommands = {
 
     return `${elapsedMsg}, ${roundtripMsg}`;
   },
+
+  /**
+   * Send a DM to the user containing invite information.
+   */
+  async invite(message) {
+    const data = formatObject(
+      this.config.invite,
+      { user: message.client.user, config: this.config }
+    );
+    try {
+      await message.author.send(data);
+      return message.reply("DM sent.");
+    } catch {
+      return message.reply("Unable to send DM.");
+    }
+  },
 };
 
 export default commands;

@@ -43,6 +43,7 @@ export interface IConniebotConfig {
   timeoutMessage: MessageEmbedOptions | string;
   token: string;
   x2iFiles: string;
+  invite: MessageEmbedOptions | string;
 }
 
 export interface ICommands {
@@ -225,8 +226,7 @@ export default class Conniebot {
   private async updateReply(oldMsg: Message | PartialMessage, newMsg: Message | PartialMessage) {
     if ((oldMsg.author ?? newMsg.author)?.id === this.bot.user?.id
         || newMsg.partial
-        // @ts-expect-error You can subtract dates in JS, but TS doesn't like that.
-        || new Date() - oldMsg.createdAt > oneDay) return;
+        || Date.now() - oldMsg.createdTimestamp > oneDay) return;
     const replies = await this.db.getReplies(oldMsg);
     if (replies.length === 0) return;
 
