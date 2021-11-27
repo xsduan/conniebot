@@ -55,7 +55,7 @@ conniebot:
   help: |-
     **Commands**
 
-    **`x,z,p,r[phonetic]`**; **`x,z,p,r/phonemic/`**; **`x,z,p,r<orthographic>`**
+    **`x,z,p,r[phonetic]`** or **`x,z,p,r/phonemic/`**
     Converts XSAMPA, ZSAMPA, APIE, or Praat phonetic notation. Hopefully.
 
     **{config.prefix}help**

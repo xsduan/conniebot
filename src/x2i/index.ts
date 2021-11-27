@@ -40,11 +40,7 @@ export default class X2IMatcher {
     const lowerKey = key.toLowerCase();
 
     const { keys, join } = this.replacers[lowerKey];
-    const parts = [
-      left === '<' ? '⟨' : left,
-      XRegExp.replaceEach(match, keys),
-      right === '>' ? '⟩' : right,
-    ];
+    const parts = [left, XRegExp.replaceEach(match, keys), right];
     return join(parts);
   }
 
@@ -68,7 +64,7 @@ export default class X2IMatcher {
 # consumes non-tagged brackets to avoid reading the insides accidentally
 
 # ($3) bracket left
-([/[<⟨])
+([/[])
 
 # ($4) body
 (
@@ -77,10 +73,10 @@ export default class X2IMatcher {
 )
 
 # ($5) bracket right
-([/\\]>⟩])
+([/\\]])
 
 # must be followed by a white space or punctuation (lookahead), not including a bracket
-(?=$|[^\\pL\\pN/[\\]<>⟨⟩])
+(?=$|[^\\pL\\pN/[\\]])
       `, "gimux");
     }
 
