@@ -55,10 +55,10 @@ conniebot:
   help: |-
     **Commands**
 
-    **`x,z,p[phonetic]`**; **`x,z,p/phonemic/`**; **`x,z,p<orthographic>`**
-    Converts X-SAMPA, Z-SAMPA, or APIE. Hopefully.
+    **`x,z,p,r[phonetic]`**; **`x,z,p,r/phonemic/`**; **`x,z,p,r<orthographic>`**
+    Converts XSAMPA, ZSAMPA, APIE, or Praat phonetic notation. Hopefully.
 
-    **`{config.prefix}help`**
+    **{config.prefix}help**
     Reply with this message.
 
     **`{config.prefix}invite`**
@@ -71,6 +71,7 @@ conniebot:
     X-SAMPA: <https://en.wikipedia.org/wiki/X-SAMPA>
     Z-SAMPA: <https://web.archive.org/web/20191116002807/http://kneequickie.com/kq/Z-SAMPA>
     APIE: <https://gist.github.com/xsduan/8ebd580be71214c57aa554ec9050916c>
+    Praat notation: <https://www.fon.hum.uva.nl/praat/manual/Phonetic_symbols.html>
 
     found a bug or want to suggest a feature?
     github: <https://github.com/bbrk24/conniebot>
