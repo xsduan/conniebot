@@ -175,52 +175,46 @@ export default class Conniebot {
    * Sends an x2i string (but also could be used for simple embeds)
    *
    * @param message Message to reply to
-   * @param send Whether to send a new message (default: true)
    */
-  private async x2iExec(message: Message, send = true) {
-    const results = this.x2i?.search(message.content)?.join("\n") ?? "";
-    const parsed = results.length !== 0;
-    if (parsed) {
-      let responses: (MessageOptions | string)[] = [results];
-      let logCode = "all";
+  private async sendX2iResponse(message: Message) {
+    const responses = await this.createX2iResponse(message);
+    if (responses.length === 0) return false;
+    const logCode = responses.length === 1 ? "all" : "partial";
 
-      // check timeout
-      if (results.length > this.config.timeoutChars) {
-        const timeoutMessage = formatObject(
-          this.config.timeoutMessage,
-          { user: message.client.user, config: this.config },
-        );
-        responses = [
-          `${results.slice(0, this.config.timeoutChars - 1)}…`,
-          typeof timeoutMessage === "string"
-            ? timeoutMessage
-            : { embeds: [new MessageEmbed(timeoutMessage)] },
-        ];
-        logCode = "partial";
+    const respond = (stat: string, ...ms: any[]) =>
+      log(`${stat}:x2i/${logCode}`, messageSummary(message), ...ms);
+
+    try {
+      const responseMessages = [];
+      for (const response of responses) {
+        const responseMessage = await message.reply(response);
+        responseMessage.react(this.config.deleteEmoji); // don't care about response
+        responseMessages.push(responseMessage);
       }
-
-      const respond = (stat: string, ...ms: any[]) =>
-        log(`${stat}:x2i/${logCode}`, messageSummary(message), ...ms);
-
-      try {
-        if (send) {
-          const responseMessages = [];
-          for (const response of responses) {
-            const responseMessage = await message.reply(response);
-            responseMessage.react(this.config.deleteEmoji); // don't care about response
-            responseMessages.push(responseMessage);
-          }
-          await this.db.addMessage(message, responseMessages);
-        } else {
-          return responses;
-        }
-        respond("success");
-      } catch (err) {
-        respond("error", err);
-      }
+      await this.db.addMessage(message, responseMessages);
+      respond("success");
+    } catch (err) {
+      respond("error", err);
     }
 
-    return parsed;
+    return true;
+  }
+
+  private async createX2iResponse(message: Message): Promise<(MessageOptions | string)[]> {
+    const results = this.x2i?.search(message.content)?.join("\n") ?? "";
+    if (results.length > this.config.timeoutChars) {
+      const timeoutMessage = formatObject(
+        this.config.timeoutMessage,
+        { user: message.client.user, config: this.config },
+      );
+      return [
+        `${results.slice(0, this.config.timeoutChars - 1)}…`,
+        typeof timeoutMessage === "string"
+          ? timeoutMessage
+          : { embeds: [new MessageEmbed(timeoutMessage)] },
+      ];
+    } else if (results.length === 0) return [];
+    return [results];
   }
 
   private async updateReply(oldMsg: Message | PartialMessage, newMsg: Message | PartialMessage) {
@@ -230,15 +224,15 @@ export default class Conniebot {
     const replies = await this.db.getReplies(oldMsg);
     if (replies.length === 0) return;
 
-    const responses = await this.x2iExec(newMsg, false) as (string | MessageOptions)[];
+    const responses = await this.createX2iResponse(newMsg);
 
     await Promise.all(replies.map(async (el, i) => {
       const message = await newMsg.channel.messages.fetch(el.message);
-      if (responses[i] && responses[i] !== message.content) {
-        await message.edit(responses[i]);
-      } else if (!responses[i]) {
+      if (!responses[i]) {
         await message.delete();
         await this.db.deleteMessage(message);
+      } else if (responses[i] !== message.content) {
+        await message.edit(responses[i]);
       }
     }));
 
@@ -268,7 +262,7 @@ export default class Conniebot {
       return;
     }
 
-    if (await this.x2iExec(message)) return;
+    if (await this.sendX2iResponse(message)) return;
     await this.command(message);
   }
 
