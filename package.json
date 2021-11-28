@@ -1,6 +1,6 @@
 {
   "name": "conniebot",
-  "version": "3.5.2",
+  "version": "3.6.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -28,6 +28,7 @@
     "discord.js": "^13.3.1",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
+    "minimist": "^1.2.5",
     "npmlog": "^6.0.0",
     "sql-template-strings": "^2.2.2",
     "sqlite": "^4.0.23",
@@ -40,7 +41,6 @@
     "@typescript-eslint/eslint-plugin-tslint": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "eslint": "^8.3.0",
-    "minimist": "^1.2.5",
     "standard": "^16.0.4"
   },
   "optionalDependencies": {
