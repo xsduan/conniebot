@@ -58,7 +58,7 @@ conniebot:
     **`x,z,p,r[phonetic]`** or **`x,z,p,r/phonemic/`**
     Converts XSAMPA, ZSAMPA, APIE, or Praat phonetic notation. Hopefully.
 
-    **{config.prefix}help**
+    **`{config.prefix}help`**
     Reply with this message.
 
     **`{config.prefix}invite`**
@@ -118,7 +118,7 @@ conniebot:
     permissions must be enabled.\n
     \"Embed links\" allows the invite to the testing server to have an embed. It is an optional
     permission.\n
-    \"Add reactions\" is used for the 🗑️ reaction to delete messages. It's not technically required,
+    \"Add reactions\" is used for the {config.deleteEmoji} reaction to delete messages. It's not technically required,
     but I highly recommend enabling it.\n
     \"Use external emojis\" is only used for reacting with {config.pingEmoji} to @\\-mentions. This is
     purely optional, and it doesn't do anything if \"add reactions\" is not enabled."
