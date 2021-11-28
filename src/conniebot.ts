@@ -257,7 +257,8 @@ export default class Conniebot {
 
     if (this.config.pingEmoji && this.bot.user
         && message.mentions.has(this.bot.user)
-        && message.mentions.repliedUser?.id !== this.bot.user.id) {
+        && message.mentions.repliedUser?.id !== this.bot.user.id
+        && !message.mentions.everyone) {
       message.react(this.config.pingEmoji);
       return;
     }
