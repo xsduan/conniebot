@@ -271,8 +271,7 @@ export default class Conniebot {
       // - the mention isn't @here or @everyone
       && !message.mentions.everyone
     ) {
-      message.react(this.config.pingEmoji);
-      return;
+      await message.react(this.config.pingEmoji);
     }
 
     if (await this.sendX2iResponse(message)) return;
