@@ -1,6 +1,5 @@
 import XRegExp from "xregexp";
 
-import { log } from "../helper/utils";
 import compileKey, { CompiledReplacer, Replacer } from "./compile";
 
 export interface IReplaceSource {

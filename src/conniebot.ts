@@ -13,6 +13,7 @@ import {
   PartialMessage,
   PartialMessageReaction,
   PartialUser,
+  TextChannel,
   User
 } from "discord.js";
 
@@ -255,10 +256,21 @@ export default class Conniebot {
   protected parse = async (message: Message) => {
     if (message.author.bot) return;
 
-    if (this.config.pingEmoji && this.bot.user
-        && message.mentions.has(this.bot.user)
-        && message.mentions.repliedUser?.id !== this.bot.user.id
-        && !message.mentions.everyone) {
+    if (
+      // check that...
+      // - there is a user and emoji to make the reaction
+      this.config.pingEmoji && this.bot.user
+      // - the user has the necessary permission
+      && (message.channel instanceof TextChannel
+        ? message.channel.permissionsFor(this.bot.user)?.has("USE_EXTERNAL_EMOJIS")
+        : true)
+      // - the message mentions the user
+      && message.mentions.has(this.bot.user)
+      // - the mention isn't via a reply
+      && message.mentions.repliedUser?.id !== this.bot.user.id
+      // - the mention isn't @here or @everyone
+      && !message.mentions.everyone
+    ) {
       message.react(this.config.pingEmoji);
       return;
     }
