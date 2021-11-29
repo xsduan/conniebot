@@ -54,11 +54,6 @@ conniebot build script.
                 nodemon or pm2.
 ```
 
-### community
-
-discord support server: https://discord.gg/MvWMH3z  
-bots.gg: https://discord.bots.gg/bots/398298688142704640
-
 [application setup]: https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
 [oauth]: https://discordapp.com/developers/tools/oauth2-url-generator
 [node]: https://nodejs.org/
