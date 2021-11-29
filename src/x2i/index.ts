@@ -37,6 +37,7 @@ export default class X2IMatcher {
   }
 
   private decode(key: string, match: string, left: string, right: string) {
+    if (!key) return;
     const lowerKey = key.toLowerCase();
 
     const { keys, join } = this.replacers[lowerKey];
@@ -60,7 +61,7 @@ export default class X2IMatcher {
 (?<=(^|\\p{White_Space}|(?:^|[^\\\\])[\`*~_]))
 
 # ($2) key
-([${XRegExp.escape(Object.keys(this.replacers).join(""))}])
+(${Object.keys(this.replacers).map(XRegExp.escape).join("|")})?
 # consumes non-tagged brackets to avoid reading the insides accidentally
 
 # ($3) bracket left
