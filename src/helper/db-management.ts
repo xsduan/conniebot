@@ -1,9 +1,9 @@
 import SQL from "sql-template-strings";
-import { open, Database } from "sqlite";
+import { Database, open } from "sqlite";
 import sqlite3 from "sqlite3";
 
+import { Message, PartialMessage } from "discord.js";
 import { log } from "./utils";
-import { Message } from "discord.js";
 
 /**
  * Key-value table of events.
@@ -39,7 +39,6 @@ interface IUnsentErrorsRow {
    */
   date: Date;
 
-  /* tslint:disable: max-line-length */
   /**
    * Stacktrace, if available. (see
    * [`Error.prototype.stack`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/Stack))
@@ -47,16 +46,13 @@ interface IUnsentErrorsRow {
    * `stack` is technically non-standard, and not every throw will give an Error object, so we
    * default to {@link message}.
    */
-  /* tslint:enable: max-line-length */
   stacktrace: string;
 
-  /* tslint:disable: max-line-length */
   /**
    * Message, if available. (first tries
    * [`Error.message`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/message),
    * then defaults to stringifying)
    */
-  /* tslint:enable: max-line-length */
   message: string;
 }
 
@@ -119,7 +115,8 @@ export default class ConniebotDatabase {
       );`),
       db.run(`CREATE TABLE IF NOT EXISTS messageAuthors (
         message VARCHAR(50) PRIMARY KEY,
-        author VARCHAR(50)
+        author VARCHAR(50),
+        original VARCHAR(50)
       );`),
     ]);
 
@@ -176,21 +173,25 @@ export default class ConniebotDatabase {
   }
 
   public async addMessage(original: Message, messages: Message[]) {
-    const statements = messages.map(async msg => {
-      return (await this.db).run(
-        SQL`INSERT INTO messageAuthors(message, author)
-          VALUES(${msg.id}, ${original.author.id})`);
-    });
+    const statements = messages.map(async msg => (await this.db).run(
+      SQL`INSERT INTO messageAuthors(message, author, original)
+          VALUES(${msg.id}, ${original.author.id}, ${original.id})`));
     return Promise.all(statements);
   }
 
-  public async getMessageAuthor(message: Message) {
+  public async getMessageAuthor(message: Message | PartialMessage) {
     return (await (await this.db).get<{ author: string }>(
       SQL`SELECT author FROM messageAuthors WHERE message = ${message.id}`
     ))?.author;
   }
 
-  public async deleteMessage(message: Message) {
+  public async getReplies(message: Message | PartialMessage) {
+    return (await (await this.db).all<{ message: string }[]>(
+      SQL`SELECT message FROM messageAuthors WHERE original = ${message.id}`
+    ));
+  }
+
+  public async deleteMessage(message: Message | PartialMessage) {
     return (await this.db).run(SQL`DELETE FROM messageAuthors WHERE message = ${message.id}`);
   }
 }

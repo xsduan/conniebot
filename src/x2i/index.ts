@@ -1,10 +1,11 @@
-import OuterXRegExp from "xregexp";
+import XRegExp from "xregexp";
 
+import { log } from "../helper/utils";
 import compileKey, { CompiledReplacer, Replacer } from "./compile";
 
-interface IReplaceSource {
+export interface IReplaceSource {
   prefix: string;
-  format: string;
+  format?: string;
   replacers: Replacer[];
 }
 
@@ -27,25 +28,7 @@ export default class X2IMatcher {
     });
   }
 
-  private static matchRegex = OuterXRegExp(`
-  # must be preceded by whitespace or surrounded by code brackets, or on its own line
-  (?:(^|[\`\\p{White_Space}]))
-
-  # ($2) key, to lower
-  ([A-Za-z]*) # consumes non-tagged brackets to avoid reading the insides accidentally
-  # ($3) bracket left
-  ([/[])
-  # ($4) body
-  (
-    \\S                          # single character (eg x/t/)
-    |\\S.*?[^_\\p{White_Space}]  # any characters not surrounded by whitespace, ignores _/
-  )
-  # ($5) bracket right
-  ([/\\]])
-
-  # must be followed by a white space or punctuation (lookahead)
-  (?=$|[\`\\p{White_Space}\\pP])
-    `, "gmx");
+  private matchRegex?: RegExp;
   private replacers: { [k: string]: IMatcher; } = {};
 
   constructor(matcherSources: IReplaceSource[] = []) {
@@ -54,14 +37,17 @@ export default class X2IMatcher {
     }
   }
 
-  private decode(key: string, match: string, [left, right]: [string, string]) {
+  private decode(key: string, match: string, left: string, right: string) {
     const lowerKey = key.toLowerCase();
-    if (!(lowerKey in this.replacers)) return;
 
-    const { keys, join } = this.replacers[lowerKey];
-    // need to use `as (RegExp | string)[][]` because the provided typings are too generic
-    const parts = [left, OuterXRegExp.replaceEach(match, keys as (RegExp | string)[][]), right];
-    return join(parts);
+    try {
+      const { keys, join } = this.replacers[lowerKey];
+      const parts = [left, XRegExp.replaceEach(match, keys), right];
+      return join(parts);
+    } catch (err) {
+      log("error:x2i", `Unknown prefix '${lowerKey}''`);
+      return "";
+    }
   }
 
   public register({ prefix, format, replacers }: IReplaceSource) {
@@ -73,11 +59,38 @@ export default class X2IMatcher {
 
   public search(content: string) {
     const results: string[] = [];
-    OuterXRegExp.forEach(content, X2IMatcher.matchRegex, match => {
+
+    if (!this.matchRegex) {
+      this.matchRegex = XRegExp(`
+# must be preceded by whitespace or surrounded by markdown punctuation, or on its own line
+(?<=(^|\\p{White_Space}|(?:^|[^\\\\])[\`*~_]))
+
+# ($2) key
+([${XRegExp.escape(Object.keys(this.replacers).join(''))}]*)
+# consumes non-tagged brackets to avoid reading the insides accidentally
+
+# ($3) bracket left
+([/[])
+
+# ($4) body
+(
+  \\S                          # single character (eg x/t/)
+  |\\S.*?[^_\\p{White_Space}]  # any characters not surrounded by whitespace, ignores _/
+)
+
+# ($5) bracket right
+([/\\]])
+
+# must be followed by a white space or punctuation (lookahead), not including a bracket
+(?=$|[^\\pL\\pN/[\\]])
+      `, "gimux");
+    }
+
+    XRegExp.forEach(content, this.matchRegex, match => {
       const parts = match.slice(2, 6);
       if (parts.length === 4) {
         const [k, l, m, r] = parts;
-        const converted = this.decode(k, m, [l, r]); // eg x, [, text, ]
+        const converted = this.decode(k, m, l, r); // eg x, text, [, ]
 
         if (converted) {
           results.push(converted);

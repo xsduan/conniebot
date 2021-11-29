@@ -1,4 +1,4 @@
-import OuterXRegExp from "xregexp";
+import XRegExp from "xregexp";
 
 interface IRawReplaceKey {
   raw: ReplaceKey;
@@ -14,8 +14,8 @@ export type Replacer = ReplaceKey | INestedKey | IRawReplaceKey;
 
 export type CompiledReplacer = [
   RegExp,
-  string | ((m: { [key: string]: string }) => string),
-  string
+  string | ((m: XRegExp.MatchSubString) => string),
+  XRegExp.MatchScope
 ];
 
 /**
@@ -26,13 +26,13 @@ export type CompiledReplacer = [
 export default function compileKey(entry: Replacer): CompiledReplacer {
   if (Array.isArray(entry)) {
     const [key, val] = entry;
-    return [OuterXRegExp(OuterXRegExp.escape(key)), val, "all"];
+    return [XRegExp(XRegExp.escape(key)), val, "all"];
   }
 
   // don't escape key
   if ("raw" in entry) {
     const [key, val] = entry.raw;
-    return [OuterXRegExp(key), val, "all"];
+    return [XRegExp(key), val, "all"];
   }
 
   // is a dict
@@ -42,7 +42,11 @@ export default function compileKey(entry: Replacer): CompiledReplacer {
   } = entry;
 
   return [
-    OuterXRegExp(`${OuterXRegExp.escape(left)}(?<inside>.*?)${OuterXRegExp.escape(right)}`),
-    m => OuterXRegExp.replaceEach(m.inside, translations.map(compileKey) as (RegExp | string)[][]),
+    XRegExp(`${XRegExp.escape(left)}(.*?)${XRegExp.escape(right)}`),
+    m => XRegExp.replaceEach(
+      // Apparently captures don't work the way they used to
+      m.substring(left.length, m.length - right.length),
+      translations.map(compileKey)
+    ),
     "all"];
 }

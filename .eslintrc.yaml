@@ -1,0 +1,114 @@
+# Some of these rules were copied from the original tslint.json, while others are used to silence or
+# extend the recommended configs to match tslint:recommended.
+env:
+  node: true
+extends:
+  - 'eslint:recommended'
+  - 'plugin:@typescript-eslint/recommended'
+overrides:
+  # Rules that require type information or conflict with `standard` should not be applied to js
+  # files, only ts files.
+  - files: '*.ts'
+    parserOptions:
+      project: ./tsconfig.json
+    rules:
+      # While TSLint had true and false, ESLint uses 'error' and 'off'.
+      '@typescript-eslint/comma-dangle':
+        - error
+        - arrays: always-multiline
+          exports: always-multiline
+          functions: only-multiline
+          objects: always-multiline
+      '@typescript-eslint/naming-convention':
+        - error
+        - format:
+            - camelCase
+            - PascalCase
+          leadingUnderscore: allowSingleOrDouble
+          selector: variable
+      '@typescript-eslint/no-shadow': error
+      '@typescript-eslint/no-throw-literal': error
+      '@typescript-eslint/no-unnecessary-qualifier': error
+      '@typescript-eslint/no-unnecessary-type-assertion': error
+      '@typescript-eslint/no-var-requires': error
+      '@typescript-eslint/tslint/config':
+        - error
+        # As TSLint is poorly supported, only the TSLint-exclusive rules go here. Any rules with
+        # ESLint equivalents should use those instead.
+        - rules:
+            match-default-export-name: true
+            no-duplicate-super: true
+            no-redundant-jsdoc: true
+            no-unnecessary-callback-wrapper: true
+            # There is an ESLint equivalent, sort-imports, but it's too different for the old
+            # configuration to be replicated.
+            ordered-imports: true
+            use-isnan: true
+      no-throw-literal: 'off'
+parser: '@typescript-eslint/parser'
+parserOptions:
+  ecmaVersion: 2017
+plugins:
+  - '@typescript-eslint/eslint-plugin'
+  - '@typescript-eslint/tslint'
+rules:
+  '@typescript-eslint/array-type': error
+  '@typescript-eslint/prefer-function-type': error
+  '@typescript-eslint/indent':
+    - error
+    - 2
+  '@typescript-eslint/member-ordering':
+    - error
+    - default:
+        - public-static-field
+        - protected-static-field
+        - private-static-field
+        - public-instance-field
+        - protected-instance-field
+        - private-instance-field
+        - public-constructor
+        - protected-constructor
+        - private-constructor
+        - private-instance-method
+        - protected-instance-method
+        - public-instance-method
+  '@typescript-eslint/method-signature-style':
+    - error
+    - method
+  '@typescript-eslint/no-explicit-any': 'off'
+  '@typescript-eslint/no-inferrable-types': 'off'
+  '@typescript-eslint/no-unused-vars': 'off'
+  '@typescript-eslint/no-var-requires': 'off'
+  '@typescript-eslint/prefer-for-of': error
+  '@typescript-eslint/unified-signatures': error
+  arrow-parens:
+    - error
+    - as-needed
+  arrow-body-style: error
+  curly:
+    - error
+    - multi-line
+  dot-notation: error
+  eqeqeq:
+    - error
+    - always
+    - 'null': ignore
+  func-names: error
+  max-len:
+    - error
+    - code: 100
+      ignoreUrls: true
+  no-eval: error
+  no-irregular-whitespace: 'off'
+  no-new-wrappers: error
+  no-throw-literal: error
+  no-trailing-spaces: 
+    - error
+    - ignoreComments: true
+  no-useless-escape: 'off'
+  no-var: error
+  object-shorthand: error
+  one-var:
+    - error
+    - never
+  radix: error

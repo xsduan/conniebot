@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { MessageEmbed, MessagePayload } from "discord.js";
 
 import { ICommands } from "../conniebot";
 import { log } from "./utils";
@@ -15,7 +15,10 @@ const commands: ICommands = {
    */
   async help(message) {
     const data = formatObject(this.config.help, { user: message.client.user, config: this.config });
-    return message.channel.send(typeof data === "string" ? data : new MessageEmbed(data));
+    console.log('x/help');
+    return message.reply(
+      typeof data === "string" ? data : { embeds: [new MessageEmbed(data)] }
+    );
   },
 
   /**
@@ -32,18 +35,17 @@ const commands: ICommands = {
       return message.reply("Sorry, you need to specify an event.");
     }
 
-    const channel = message.channel;
     let returnMessage: string;
 
     try {
-      await this.db.setChannel(event, channel.id);
+      await this.db.setChannel(event, message.channelId);
       returnMessage = `Got it! Will send notifications for ${event} to ${message.channel}.`;
     } catch (err) {
       log("error", err);
       returnMessage = "Something went wrong while trying to set notifications.";
     }
 
-    return channel.send(returnMessage);
+    return message.reply(returnMessage);
   },
 
   /**
@@ -57,7 +59,7 @@ const commands: ICommands = {
     const elapsedMsg = `${Date.now() - created} ms`;
 
     // wait for send
-    const pingReturn = await message.channel.send(`I'm alive! (${elapsedMsg})`);
+    const pingReturn = await message.reply(`I'm alive! (${elapsedMsg})`);
     const pingMsg = Array.isArray(pingReturn) ? pingReturn[0] : pingReturn;
     const roundtripMsg = `${Date.now() - created} ms`;
 
@@ -66,6 +68,22 @@ const commands: ICommands = {
     }
 
     return `${elapsedMsg}, ${roundtripMsg}`;
+  },
+
+  /**
+   * Send a DM to the user containing invite information.
+   */
+  async invite(message) {
+    const data = formatObject(
+      this.config.invite,
+      { user: message.client.user, config: this.config }
+    );
+    try {
+      await message.author.send(data);
+      return message.reply("DM sent.");
+    } catch {
+      return message.reply("Unable to send DM.");
+    }
   },
 };
 

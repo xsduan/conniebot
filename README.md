@@ -15,6 +15,9 @@ lookie:
 
 ## setup
 
+Note: after v3.6.0 is released, `master` will be the live branch, and all active development will
+take place on `dev`.
+
 ### pre flight checklist
 
 #### on the discord website
@@ -50,9 +53,13 @@ conniebot build script.
 -s, --start     watch files for development using nodemon.
 -f, --forever   run conniebot in production using pm2 (open source version).
 -n, --name      process name if running in forever mode. (default: conniebot)
---no-install    pass `--no-install` to npx, so you don't waste time installing
-                nodemon or pm2.
+--no-install    pass `--no` to npx, so you don't waste time installing nodemon
+                or pm2.
 ```
+
+### community
+
+discord support server: https://discord.gg/qgCG67knvs  
 
 [application setup]: https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
 [oauth]: https://discordapp.com/developers/tools/oauth2-url-generator

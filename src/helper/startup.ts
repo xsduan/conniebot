@@ -18,7 +18,8 @@ export async function notifyRestart(bot: Client, db: ConniebotDatabase) {
   }
 
   try {
-    await channel.send(`Rebooted at ${new Date()}.`);
+    const timestamp = Math.round(new Date().getTime() / 1000);
+    await channel.send(`Rebooted at <t:${timestamp}:D> <t:${timestamp}:T>.`);
     log("info", `Notified ${channel} (#${channel.name || "??"}) of restart.`);
   } catch (err) {
     log("error", err);
@@ -47,7 +48,7 @@ export async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
 
   for (const { id, date, stacktrace, message } of errors) {
     const errorMessage = `at ${new Date(date)}:\n\`\`\`${stacktrace || message}\`\`\``;
-    if (sendMessage(errorMessage, errorChannel)) {
+    if (await sendMessage(errorMessage, errorChannel)) {
       await db.moveError(id);
     }
   }

@@ -2,25 +2,40 @@ import { readdir, readFile } from "fs";
 import path from "path";
 import { promisify } from "util";
 
-import { Client, ClientOptions, Message, MessageEmbed, MessageEmbedOptions, MessageReaction, PartialUser, User } from "discord.js";
+import {
+  Client,
+  ClientOptions,
+  Message,
+  MessageEmbed,
+  MessageEmbedOptions,
+  MessageOptions,
+  MessageReaction,
+  PartialMessage,
+  PartialMessageReaction,
+  PartialUser,
+  User
+} from "discord.js";
+
 import yaml from "js-yaml";
+import _ from "lodash";
 import process from "process";
-import OuterXRegExp from "xregexp";
+import XRegExp from "xregexp";
 
 import ConniebotDatabase from "./helper/db-management";
 import { notifyNewErrors, notifyRestart, updateActivity } from "./helper/startup";
 import { log, messageSummary } from "./helper/utils";
 import { formatObject } from "./helper/utils/format";
-import X2IMatcher from "./x2i";
+import X2IMatcher, { IReplaceSource } from "./x2i";
 
 export type CommandCallback =
   (this: Conniebot, message: Message, ...args: string[]) => Promise<any>;
 
 export interface IConniebotConfig {
   activeMessage: string;
-  clientOptions?: ClientOptions;
+  clientOptions: ClientOptions;
   database: string;
   deleteEmoji: string;
+  pingEmoji?: string;
   help: MessageEmbedOptions | string;
   owner: string;
   prefix: string;
@@ -28,6 +43,7 @@ export interface IConniebotConfig {
   timeoutMessage: MessageEmbedOptions | string;
   token: string;
   x2iFiles: string;
+  invite: MessageEmbedOptions | string;
 }
 
 export interface ICommands {
@@ -36,6 +52,9 @@ export interface ICommands {
 
 const readdirPromise = promisify(readdir);
 const readFilePromise = promisify(readFile);
+
+// the length of one day, in ms
+const oneDay = 1000 * 60 * 60 * 24;
 
 export default class Conniebot {
   public bot: Client;
@@ -52,13 +71,13 @@ export default class Conniebot {
 
     this.config = config;
 
-    this.bot = new Client(this.config.clientOptions);
+    this.bot = new Client(_.cloneDeep(config.clientOptions));
     this.db = new ConniebotDatabase(this.config.database);
     this.commands = {};
 
     this.bot
       .on("ready", () => this.startup())
-      .on("message", async message => {
+      .on("messageCreate", message => {
         if (this.ready) {
           return this.parse(message);
         }
@@ -69,9 +88,14 @@ export default class Conniebot {
         }
         this.panicResponsibly(err);
       })
-      .on("messageReactionAdd", async (message, user) => {
+      .on("messageReactionAdd", (message, user) => {
         if (this.ready) {
           return this.reactDeleteMessage(message, user);
+        }
+      })
+      .on("messageUpdate", (oldMsg, newMsg) => {
+        if (this.ready) {
+          this.updateReply(oldMsg, newMsg);
         }
       })
       .login(this.config.token);
@@ -104,7 +128,7 @@ export default class Conniebot {
     ));
 
     log("info", "X2I keys have been loaded.");
-    return new X2IMatcher(x2iData.map(d => yaml.safeLoad(d)));
+    return new X2IMatcher(x2iData.map(d => yaml.load(d) as IReplaceSource));
   }
 
   /**
@@ -128,8 +152,8 @@ export default class Conniebot {
    */
   private async command(message: Message) {
     // commands
-    const prefixRegex = OuterXRegExp.build(
-      `(?:^${OuterXRegExp.escape(this.config.prefix)})(\\S*) ?(.*)`, [],
+    const prefixRegex = XRegExp.build(
+      `(?:^${XRegExp.escape(this.config.prefix)})(\\S*) ?(.*)`, {},
     );
 
     const toks = message.content.match(prefixRegex);
@@ -152,44 +176,75 @@ export default class Conniebot {
    *
    * @param message Message to reply to
    */
-  private async x2iExec(message: Message) {
-    const results = this.x2i ? this.x2i.search(message.content).join("\n") : "";
-    const parsed = Boolean(results && results.length !== 0);
-    if (parsed) {
-      let responses: (MessageEmbed | string)[] = [results];
-      let logCode = "all";
+  private async sendX2iResponse(message: Message) {
+    const responses = await this.createX2iResponse(message);
+    if (responses.length === 0) return false;
+    const logCode = responses.length === 1 ? "all" : "partial";
 
-      // check timeout
-      if (results.length > this.config.timeoutChars) {
-        const timeoutMessage = formatObject(
-          this.config.timeoutMessage,
-          { user: message.client.user, config: this.config},
-        );
-        responses = [
-          `${results.slice(0, this.config.timeoutChars)}…`,
-          typeof timeoutMessage === "string" ? timeoutMessage : new MessageEmbed(timeoutMessage),
-        ];
-        logCode = "partial";
+    const respond = (stat: string, ...ms: any[]) =>
+      log(`${stat}:x2i/${logCode}`, messageSummary(message), ...ms);
+
+    try {
+      const responseMessages = [];
+      for (const response of responses) {
+        const responseMessage = await message.reply(response);
+        responseMessage.react(this.config.deleteEmoji); // don't care about response
+        responseMessages.push(responseMessage);
       }
-
-      const respond = (stat: string, ...ms: any[]) =>
-        log(`${stat}:x2i/${logCode}`, messageSummary(message), ...ms);
-
-      try {
-        const responseMessages = [];
-        for (const response of responses) {
-          const responseMessage = await message.channel.send(response);
-          responseMessage.react(this.config.deleteEmoji); // don't care about response
-          responseMessages.push(responseMessage);
-        }
-        await this.db.addMessage(message, responseMessages);
-        respond("success");
-      } catch (err) {
-        respond("error", err);
-      }
+      await this.db.addMessage(message, responseMessages);
+      respond("success");
+    } catch (err) {
+      respond("error", err);
     }
 
-    return parsed;
+    return true;
+  }
+
+  private async createX2iResponse(message: Message): Promise<(MessageOptions | string)[]> {
+    const results = this.x2i?.search(message.content)?.join("\n") ?? "";
+    if (results.length > this.config.timeoutChars) {
+      const timeoutMessage = formatObject(
+        this.config.timeoutMessage,
+        { user: message.client.user, config: this.config },
+      );
+      return [
+        `${results.slice(0, this.config.timeoutChars - 1)}…`,
+        typeof timeoutMessage === "string"
+          ? timeoutMessage
+          : { embeds: [new MessageEmbed(timeoutMessage)] },
+      ];
+    } else if (results.length === 0) return [];
+    return [results];
+  }
+
+  private async updateReply(oldMsg: Message | PartialMessage, newMsg: Message | PartialMessage) {
+    if ((oldMsg.author ?? newMsg.author)?.id === this.bot.user?.id
+        || newMsg.partial
+        || Date.now() - oldMsg.createdTimestamp > oneDay) return;
+    const replies = await this.db.getReplies(oldMsg);
+    if (replies.length === 0) return;
+
+    const responses = await this.createX2iResponse(newMsg);
+
+    await Promise.all(replies.map(async (el, i) => {
+      const message = await newMsg.channel.messages.fetch(el.message);
+      if (!responses[i]) {
+        await message.delete();
+        await this.db.deleteMessage(message);
+      } else if (responses[i] !== message.content) {
+        await message.edit(responses[i]);
+      }
+    }));
+
+    if (responses.length > replies.length) {
+      const newMessages: Message[] = [];
+      for (let i = replies.length; i < responses.length; ++i) {
+        const newReply = await newMsg.reply(responses[i]);
+        newReply.react(this.config.deleteEmoji);
+        newMessages.push(newReply);
+      }
+      this.db.addMessage(newMsg, newMessages);
+    }
   }
 
   /**
@@ -199,7 +254,16 @@ export default class Conniebot {
    */
   protected parse = async (message: Message) => {
     if (message.author.bot) return;
-    if (await this.x2iExec(message)) return;
+
+    if (this.config.pingEmoji && this.bot.user
+        && message.mentions.has(this.bot.user)
+        && message.mentions.repliedUser?.id !== this.bot.user.id
+        && !message.mentions.everyone) {
+      message.react(this.config.pingEmoji);
+      return;
+    }
+
+    if (await this.sendX2iResponse(message)) return;
     await this.command(message);
   }
 
@@ -209,7 +273,10 @@ export default class Conniebot {
    * @param reaction Message reaction event.
    * @param user User that prompted reaction.
    */
-  protected reactDeleteMessage = async (reaction: MessageReaction, user: User | PartialUser) => {
+  protected reactDeleteMessage = async (
+    reaction: MessageReaction | PartialMessageReaction,
+    user: User | PartialUser
+  ) => {
     if (user.id === this.bot.user?.id
         || user.id !== await this.db.getMessageAuthor(reaction.message)
         || reaction.emoji.name !== this.config.deleteEmoji) { return; }

@@ -6,9 +6,8 @@ import npmlog from "npmlog";
 // init log style
 Object.defineProperty(npmlog, "heading", {
   get: () => `[${new Date().toISOString()}]`,
-  /* tslint:disable:no-empty */
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   set: () => { }, // ignore sets since we just need it to be a timestamp
-  /* tslint:enable:no-empty */
 });
 npmlog.headingStyle = { fg: "blue" };
 npmlog.levels = new Proxy(npmlog.levels, { get: (o, k) => o[k] || o.info, has: () => true });
@@ -42,7 +41,8 @@ export function log(status: string, message: string, ...args: any[]) {
  * this workaround.
  */
 export function isTextChannel(channel: Channel): channel is TextChannel {
-  return ["dm", "group", "text"].includes(channel.type) && "send" in channel;
+  return ["DM", "GROUP_DM", "GUILD_TEXT", "GUILD_PUBLIC_THREAD"].includes(channel.type)
+    && "send" in channel;
 }
 
 /**

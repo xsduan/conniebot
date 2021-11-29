@@ -22,18 +22,29 @@ conniebot:
   prefix: x/
 
   # owner id, only responds to admin commands if author is this person.
-  owner: '207600419659186176'
+  owner: '499681310592335892'
   database: data/db.sqlite # relative to cwd
 
   # discord.js config
   clientOptions:
-    partials: ['MESSAGE', 'CHANNEL', 'REACTION']
+    partials:
+      - MESSAGE
+      - CHANNEL
+      - REACTION
+    intents: 
+      - DIRECT_MESSAGES
+      - DIRECT_MESSAGE_REACTIONS
+      - GUILD_MESSAGES
+      - GUILD_MESSAGE_REACTIONS
+      - GUILDS
+    allowedMentions:
+      repliedUser: false
 
   # where x2i data should be read from
   x2iFiles: data/x2i
 
   # help string
-  # can be object for embed, see [RichEmbed](https://discord.js.org/#/docs/main/stable/class/RichEmbed)
+  # can be object for embed, see [MessageEmbedOptions](https://discord.js.org/#/docs/main/stable/typedef/MessageEmbedOptions)
   # for more info about how the object should be structured.
 
   # additionally, you can use string substitution with `user` and `config` objects
@@ -41,21 +52,30 @@ conniebot:
   # `{foo.bar}` or `{foo[0]}`. (see `utils.strFormat` for more info.)
 
   # objects will recursively look through values for strings to replace.
-  help: |
+  help: |-
     **Commands**
 
-    **x,z,p[phonetic] or x,z,p/phonemic/**
-    Converts XSAMPA, ZSAMPA, or APIE. Hopefully.
-    **{config.prefix}help**
+    **`x,z,p,r[phonetic]`** or **`x,z,p,r/phonemic/`**
+    Converts XSAMPA, ZSAMPA, APIE, or Praat phonetic notation. Hopefully.
+
+    **`{config.prefix}help`**
     Reply with this message.
+
+    **`{config.prefix}invite`**
+    Send a DM with information about adding this bot to other servers.
+
+    **`{config.prefix}ping`**
+    Check whether the bot is alive.
+
     **About these conversions**
-    <https://en.wikipedia.org/wiki/X-SAMPA>
-    <https://web.archive.org/web/20191116002807/http://kneequickie.com/kq/Z-SAMPA>
-    <https://gist.github.com/xsduan/8ebd580be71214c57aa554ec9050916c>
+    X-SAMPA: <https://en.wikipedia.org/wiki/X-SAMPA>
+    Z-SAMPA: <https://web.archive.org/web/20200215002618/http://kneequickie.com/kq/Z-SAMPA>
+    APIE: <https://github.com/bbrk24/conniebot/blob/master/apie-docs.md>
+    Praat notation: <https://www.fon.hum.uva.nl/praat/manual/Phonetic_symbols.html>
 
     found a bug or want to suggest a feature?
-    github: <https://github.com/xsduan/conniebot>
-    come discuss: https://discord.gg/MvWMH3z
+    github: <https://github.com/bbrk24/conniebot>
+    come discuss: https://discord.gg/qgCG67knvs
 
   # alternatively, if you wanted to have a rich embed as a help message
 
@@ -63,7 +83,7 @@ conniebot:
   #   color: 10017588
   #   author:
   #     name: '{user.username}'
-  #     icon_url: '{user.avatarURL}'
+  #     iconURL: '{user.avatarURL}'
   #   title: 'Commands'
   #   fields:
   #     - name: x,z,p[phonetic] or x,z,p/phonemic/
@@ -71,23 +91,51 @@ conniebot:
   #     - name: '{config.conniebot.prefix}help'
   #       value: Reply with this message.
   #     - name: About these conversions
-  #       value: |
+  #       value: |-
   #         <https://en.wikipedia.org/wiki/X-SAMPA>
   #         <http://www.kneequickie.com/kq/Z-SAMPA>
   #     - name: "\u200B"
-  #       value: |
+  #       value: |-
   #         found a bug or want to suggest a feature?
   #         github: <https://github.com/xsduan/conniebot>
   #         come discuss: https://discord.gg/MvWMH3z
+
+  invite:
+    # I'm not using >- or |-, since I want to manually specify where line breaks are.
+    "To add {user.username} to a server, click on the link below:\n
+    https://discordapp.com/oauth2/authorize?client_id={user.id}&scope=bot&permissions=274878188608\n
+    You may only add the bot to a server that you have the \"manage server\" permission in.\n
+    \n
+    It will request the following permissions:\n
+    - Read messages\n
+    - Send messages in channels\n
+    - Send messages in threads\n
+    - Embed links\n
+    - Add reactions\n
+    - Use external emojis\n
+    \n
+    In order for the bot to function, at least the \"read messages\" and one of the \"send messages\"
+    permissions must be enabled.\n
+    \"Embed links\" allows the invite to the testing server to have an embed. It is an optional
+    permission.\n
+    \"Add reactions\" is used for the {config.deleteEmoji} reaction to delete messages. It's not technically required,
+    but I highly recommend enabling it.\n
+    \"Use external emojis\" is only used for reacting with {config.pingEmoji} to @\\-mentions. This is
+    purely optional, and it doesn't do anything if \"add reactions\" is not enabled."
 
   # currently absolute timeout is 2048 because the largest field is 2048
   # characters long, and the longest normal message is only allowed to be 2000
   # characters (I think?) however if you really wanted to you could set it
   # farther, but you'll have some rejections from the api server. (or you
   # somehow purchased an override from Discord)
-  timeoutChars: 2040
-  timeoutMessage: |
+  timeoutChars: 2000
+  timeoutMessage: |-
     **Timeout**
     Could not send all output as there were too many in a single message.
 
-  deleteEmoji: 🗑
+  deleteEmoji: 🗑️
+
+  # If this is included, and the bot has access to it, it will react with this to all messages that
+  # @-mention it. This does not include roles, @everyone, or @here.
+  # It's totally optional, though.
+  pingEmoji: <:wugping:913268541023723570>
