@@ -1,6 +1,5 @@
 import XRegExp from "xregexp";
 
-import { log } from "../helper/utils";
 import compileKey, { CompiledReplacer, Replacer } from "./compile";
 
 export interface IReplaceSource {
@@ -38,16 +37,12 @@ export default class X2IMatcher {
   }
 
   private decode(key: string, match: string, left: string, right: string) {
+    if (!key) return;
     const lowerKey = key.toLowerCase();
 
-    try {
-      const { keys, join } = this.replacers[lowerKey];
-      const parts = [left, XRegExp.replaceEach(match, keys), right];
-      return join(parts);
-    } catch (err) {
-      log("error:x2i", `Unknown prefix '${lowerKey}''`);
-      return "";
-    }
+    const { keys, join } = this.replacers[lowerKey];
+    const parts = [left, XRegExp.replaceEach(match, keys), right];
+    return join(parts);
   }
 
   public register({ prefix, format, replacers }: IReplaceSource) {
@@ -66,7 +61,7 @@ export default class X2IMatcher {
 (?<=(^|\\p{White_Space}|(?:^|[^\\\\])[\`*~_]))
 
 # ($2) key
-([${XRegExp.escape(Object.keys(this.replacers).join(''))}]*)
+(${Object.keys(this.replacers).map(XRegExp.escape).join("|")})?
 # consumes non-tagged brackets to avoid reading the insides accidentally
 
 # ($3) bracket left
