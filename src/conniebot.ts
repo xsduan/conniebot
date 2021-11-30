@@ -32,13 +32,13 @@ export type CommandCallback =
   (this: Conniebot, message: Message, ...args: string[]) => Promise<any>;
 
 export interface IConniebotConfig {
-  activeMessage: string;
+  activeMessage?: string;
   clientOptions: ClientOptions;
   database: string;
   deleteEmoji: string;
-  pingEmoji?: string;
   help: MessageEmbedOptions | string;
   owner: string;
+  pingEmoji?: string;
   prefix: string;
   timeoutChars: number;
   timeoutMessage: MessageEmbedOptions | string;
@@ -107,7 +107,10 @@ export default class Conniebot {
   private async startup() {
     log("info", "Bot ready. Setting up...");
 
-    updateActivity(this.bot, this.config.activeMessage);
+    if (this.config.activeMessage) {
+      updateActivity(this.bot, this.config.activeMessage);
+    }
+
     notifyRestart(this.bot, this.db);
     notifyNewErrors(this.bot, this.db);
 
