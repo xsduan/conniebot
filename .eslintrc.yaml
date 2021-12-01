@@ -18,7 +18,12 @@ overrides:
         - arrays: always-multiline
           exports: always-multiline
           functions: only-multiline
+          imports: always-multiline
           objects: always-multiline
+      '@typescript-eslint/explicit-member-accessibility':
+        - error
+        - overrides:
+            constructors: no-public
       '@typescript-eslint/naming-convention':
         - error
         - format:
@@ -110,7 +115,6 @@ rules:
   no-trailing-spaces: 
     - error
     - ignoreComments: true
-  no-useless-escape: 'off'
   no-var: error
   object-shorthand: error
   one-var:

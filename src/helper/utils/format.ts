@@ -14,7 +14,7 @@ export function strFormat(target: string, args: object) {
       let curr: any = args;
       // technically there could be some odd sequences we allow here, but our path regex ensures
       // that it'll be sensible, at the very least.
-      for (const tok of objPath.split(/[\.\[\]]/)) {
+      for (const tok of objPath.split(/[.[\]]/)) {
         try {
           curr = curr[tok];
         } catch {

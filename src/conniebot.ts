@@ -14,11 +14,11 @@ import {
   PartialMessageReaction,
   PartialUser,
   TextChannel,
-  User
+  User,
 } from "discord.js";
 
+import c from "config";
 import yaml from "js-yaml";
-import _ from "lodash";
 import process from "process";
 import XRegExp from "xregexp";
 
@@ -32,19 +32,19 @@ export type CommandCallback =
   (this: Conniebot, message: Message, ...args: string[]) => Promise<any>;
 
 export interface IConniebotConfig {
-  activeMessage?: string;
-  clientOptions: ClientOptions;
-  database: string;
-  deleteEmoji: string;
-  help: MessageEmbedOptions | string;
-  owner: string;
-  pingEmoji?: string;
-  prefix: string;
-  timeoutChars: number;
-  timeoutMessage: MessageEmbedOptions | string;
-  token: string;
-  x2iFiles: string;
-  invite: MessageEmbedOptions | string;
+  readonly activeMessage?: string;
+  readonly clientOptions: Readonly<ClientOptions>;
+  readonly database: string;
+  readonly deleteEmoji: string;
+  readonly help: Readonly<MessageEmbedOptions> | string;
+  readonly owner: string;
+  readonly pingEmoji?: string;
+  readonly prefix: string;
+  readonly timeoutChars: number;
+  readonly timeoutMessage: Readonly<MessageEmbedOptions> | string;
+  readonly token: string;
+  readonly x2iFiles: string;
+  readonly invite: Readonly<MessageEmbedOptions> | string;
 }
 
 export interface ICommands {
@@ -72,7 +72,7 @@ export default class Conniebot {
 
     this.config = config;
 
-    this.bot = new Client(_.cloneDeep(config.clientOptions));
+    this.bot = new Client(c.util.cloneDeep(config.clientOptions, 5));
     this.db = new ConniebotDatabase(this.config.database);
     this.commands = {};
 

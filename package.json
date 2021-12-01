@@ -20,14 +20,12 @@
     "bbrk24 (https://github.com/bbrk24)"
   ],
   "dependencies": {
-    "@types/config": "0.0.34",
+    "@types/config": "0.0.40",
     "@types/js-yaml": "^4.0.5",
-    "@types/lodash": "^4.14.177",
     "@types/node": ">=16.6.0",
-    "config": "^1.31.0",
+    "config": "^3.3.6",
     "discord.js": "^13.3.1",
     "js-yaml": "^4.1.0",
-    "lodash": "^4.17.21",
     "minimist": "^1.2.5",
     "npmlog": "^6.0.0",
     "sql-template-strings": "^2.2.2",
@@ -37,9 +35,9 @@
     "xregexp": "^5.1.0"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.4.0",
-    "@typescript-eslint/eslint-plugin-tslint": "^5.4.0",
-    "@typescript-eslint/parser": "^5.4.0",
+    "@typescript-eslint/eslint-plugin": "^5.5.0",
+    "@typescript-eslint/eslint-plugin-tslint": "^5.5.0",
+    "@typescript-eslint/parser": "^5.5.0",
     "eslint": "^8.3.0",
     "standard": "^16.0.4"
   },
