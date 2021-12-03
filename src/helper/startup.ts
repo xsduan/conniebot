@@ -18,7 +18,7 @@ export async function notifyRestart(bot: Client, db: ConniebotDatabase) {
   }
 
   try {
-    const timestamp = Math.round(new Date().getTime() / 1000);
+    const timestamp = Math.round(Date.now() / 1000);
     await channel.send(`Rebooted at <t:${timestamp}:D> <t:${timestamp}:T>.`);
     log("info", `Notified ${channel} (#${channel.name || "??"}) of restart.`);
   } catch (err) {
