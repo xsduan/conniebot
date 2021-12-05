@@ -102,25 +102,25 @@ conniebot:
 
   invite:
     # I'm not using >- or |-, since I want to manually specify where line breaks are.
-    "To add {user.username} to a server, click on the link below:\n
-    https://discordapp.com/oauth2/authorize?client_id={user.id}&scope=bot&permissions=274878188608\n
-    You may only add the bot to a server that you have the \"manage server\" permission in.\n
+    "To add {user.username} to a server, click on the link below:
+    \nhttps://discordapp.com/oauth2/authorize?client_id={user.id}&scope=bot&permissions=274878188608
+    \nYou may only add the bot to a server that you have the \"manage server\" permission in.
     \n
-    It will request the following permissions:\n
-    - Read messages\n
-    - Send messages in channels\n
-    - Send messages in threads\n
-    - Embed links\n
-    - Add reactions\n
-    - Use external emojis\n
+    \nIt will request the following permissions:
+    \n - Read messages
+    \n - Send messages in channels
+    \n - Send messages in threads
+    \n - Embed links
+    \n - Add reactions
+    \n - Use external emojis
     \n
-    In order for the bot to function, at least the \"read messages\" and one of the \"send messages\"
-    permissions must be enabled.\n
-    \"Embed links\" allows the invite to the testing server to have an embed. It is an optional
-    permission.\n
-    \"Add reactions\" is used for the {config.deleteEmoji} reaction to delete messages. It's not technically required,
-    but I highly recommend enabling it.\n
-    \"Use external emojis\" is only used for reacting with {config.pingEmoji} to @\\-mentions. This is
+    \nIn order for the bot to function, at least the \"read messages\" and one of the \"send messages\"
+    permissions must be enabled.
+    \n\"Embed links\" allows the invite to the testing server to have an embed. It is an optional
+    permission.
+    \n\"Add reactions\" is used for the 🗑️ reaction to delete messages. It's not technically required,
+    but I highly recommend enabling it.
+    \n\"Use external emojis\" is only used for reacting with {config.pingEmoji} to @\\-mentions. This is
     purely optional, and it doesn't do anything if \"add reactions\" is not enabled."
 
   # currently absolute timeout is 2048 because the largest field is 2048
