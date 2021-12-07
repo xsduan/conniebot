@@ -22,17 +22,18 @@ export type CompiledReplacer = [
  * Compiles a plain object into a regexp thing.
  *
  * @param entry Regex and replacement pair, or delimited match object.
+ * @param insensitive Whether the replacement should be case-insensitive or not.
  */
-export default function compileKey(entry: Replacer): CompiledReplacer {
+export default function compileKey(entry: Replacer, insensitive?: boolean): CompiledReplacer {
   if (Array.isArray(entry)) {
     const [key, val] = entry;
-    return [XRegExp(XRegExp.escape(key)), val, "all"];
+    return [XRegExp(XRegExp.escape(key), insensitive ? "i" : undefined), val, "all"];
   }
 
   // don't escape key
   if ("raw" in entry) {
     const [key, val] = entry.raw;
-    return [XRegExp(key), val, "all"];
+    return [XRegExp(key, insensitive ? "i" : undefined), val, "all"];
   }
 
   // is a dict
@@ -46,7 +47,7 @@ export default function compileKey(entry: Replacer): CompiledReplacer {
     m => XRegExp.replaceEach(
       // Apparently captures don't work the way they used to
       m.substring(left.length, m.length - right.length),
-      translations.map(compileKey)
+      translations.map(el => compileKey(el, insensitive))
     ),
     "all"];
 }

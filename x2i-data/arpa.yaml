@@ -1,0 +1,125 @@
+---
+name: ARPAbet
+help: 'https://en.wikipedia.org/wiki/ARPABET'
+insensitive: true
+prefix: a
+replacers:
+  - - AX-H
+    - ə̥
+  - - AXR
+    - ɚ
+  - - ENG
+    - ŋ̍
+  - - PAU
+    - (..)
+  - - AA
+    - ɑ
+  - - AE
+    - æ
+  - - AH
+    - ʌ
+  - - AO
+    - ɔ
+  - - AW
+    - aʊ
+  - - AX
+    - ə
+  - - AY
+    - aɪ
+  - - CH
+    - t͡ʃ
+  - - CL
+    - '̚'
+  - - DH
+    - ð
+  - - DX
+    - ɾ
+  - - EH
+    - ɛ
+  - - EL
+    - l̩
+  - - EM
+    - m̩
+  - - EN
+    - n̩
+  - - ER
+    - ɝ
+  - - EY
+    - eɪ
+  - - HV
+    - ɦ
+  - - IH
+    - ɪ
+  - - IX
+    - ᵻ
+  - - IY
+    - i
+  - - JH
+    - d͡ʒ
+  - - NG
+    - ŋ
+  - - NX
+    - ɾ̃
+  - - OW
+    - oʊ
+  - - OY
+    - ɔɪ
+  - - SH
+    - ʃ
+  - - TH
+    - θ
+  - - UH
+    - ʊ
+  - - UW
+    - u
+  - - UX
+    - ʉ
+  - - WH
+    - ʍ
+  - - ZH
+    - ʒ
+  - - B
+    - b
+  - - D
+    - d
+  - - F
+    - f
+  - - G
+    - ɡ
+  - - K
+    - k
+  - - L
+    - l
+  - - M
+    - m
+  - - 'N'
+    - 'n'
+  - - P
+    - p
+  - - Q
+    - ʔ
+  - - R
+    - ɹ
+  - - S
+    - s
+  - - T
+    - t
+  - - V
+    - v
+  - - W
+    - w
+  - - 'Y'
+    - j
+  - - Z
+    - z
+  - raw:
+    - HH?
+    - h
+  - - ' '
+    - ''
+  - - +
+    - '-'
+  - - /
+    - ' '
+  - - ':'
+    - ‖
