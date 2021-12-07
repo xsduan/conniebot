@@ -55,8 +55,8 @@ conniebot:
   help: |-
     **Commands**
 
-    **`x,z,p,r[phonetic]`** or **`x,z,p,r/phonemic/`**
-    Converts XSAMPA, ZSAMPA, APIE, or Praat phonetic notation. Hopefully.
+    **`{config.prefix}alphabets`**
+    List all available alphabets.
 
     **`{config.prefix}help`**
     Reply with this message.
@@ -66,12 +66,6 @@ conniebot:
 
     **`{config.prefix}ping`**
     Check whether the bot is alive.
-
-    **About these conversions**
-    X-SAMPA: <https://en.wikipedia.org/wiki/X-SAMPA>
-    Z-SAMPA: <https://web.archive.org/web/20200215002618/http://kneequickie.com/kq/Z-SAMPA>
-    APIE: <https://github.com/xsduan/conniebot/blob/master/apie-docs.md>
-    Praat notation: <https://www.fon.hum.uva.nl/praat/manual/Phonetic_symbols.html>
 
     found a bug or want to suggest a feature?
     github: <https://github.com/xsduan/conniebot>

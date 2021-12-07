@@ -1,5 +1,7 @@
 ---
-prefix: 'x'
+name: X-SAMPA
+help: 'https://en.wikipedia.org/wiki/X-SAMPA'
+prefix: x
 replacers:
   - - d`z`
     - ɖ͡ʐ

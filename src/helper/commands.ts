@@ -15,7 +15,6 @@ const commands: ICommands = {
    */
   async help(message) {
     const data = formatObject(this.config.help, { user: message.client.user, config: this.config });
-    console.log("x/help");
     return message.reply(
       typeof data === "string" ? data : { embeds: [new MessageEmbed(data)] }
     );
@@ -84,6 +83,13 @@ const commands: ICommands = {
     } catch {
       return message.reply("Unable to send DM.");
     }
+  },
+
+  /**
+   * List the known alphabets and their help pages.
+   */
+  async alphabets(message) {
+    return message.reply(this.alphabetList ?? "");
   },
 };
 

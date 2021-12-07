@@ -1,6 +1,8 @@
 ---
-prefix: 'p'
-format: '\*$1'
+name: APIE
+help: 'https://github.com/xsduan/conniebot/blob/master/apie-docs.md'
+prefix: p
+format: \*$1
 replacers:
   - - '"a:'
     - ā́

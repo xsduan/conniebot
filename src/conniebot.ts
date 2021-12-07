@@ -60,6 +60,7 @@ const oneDay = 1000 * 60 * 60 * 24;
 export default class Conniebot {
   public bot: Client;
   public db: ConniebotDatabase;
+  public alphabetList?: string;
   public readonly config: IConniebotConfig;
 
   private commands: ICommands;
@@ -115,6 +116,7 @@ export default class Conniebot {
     notifyNewErrors(this.bot, this.db);
 
     this.x2i = await this.loadKeys();
+    this.alphabetList = this.x2i.alphabetList;
     log("info", "Setup complete.");
     this.ready = true;
   }

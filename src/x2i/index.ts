@@ -3,8 +3,10 @@ import XRegExp from "xregexp";
 import compileKey, { CompiledReplacer, Replacer } from "./compile";
 
 export interface IReplaceSource {
-  prefix: string;
   format?: string;
+  help: string;
+  name: string;
+  prefix: string;
   replacers: Replacer[];
 }
 
@@ -14,6 +16,11 @@ interface IMatcher {
 }
 
 export default class X2IMatcher {
+  /**
+   * The alphabet list, for the x/alphabets command.
+   */
+  public alphabetList: string;
+
   /**
    * Create a callback that joins a result based on "template" string ($0 for global, $1, $2, ...)
    */
@@ -31,9 +38,13 @@ export default class X2IMatcher {
   private replacers: { [k: string]: IMatcher; } = {};
 
   constructor(matcherSources: IReplaceSource[] = []) {
+    this.alphabetList = "";
     for (const source of matcherSources) {
       this.register(source);
+      this.alphabetList += source.name + ": `" + source.prefix + "/text/` or `" + source.prefix +
+        "[text]`: <" + source.help + ">\n";
     }
+    this.alphabetList = this.alphabetList.trimEnd();
   }
 
   private decode(key: string, match: string, left: string, right: string) {
@@ -45,10 +56,10 @@ export default class X2IMatcher {
     return join(parts);
   }
 
-  public register({ prefix, format, replacers }: IReplaceSource) {
-    this.replacers[prefix] = {
-      join: format ? X2IMatcher.joinResult(format) : parts => parts.join(""),
-      keys: replacers.map(compileKey),
+  public register(notation: IReplaceSource) {
+    this.replacers[notation.prefix] = {
+      join: notation.format ? X2IMatcher.joinResult(notation.format) : parts => parts.join(""),
+      keys: notation.replacers.map(compileKey),
     };
   }
 

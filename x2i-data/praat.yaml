@@ -1,5 +1,7 @@
 ---
-prefix: 'r'
+name: Praat notation
+help: 'https://www.fon.hum.uva.nl/praat/manual/Phonetic_symbols.html'
+prefix: r
 replacers:
   - - \'^
     - ́
