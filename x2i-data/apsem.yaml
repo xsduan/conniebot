@@ -1,6 +1,6 @@
 ---
 name: APSem
-help: 'https://github.com/xsduan/conniebot/blob/dev/apsem-docs.md'
+help: 'https://github.com/xsduan/conniebot/blob/master/docs/apsem.md'
 prefix: sem
 format: \*$1
 replacers:

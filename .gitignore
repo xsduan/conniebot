@@ -59,7 +59,9 @@ jspm_packages/
 config/default.yaml
 *.sqlite
 
+# IDE and OS files
 .vscode
+.DS_Store
 
 # default "compiled" directories
 dist

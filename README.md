@@ -1,13 +1,16 @@
 # conniebot
 
+![discord] ![issues]
+
 really cool language bot
 
 ## what do
 
 it does various cool language things. currently:
 
-- xsampa & zsampa to ipa (try it out with `x[Eks "s{mp_h@ tu aI_^pi:Ei_^]`)
-- fun ascii pie notation (try it out with `p/g'hm"o:/`)
+- xsampa, zsampa, and arpabet to ipa (try it out with `x[Eks "s{mp_h@ tu "aI_^p_hi%eI_^]`)
+- fun ascii pie and psem notation (try it out with `p/g'hm"o:/`)
+- praat's phonetic notation (try it out with `r/pra\:ft no\hste\ic\sh\swn/`)
 
 lookie:
 
@@ -61,6 +64,8 @@ conniebot build script.
 
 discord support server: https://discord.gg/qgCG67knvs  
 
+[discord]: https://img.shields.io/discord/912393365541224479
+[issues]: https://img.shields.io/github/issues/xsduan/conniebot
 [application setup]: https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
 [oauth]: https://discordapp.com/developers/tools/oauth2-url-generator
 [node]: https://nodejs.org/
