@@ -1,0 +1,74 @@
+---
+name: APSem
+help: 'https://github.com/xsduan/conniebot/blob/dev/apsem-docs.md'
+prefix: sem
+format: \*$1
+replacers:
+  - - t-.
+    - ṯ̣
+  - - 'a:'
+    - ā
+  - - 'i:'
+    - ī
+  - - 'u:'
+    - ū
+  - - s1
+    - s₁
+  - - s2
+    - s₂
+  - - s3
+    - s₃
+  - - d-
+    - ḏ
+  - - t-
+    - ṯ
+  - - g.
+    - ġ
+  - - h.
+    - ḥ
+  - - k.
+    - ḳ
+  - - l.
+    - ṣ́
+  - - s.
+    - ṣ
+  - - t.
+    - ṭ
+  - - a
+    - a
+  - - b
+    - b
+  - - c
+    - ʻ
+  - - d
+    - d
+  - - g
+    - g
+  - - h
+    - h
+  - - i
+    - i
+  - - k
+    - k
+  - - l
+    - l
+  - - m
+    - m
+  - - 'n'
+    - 'n'
+  - - p
+    - p
+  - - r
+    - r
+  - - t
+    - t
+  - - u
+    - u
+  - - w
+    - w
+  - - x
+    - ḫ
+  - - 'y'
+    - 'y'
+  - - z
+    - z
