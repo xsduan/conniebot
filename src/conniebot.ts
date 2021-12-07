@@ -194,7 +194,13 @@ export default class Conniebot {
       const responseMessages = [];
       for (const response of responses) {
         const responseMessage = await message.reply(response);
-        responseMessage.react(this.config.deleteEmoji); // don't care about response
+        if (this.bot.user
+          && (message.channel instanceof TextChannel
+            ? message.channel.permissionsFor(this.bot.user)?.has("ADD_REACTIONS")
+            : true)
+        ) {
+          responseMessage.react(this.config.deleteEmoji);
+        }
         responseMessages.push(responseMessage);
       }
       await this.db.addMessage(message, responseMessages);
@@ -267,7 +273,9 @@ export default class Conniebot {
       this.config.pingEmoji && this.bot.user
       // - the user has the necessary permission
       && (message.channel instanceof TextChannel
-        ? message.channel.permissionsFor(this.bot.user)?.has("USE_EXTERNAL_EMOJIS")
+        ? message.channel
+          .permissionsFor(this.bot.user)
+          ?.has(["USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"])
         : true)
       // - the message mentions the user
       && message.mentions.has(this.bot.user)
