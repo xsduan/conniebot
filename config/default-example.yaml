@@ -133,3 +133,9 @@ conniebot:
   # @-mention it. This does not include roles, @everyone, or @here.
   # It's totally optional, though.
   pingEmoji: <:wugping:913268541023723570>
+
+  # If these are both present, they'll be used to post the server count to bots.gg.
+  botlistToken:
+    "000000000000000000000000000000000000.000000000000000000000000000000000000000000000000000000000\
+    00000000000000000.0000000000000000000000000000000000000000000"
+  botlistUrl: 'https://discord.bots.gg/api/v1/bots/{user.id}/stats'

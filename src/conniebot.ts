@@ -1,4 +1,5 @@
 import { readdir, readFile } from "fs";
+import { request } from "https";
 import path from "path";
 import { promisify } from "util";
 
@@ -33,6 +34,8 @@ export type CommandCallback =
 
 export interface IConniebotConfig {
   readonly activeMessage?: string;
+  readonly botlistToken?: string;
+  readonly botlistUrl?: string;
   readonly clientOptions: Readonly<ClientOptions>;
   readonly database: string;
   readonly deleteEmoji: string;
@@ -100,6 +103,16 @@ export default class Conniebot {
           this.updateReply(oldMsg, newMsg);
         }
       })
+      .on("guildCreate", () => {
+        if (this.ready) {
+          this.serverCountChanged();
+        }
+      })
+      .on("guildDelete", () => {
+        if (this.ready) {
+          this.serverCountChanged();
+        }
+      })
       .login(this.config.token);
 
     process.once("uncaughtException", this.panicResponsibly);
@@ -114,6 +127,10 @@ export default class Conniebot {
 
     notifyRestart(this.bot, this.db);
     notifyNewErrors(this.bot, this.db);
+
+    // fetch the server list and post the count to bots.gg
+    await this.bot.guilds.fetch();
+    this.serverCountChanged();
 
     this.x2i = await this.loadKeys();
     this.alphabetList = this.x2i.alphabetList;
@@ -256,6 +273,31 @@ export default class Conniebot {
         newMessages.push(newReply);
       }
       this.db.addMessage(newMsg, newMessages);
+    }
+  }
+
+  private async serverCountChanged() {
+    // send server count to bots.gg
+    if (this.config.botlistToken && this.config.botlistUrl && this.bot.user) {
+
+      const req = request(
+        formatObject(
+          this.config.botlistUrl,
+          { user: this.bot.user, config: this.config },
+        ) as string,
+        {
+          headers: {
+            Authorization: this.config.botlistToken,
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        }
+      );
+
+      req.on("error", err => log("error", "Failed to post server count:", err));
+
+      req.write(`{"guildCount":${this.bot.guilds.cache.size}}`);
+      req.end();
     }
   }
 
