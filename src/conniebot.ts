@@ -5,6 +5,8 @@ import { promisify } from "util";
 import {
   Client,
   ClientOptions,
+  DiscordAPIError,
+  GuildMemberResolvable,
   Message,
   MessageEmbed,
   MessageEmbedOptions,
@@ -13,7 +15,8 @@ import {
   PartialMessage,
   PartialMessageReaction,
   PartialUser,
-  TextChannel,
+  Permissions,
+  RoleResolvable,
   User,
 } from "discord.js";
 
@@ -194,13 +197,7 @@ export default class Conniebot {
       const responseMessages = [];
       for (const response of responses) {
         const responseMessage = await message.reply(response);
-        if (this.bot.user
-          && (message.channel instanceof TextChannel
-            ? message.channel.permissionsFor(this.bot.user)?.has("ADD_REACTIONS")
-            : true)
-        ) {
-          responseMessage.react(this.config.deleteEmoji);
-        }
+        this.reactIfAllowed(responseMessage, this.config.deleteEmoji);
         responseMessages.push(responseMessage);
       }
       await this.db.addMessage(message, responseMessages);
@@ -252,10 +249,37 @@ export default class Conniebot {
       const newMessages: Message[] = [];
       for (let i = replies.length; i < responses.length; ++i) {
         const newReply = await newMsg.reply(responses[i]);
-        newReply.react(this.config.deleteEmoji);
+        this.reactIfAllowed(newReply, this.config.deleteEmoji);
         newMessages.push(newReply);
       }
       this.db.addMessage(newMsg, newMessages);
+    }
+  }
+
+  private async reactIfAllowed(message: Message, emoji: string) {
+    const isExternal = emoji.length > 1;
+    if (this.bot.user &&  (
+      (
+        // @ts-expect-error It complains that `permissionsFor` may not exist. Guess what, that's why
+        // the `?.` and typecast are there.
+        message.channel.permissionsFor as (
+          (member: GuildMemberResolvable | RoleResolvable, checkAdmin?: boolean) =>
+          Permissions | null
+        ) | undefined
+      )?.(this.bot.user)?.has(
+        isExternal ? ["ADD_REACTIONS", "USE_EXTERNAL_EMOJIS"] : "ADD_REACTIONS"
+      ) ?? true
+    )) {
+      try {
+        await message.react(emoji);
+      } catch (e) {
+        if (e instanceof DiscordAPIError) {
+          log(
+            "error:react",
+            `${message.guild ? message.guild.name + ": " : ""}: Unable to react with ${emoji}`
+          );
+        } else throw e;
+      }
     }
   }
 
@@ -271,12 +295,6 @@ export default class Conniebot {
       // check that...
       // - there is a user and emoji to make the reaction
       this.config.pingEmoji && this.bot.user
-      // - the user has the necessary permission
-      && (message.channel instanceof TextChannel
-        ? message.channel
-          .permissionsFor(this.bot.user)
-          ?.has(["USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"])
-        : true)
       // - the message mentions the user
       && message.mentions.has(this.bot.user)
       // - the mention isn't via a reply
@@ -284,7 +302,7 @@ export default class Conniebot {
       // - the mention isn't @here or @everyone
       && !message.mentions.everyone
     ) {
-      await message.react(this.config.pingEmoji);
+      this.reactIfAllowed(message, this.config.pingEmoji)
     }
 
     if (await this.sendX2iResponse(message)) return;
