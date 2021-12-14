@@ -293,8 +293,12 @@ export default class Conniebot {
 
       req.on("error", err => log("error", "Failed to post server count:", err));
 
-      req.write(`{"guildCount":${this.bot.guilds.cache.size}}`);
+      const serverCount = this.bot.guilds.cache.size;
+
+      req.write(`{"guildCount":${serverCount}}`);
       req.end();
+
+      log("info", `Server count is now ${serverCount}.`)
     }
   }
 
