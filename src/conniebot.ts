@@ -186,7 +186,7 @@ export default class Conniebot {
     if (!toks) return;
     const [, cmd, args] = toks;
 
-    if (!(cmd in this.commands)) return;
+    if (!this.commands.hasOwnProperty(cmd)) return;
     const cb = this.commands[cmd].bind(this);
 
     try {
@@ -303,16 +303,10 @@ export default class Conniebot {
   }
 
   private async reactIfAllowed(message: Message, emoji: string) {
-    const isExternal = emoji.length > 1;
-    if (this.bot.user &&  (
-      (
-        // @ts-expect-error It complains that `permissionsFor` may not exist. Guess what, that's why
-        // the `?.` and typecast are there.
-        message.channel.permissionsFor as (
-          (member: GuildMemberResolvable | RoleResolvable, checkAdmin?: boolean) =>
-          Permissions | null
-        ) | undefined
-      )?.(this.bot.user)?.has(
+    const isExternal = emoji.length > 1 && emoji.startsWith("<") && emoji.endsWith(">");
+    if (this.bot.user && (
+      // @ts-expect-error The thing it complains about is why the `?.` is there
+      message.channel.permissionsFor?.(this.bot.user)?.has(
         isExternal ? ["ADD_REACTIONS", "USE_EXTERNAL_EMOJIS"] : "ADD_REACTIONS"
       ) ?? true
     )) {
