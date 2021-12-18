@@ -57,10 +57,10 @@ export async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
 /**
  * Update activity of bot.
  */
-export async function updateActivity(bot: Client, activeMessage: string) {
+export function updateActivity(bot: Client, activeMessage: string) {
   log("info", "Changing game status: \x1b[95m%s\x1b[0m...", activeMessage);
   try {
-    await bot?.user?.setActivity(activeMessage);
+    bot?.user?.setActivity(activeMessage);
     log("info", "Set game status.");
   } catch (err) {
     log("error", `Status couldn't be set. ${err}`);

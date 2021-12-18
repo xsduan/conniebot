@@ -20,7 +20,7 @@ function splitPrefix(status: string): [string, string] {
   if (sepIndex === -1) {
     return [status, ""];
   }
-  return [status.substr(0, sepIndex), status.substr(sepIndex + 1)];
+  return [status.substring(0, sepIndex), status.substring(sepIndex + 1)];
 }
 
 /**
@@ -63,5 +63,5 @@ export async function sendMessage(msg: string, channel: TextChannel) {
  */
 export function messageSummary({ guild, content }: Message) {
   const guildName = guild ? guild.name : "unknown guild";
-  return `${guildName}: ${content.substr(0, 100)}`;
+  return `${guildName}: ${content.substring(0, 100)}`;
 }

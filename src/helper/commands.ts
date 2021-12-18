@@ -80,11 +80,12 @@ const commands: ICommands = {
     try {
       if (message.channel.type === "DM") {
         // Already in DMs, no need to explicitly say "DM sent"
-        message.reply(data);
+        await message.reply(data);
         return "DM sent."
       } else {
         await message.author.send(data);
-        return message.reply("DM sent.");
+        // `return await` is only necessary inside of `try`
+        return await message.reply("DM sent.");
       }
     } catch {
       return message.reply("Unable to send DM.");
@@ -95,9 +96,7 @@ const commands: ICommands = {
    * List the known alphabets and their help pages.
    */
   async alphabets(message) {
-    if (this.alphabetList) {
-      return message.reply(this.alphabetList);
-    }
+    if (this.alphabetList) return message.reply(this.alphabetList);
   },
 };
 

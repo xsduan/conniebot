@@ -7,7 +7,6 @@ import {
   Client,
   ClientOptions,
   DiscordAPIError,
-  GuildMemberResolvable,
   Message,
   MessageEmbed,
   MessageEmbedOptions,
@@ -16,8 +15,6 @@ import {
   PartialMessage,
   PartialMessageReaction,
   PartialUser,
-  Permissions,
-  RoleResolvable,
   User,
 } from "discord.js";
 
@@ -316,7 +313,7 @@ export default class Conniebot {
         if (e instanceof DiscordAPIError) {
           log(
             "error:react",
-            `${message.guild ? message.guild.name + ": " : ""}: Unable to react with ${emoji}`
+            `${message.guild?.name ?? "unknown guild"}: Unable to react with ${emoji}`
           );
         } else throw e;
       }
