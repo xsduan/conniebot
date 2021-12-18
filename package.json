@@ -31,21 +31,21 @@
     "sql-template-strings": "^2.2.2",
     "sqlite": "^4.0.23",
     "sqlite3": "https://github.com/mapbox/node-sqlite3/tarball/eb7708a2f10de9009459db230313c5994b9fd719",
-    "typescript": "^4.5.2",
+    "typescript": "^4.5.4",
     "xregexp": "^5.1.0"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.5.0",
-    "@typescript-eslint/eslint-plugin-tslint": "^5.5.0",
-    "@typescript-eslint/parser": "^5.5.0",
-    "eslint": "^8.4.0",
+    "@typescript-eslint/eslint-plugin": "^5.7.0",
+    "@typescript-eslint/eslint-plugin-tslint": "^5.7.0",
+    "@typescript-eslint/parser": "^5.7.0",
+    "eslint": "^8.5.0",
     "standard": "^16.0.4"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.5",
-    "erlpack": "^0.1.3",
+    "erlpack": "~0.1.3",
     "utf-8-validate": "^5.0.7",
-    "zlib-sync": "^0.1.7"
+    "zlib-sync": "~0.1.7"
   },
   "nodemonConfig": {
     "ignore": [
