@@ -130,7 +130,7 @@ export default class X2IMatcher {
 
 # must be followed by a white space or punctuation (lookahead)
 (?=$|[^\\pL\\pN])
-      `, "giusx")
+      `, "giusx");
     }
 
     XRegExp.forEach(content, this.inlineRegex, match => {
@@ -155,7 +155,7 @@ export default class X2IMatcher {
           results.push(converted);
         }
       }
-    })
+    });
 
     return results;
   }

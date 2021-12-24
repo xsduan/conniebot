@@ -166,7 +166,7 @@ export default class Conniebot {
     if (exit) {
       process.exit(1);
     }
-  }
+  };
 
   /**
    * Looks for a reply message.
@@ -295,7 +295,7 @@ export default class Conniebot {
       req.write(`{"guildCount":${serverCount}}`);
       req.end();
 
-      log("info", `Server count is now ${serverCount}.`)
+      log("info", `Server count is now ${serverCount}.`);
     }
   }
 
@@ -339,12 +339,12 @@ export default class Conniebot {
       // - the mention isn't @here or @everyone
       && !message.mentions.everyone
     ) {
-      this.reactIfAllowed(message, this.config.pingEmoji)
+      this.reactIfAllowed(message, this.config.pingEmoji);
     }
 
     if (await this.sendX2iResponse(message)) return;
     await this.command(message);
-  }
+  };
 
   /**
    * Acts for a reaction to potentially delete a message.
@@ -362,7 +362,7 @@ export default class Conniebot {
 
     await reaction.message.delete();
     await this.db.deleteMessage(reaction.message);
-  }
+  };
 
   /**
    * Register multiple commands at once.

@@ -1,8 +1,23 @@
-import { MessageEmbed, MessagePayload } from "discord.js";
+import { Message, MessageEmbed, MessageOptions } from "discord.js";
 
 import { ICommands } from "../conniebot";
 import { log } from "./utils";
 import { formatObject } from "./utils/format";
+
+const dmReply = async (message: Message, data: string | MessageOptions) => {
+  try {
+    if (message.channel.type === "DM") {
+      // Already in DMs, no need to explicitly say "DM sent"
+      await message.reply(data);
+      return "DM sent.";
+    } else {
+      await message.author.send(data);
+      return message.reply("DM sent.");
+    }
+  } catch {
+    return message.reply("Unable to send DM.");
+  }
+};
 
 /**
  * Extension methods for different reply commands.
@@ -77,19 +92,7 @@ const commands: ICommands = {
       this.config.invite,
       { user: message.client.user, config: this.config }
     );
-    try {
-      if (message.channel.type === "DM") {
-        // Already in DMs, no need to explicitly say "DM sent"
-        await message.reply(data);
-        return "DM sent."
-      } else {
-        await message.author.send(data);
-        // `return await` is only necessary inside of `try`
-        return await message.reply("DM sent.");
-      }
-    } catch {
-      return message.reply("Unable to send DM.");
-    }
+    return dmReply(message, data);
   },
 
   /**
