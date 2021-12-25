@@ -10,13 +10,13 @@ const dmReply = async (message: Message, data: string | MessageOptions) => {
       // Already in DMs, no need to explicitly say "DM sent"
       await message.reply(data);
       return "DM sent.";
-    } else {
-      await message.author.send(data);
-      return message.reply("DM sent.");
     }
+
+    await message.author.send(data);
   } catch {
     return message.reply("Unable to send DM.");
   }
+  return message.reply("DM sent.");
 };
 
 /**
