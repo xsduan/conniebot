@@ -98,7 +98,7 @@ const commands: ICommands = {
   /**
    * List the known alphabets and their help pages.
    */
-  async alphabets(message) {
+  async alpha(message) {
     if (this.alphabetList) return message.reply(this.alphabetList);
   },
 };

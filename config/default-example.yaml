@@ -55,7 +55,7 @@ conniebot:
   help: |-
     **Commands**
 
-    **`{config.prefix}alphabets`**
+    **`{config.prefix}alpha`**
     List all available alphabets.
 
     **`{config.prefix}help`**
