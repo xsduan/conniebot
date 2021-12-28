@@ -119,8 +119,8 @@ export default class X2IMatcher {
 \\n?\`\`\`\\n
 
 # ($3) body
-(.*)
-# no need to worry about leading/trailing whitespace
+((?:\`{0,2}[^\`])*)
+# don't allow three backticks in a row
 
 # ending table
 \\n?\`\`\`\\n?
