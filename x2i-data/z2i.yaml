@@ -3,6 +3,8 @@ name: Z-SAMPA
 help: 'https://web.archive.org/web/20200215002618/http://kneequickie.com/kq/Z-SAMPA'
 prefix: z
 replacers:
+  - - _=\
+    - "˭"
   - - O\
     - ʘ
   - - p_!
@@ -287,8 +289,6 @@ replacers:
     - ̌
   - - _;
     - ͋
-  - - _=\
-    - "˭"
   - - _=
     - ̩
   - - "="
