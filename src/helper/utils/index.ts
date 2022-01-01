@@ -1,5 +1,5 @@
 import c from "config";
-import { Channel, Message, TextChannel } from "discord.js";
+import { AnyChannel, Message, TextChannel } from "discord.js";
 
 import npmlog from "npmlog";
 
@@ -36,12 +36,12 @@ export function log(status: string, message: string, ...args: any[]) {
 }
 
 /**
- * Check if channel is a TextChannel. Technically it can be a guild, dm or group dm channel, but
+ * Check if channel is a TextChannel. Technically it can be a guild or dm channel, but
  * the default discord.js type for a text based channel is not actually a type, so we have to have
  * this workaround.
  */
-export function isTextChannel(channel: Channel): channel is TextChannel {
-  return ["DM", "GROUP_DM", "GUILD_TEXT", "GUILD_PUBLIC_THREAD"].includes(channel.type)
+export function isTextChannel(channel: AnyChannel): channel is TextChannel {
+  return ["DM", "GUILD_TEXT", "GUILD_PUBLIC_THREAD"].includes(channel.type)
     && "send" in channel;
 }
 

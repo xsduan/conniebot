@@ -42,6 +42,8 @@ export default class X2IMatcher {
   constructor(matcherSources: IReplaceSource[] = []) {
     this.alphabetList = "";
     for (const source of matcherSources) {
+      // an empty file ends up being `undefined`
+      if (!source) continue;
       this.register(source);
       this.alphabetList += source.name + ": `" + source.prefix + "/text/` or `" + source.prefix +
         "[text]`: <" + source.help + ">\n";
