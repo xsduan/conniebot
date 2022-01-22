@@ -31,14 +31,14 @@
     "sql-template-strings": "^2.2.2",
     "sqlite": "^4.0.23",
     "sqlite3": "https://github.com/mapbox/node-sqlite3/tarball/eb7708a2f10de9009459db230313c5994b9fd719",
-    "typescript": "^4.5.4",
+    "typescript": "^4.5.5",
     "xregexp": "^5.1.0"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.9.1",
-    "@typescript-eslint/eslint-plugin-tslint": "^5.9.1",
-    "@typescript-eslint/parser": "^5.9.1",
-    "eslint": "^8.6.0",
+    "@typescript-eslint/eslint-plugin": "^5.10.0",
+    "@typescript-eslint/eslint-plugin-tslint": "^5.10.0",
+    "@typescript-eslint/parser": "^5.10.0",
+    "eslint": "^8.7.0",
     "standard": "^16.0.4"
   },
   "optionalDependencies": {
