@@ -1,5 +1,5 @@
 import c from "config";
-import { AnyChannel, Message, TextChannel } from "discord.js";
+import { AnyChannel, Client, Message, MessageOptions, TextChannel } from "discord.js";
 
 import npmlog from "npmlog";
 
@@ -65,3 +65,17 @@ export function messageSummary({ guild, content }: Message) {
   const guildName = guild ? guild.name : "unknown guild";
   return `${guildName}: ${content.substring(0, 100)}`;
 }
+
+/**
+ * Reply to a message, using Message#reply if allowed, or Channel#send otherwise.
+ * @param message The message to reply to
+ * @param bot The user to reply as
+ * @param data The data to sen
+ */
+export const reply = async (message: Message, bot: Client, data: string | MessageOptions) => {
+  // @ts-expect-error The thing it complains about is why the `?.` is there
+  if (message.channel.permissionsFor?.(bot.user)?.has("READ_MESSAGE_HISTORY") ?? true) {
+    return message.reply(data);
+  }
+  return message.channel.send(data);
+};

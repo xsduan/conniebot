@@ -1,10 +1,10 @@
-import { Message, MessageEmbed, MessageOptions } from "discord.js";
+import { Client, Message, MessageEmbed, MessageOptions } from "discord.js";
 
 import { ICommands } from "../conniebot";
-import { log } from "./utils";
+import { log, reply } from "./utils";
 import { formatObject } from "./utils/format";
 
-const dmReply = async (message: Message, data: string | MessageOptions) => {
+const dmReply = async (message: Message, bot: Client, data: string | MessageOptions) => {
   try {
     if (message.channel.type === "DM") {
       // Already in DMs, no need to explicitly say "DM sent"
@@ -14,9 +14,9 @@ const dmReply = async (message: Message, data: string | MessageOptions) => {
 
     await message.author.send(data);
   } catch {
-    return message.reply("Unable to send DM.");
+    return reply(message, bot, "Unable to send DM.");
   }
-  return message.reply("DM sent.");
+  return reply(message, bot, "DM sent.");
 };
 
 /**
@@ -30,8 +30,10 @@ const commands: ICommands = {
    */
   async help(message) {
     const data = formatObject(this.config.help, { user: message.client.user, config: this.config });
-    return message.reply(
-      typeof data === "string" ? data : { embeds: [new MessageEmbed(data)] }
+    return reply(
+      message,
+      this.bot,
+      typeof data === "string" ? data : { embeds: [new MessageEmbed(data)] },
     );
   },
 
@@ -42,11 +44,11 @@ const commands: ICommands = {
    */
   async notif(message, event) {
     if (message.author.id !== this.config.owner) {
-      return message.reply("Sorry, but you don't have permissions to do that.");
+      return reply(message, this.bot, "Sorry, but you don't have permissions to do that.");
     }
 
     if (!event) {
-      return message.reply("Sorry, you need to specify an event.");
+      return reply(message, this.bot, "Sorry, you need to specify an event.");
     }
 
     let returnMessage: string;
@@ -59,7 +61,7 @@ const commands: ICommands = {
       returnMessage = "Something went wrong while trying to set notifications.";
     }
 
-    return message.reply(returnMessage);
+    return reply(message, this.bot, returnMessage);
   },
 
   /**
@@ -73,7 +75,7 @@ const commands: ICommands = {
     const elapsedMsg = `${Date.now() - created} ms`;
 
     // wait for send
-    const pingReturn = await message.reply(`I'm alive! (${elapsedMsg})`);
+    const pingReturn = await reply(message, this.bot, `I'm alive! (${elapsedMsg})`);
     const pingMsg = Array.isArray(pingReturn) ? pingReturn[0] : pingReturn;
     const roundtripMsg = `${Date.now() - created} ms`;
 
@@ -92,14 +94,14 @@ const commands: ICommands = {
       this.config.invite,
       { user: message.client.user, config: this.config }
     );
-    return dmReply(message, data);
+    return dmReply(message, this.bot, data);
   },
 
   /**
    * List the known alphabets and their help pages.
    */
   async alpha(message) {
-    if (this.alphabetList) return message.reply(this.alphabetList);
+    if (this.alphabetList) return reply(message, this.bot, this.alphabetList);
   },
 };
 

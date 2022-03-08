@@ -35,10 +35,10 @@
     "xregexp": "^5.1.0"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.12.0",
-    "@typescript-eslint/eslint-plugin-tslint": "^5.12.0",
-    "@typescript-eslint/parser": "^5.12.0",
-    "eslint": "^8.9.0",
+    "@typescript-eslint/eslint-plugin": "^5.14.0",
+    "@typescript-eslint/eslint-plugin-tslint": "^5.14.0",
+    "@typescript-eslint/parser": "^5.14.0",
+    "eslint": "^8.10.0",
     "standard": "^16.0.4"
   },
   "optionalDependencies": {
@@ -46,7 +46,7 @@
     "erlpack": "~0.1.4",
     "utf-8-validate": "^5.0.8",
     "zlib-sync": "~0.1.7",
-    "encoding": "~0.1.0"
+    "encoding": "~0.1.13"
   },
   "nodemonConfig": {
     "ignore": [

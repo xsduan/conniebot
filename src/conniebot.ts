@@ -25,7 +25,7 @@ import XRegExp from "xregexp";
 
 import ConniebotDatabase from "./helper/db-management";
 import { notifyNewErrors, notifyRestart, updateActivity } from "./helper/startup";
-import { log, messageSummary } from "./helper/utils";
+import { log, messageSummary, reply } from "./helper/utils";
 import { formatObject } from "./helper/utils/format";
 import X2IMatcher, { IReplaceSource } from "./x2i";
 
@@ -210,7 +210,7 @@ export default class Conniebot {
     try {
       const responseMessages = [];
       for (const response of responses) {
-        const responseMessage = await message.reply(response);
+        const responseMessage = await reply(message, this.bot, response);
         this.reactIfAllowed(responseMessage, this.config.deleteEmoji);
         responseMessages.push(responseMessage);
       }
