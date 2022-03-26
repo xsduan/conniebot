@@ -97,7 +97,7 @@ conniebot:
   invite:
     # I'm not using >- or |-, since I want to manually specify where line breaks are.
     "To add {user.username} to a server, click on the link below:
-    \nhttps://discordapp.com/oauth2/authorize?client_id={user.id}&scope=bot&permissions=274878188608
+    \nhttps://discordapp.com/oauth2/authorize?client_id={user.id}&scope=bot&permissions=274878254144
     \nYou may only add the bot to a server that you have the \"manage server\" permission in.
     \n
     \nIt will request the following permissions:
@@ -105,6 +105,7 @@ conniebot:
     \n - Send messages in channels
     \n - Send messages in threads
     \n - Embed links
+    \n - Read message history
     \n - Add reactions
     \n - Use external emojis
     \n
@@ -112,6 +113,9 @@ conniebot:
     permissions must be enabled.
     \n\"Embed links\" allows the invite to the testing server to have an embed. It is an optional
     permission.
+    \n\"Read message history\" allows the bot to use the Discord reply feature to indicate which message
+    it's responding to. Without this permission, the bot will send messages normally. It is also
+    optional.
     \n\"Add reactions\" is used for the {config.deleteEmoji} reaction to delete messages. It's not
     technically required, but I highly recommend enabling it.
     \n\"Use external emojis\" is only used for reacting with {config.pingEmoji} to @\\-mentions. This is
