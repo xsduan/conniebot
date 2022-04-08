@@ -41,6 +41,7 @@ overrides:
         - double
         - allowTemplateLiterals: true
           avoidEscape: true
+      '@typescript-eslint/return-await': error
       '@typescript-eslint/semi': error
       '@typescript-eslint/tslint/config':
         - error

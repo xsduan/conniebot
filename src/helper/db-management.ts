@@ -186,12 +186,12 @@ export default class ConniebotDatabase {
   }
 
   public async getReplies(message: Message | PartialMessage) {
-    return (await (await this.db).all<{ message: string }[]>(
+    return ((await this.db).all<{ message: string }[]>(
       SQL`SELECT message FROM messageAuthors WHERE original = ${message.id}`
     ));
   }
 
-  public async deleteMessage(message: Message | PartialMessage) {
+  public async deleteMessage(message: { id: string }) {
     return (await this.db).run(SQL`DELETE FROM messageAuthors WHERE message = ${message.id}`);
   }
 }

@@ -26,7 +26,7 @@ import XRegExp from "xregexp";
 import ConniebotDatabase from "./helper/db-management";
 import { notifyNewErrors, notifyRestart, updateActivity } from "./helper/startup";
 import { log, messageSummary, reply } from "./helper/utils";
-import { formatObject } from "./helper/utils/format";
+import { formatObject, strFormat } from "./helper/utils/format";
 import X2IMatcher, { IReplaceSource } from "./x2i";
 
 export type CommandCallback =
@@ -250,7 +250,25 @@ export default class Conniebot {
     const responses = await this.createX2iResponse(newMsg);
 
     await Promise.all(replies.map(async (el, i) => {
-      const message = await newMsg.channel.messages.fetch(el.message);
+      let message: Message;
+      try {
+        message = await newMsg.channel.messages.fetch(el.message);
+      } catch (e) {
+        if (e instanceof DiscordAPIError) {
+          if (e.code === 10008) {
+            // message already deleted
+            await this.db.deleteMessage({ id: el.message });
+          }
+
+          log(
+            "error:edit",
+            `${newMsg.guild?.name ?? "unknown guild"}: Unable to edit message ${el.message}`
+          );
+          return;
+        }
+        throw e;
+      }
+
       if (!responses[i]) {
         await message.delete();
         await this.db.deleteMessage(message);
@@ -275,10 +293,10 @@ export default class Conniebot {
     if (this.config.botlistToken && this.config.botlistUrl && this.bot.user) {
 
       const req = request(
-        formatObject(
+        strFormat(
           this.config.botlistUrl,
           { user: this.bot.user, config: this.config },
-        ) as string,
+        ),
         {
           headers: {
             Authorization: this.config.botlistToken,
@@ -304,7 +322,9 @@ export default class Conniebot {
     if (this.bot.user && (
       // @ts-expect-error The thing it complains about is why the `?.` is there
       message.channel.permissionsFor?.(this.bot.user)?.has(
-        isExternal ? ["ADD_REACTIONS", "USE_EXTERNAL_EMOJIS"] : "ADD_REACTIONS"
+        isExternal
+          ? ["ADD_REACTIONS", "USE_EXTERNAL_EMOJIS", "READ_MESSAGE_HISTORY"]
+          : ["ADD_REACTIONS", "READ_MESSAGE_HISTORY"]
       ) ?? true
     )) {
       try {
