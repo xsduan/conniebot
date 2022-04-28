@@ -18,8 +18,7 @@ lookie:
 
 ## setup
 
-Note: after v3.6.0 is released, `master` will be the live branch, and all active development will
-take place on `dev`.
+Note: `master` is the live branch; all active development will take place on `dev`.
 
 ### pre flight checklist
 
@@ -63,6 +62,7 @@ conniebot build script.
 ### community
 
 discord support server: https://discord.gg/qgCG67knvs  
+bots.gg page: https://discord.bots.gg/bots/911674351248613426
 
 [discord]: https://img.shields.io/discord/912393365541224479
 [issues]: https://img.shields.io/github/issues/xsduan/conniebot

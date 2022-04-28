@@ -31,7 +31,7 @@ conniebot:
       - MESSAGE
       - CHANNEL
       - REACTION
-    intents: 
+    intents:
       - DIRECT_MESSAGES
       - DIRECT_MESSAGE_REACTIONS
       - GUILD_MESSAGES
@@ -113,9 +113,9 @@ conniebot:
     permissions must be enabled.
     \n\"Embed links\" allows the invite to the testing server to have an embed. It is an optional
     permission.
-    \n\"Read message history\" allows the bot to use the Discord reply feature to indicate which message
-    it's responding to. Without this permission, the bot will send messages normally. It is also
-    optional.
+    \n\"Read message history\" is required to self-react, so for the same reasons as \"add reactions\",
+    it is recommended. It also allows the bot to use the Discord reply feature to indicate which message
+    it's responding to. 
     \n\"Add reactions\" is used for the {config.deleteEmoji} reaction to delete messages. It's not
     technically required, but I highly recommend enabling it.
     \n\"Use external emojis\" is only used for reacting with {config.pingEmoji} to @\\-mentions. This is
