@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    // NodeJS 16.4.0 - 16.10.0 has nearly full ES2021 support, only lacking Atomics.wake and
-    // proxying of RegExp#flags.
     "target": "es2021",
     "module": "commonjs",
     "strict": true,
