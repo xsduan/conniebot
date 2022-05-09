@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS notifs (
+    event VARCHAR(50) PRIMARY KEY,
+    channel TEXT NOT NULL
+);

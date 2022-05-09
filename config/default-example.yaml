@@ -24,6 +24,7 @@ conniebot:
   # owner id, only responds to admin commands if author is this person.
   owner: '499681310592335892'
   database: data/db.sqlite # relative to cwd
+  migrations: migrations/*.sql # glob pattern, relative to cwd
 
   # discord.js config
   clientOptions:

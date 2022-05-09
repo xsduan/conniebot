@@ -1,3 +1,4 @@
+import Postgrator from "postgrator";
 import SQL from "sql-template-strings";
 import { Database, open } from "sqlite";
 import sqlite3 from "sqlite3";
@@ -78,47 +79,40 @@ export default class ConniebotDatabase {
   /**
    * @param dbFile Filename of database file. Should be a `.sqlite` file. Relative to command
    * directory.
+   * @param migrationPattern Glob pattern to match all migration files. Relative to command
+   * directory.
    */
-  constructor(dbFile: string) {
+  constructor(dbFile: string, migrationPattern: string) {
     if (!dbFile.endsWith(".sqlite")) {
       log("warn", "Database file is not marked as `.sqlite`.");
     }
 
-    this.db = this.init(dbFile);
+    this.db = this.init(dbFile, migrationPattern);
   }
 
   /**
    * Open a file and initialize the tables if they haven't already been created.
    *
    * @param filename Database filename. Relative to command directory.
+   * @param migrationPattern Glob pattern to match all migration files. Relative to command
+   * directory.
    */
-  private async init(filename: string) {
+  private async init(filename: string, migrationPattern: string) {
     const db = await open({ filename, driver: sqlite3.Database });
 
-    await Promise.all([
-      db.run(`CREATE TABLE IF NOT EXISTS notifs (
-        event VARCHAR(50) PRIMARY KEY,
-        channel TEXT NOT NULL
-      )`),
-      db.run(`CREATE TABLE IF NOT EXISTS unsentErrors (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        date DATETIME NOT NULL,
-        stacktrace TEXT DEFAULT NULL,
-        message TEXT DEFAULT NULL
-      );`),
-      db.run(`CREATE TABLE IF NOT EXISTS sentErrors (
-        id INTEGER PRIMARY KEY,
-        date DATETIME NOT NULL,
-        dateSent DATETIME NOT NULL,
-        stacktrace TEXT DEFAULT NULL,
-        message TEXT DEFAULT NULL
-      );`),
-      db.run(`CREATE TABLE IF NOT EXISTS messageAuthors (
-        message VARCHAR(50) PRIMARY KEY,
-        author VARCHAR(50),
-        original VARCHAR(50)
-      );`),
-    ]);
+    const pg = new Postgrator({
+      migrationPattern,
+      driver: "sqlite3",
+      async execQuery(query) {
+        return { rows: await db.all(query) };
+      },
+    });
+
+    pg.on("migration-started", migration => {
+      log("info", `Running ${migration.filename}...`);
+    });
+
+    await pg.migrate();
 
     return db;
   }
@@ -126,7 +120,7 @@ export default class ConniebotDatabase {
   public async getChannel(event: string) {
     const db = await this.db;
     const row = await db.get<INotifRow>(
-      SQL`SELECT event, channel FROM notifs WHERE event = ${event.substr(0, 50)}`,
+      SQL`SELECT event, channel FROM notifs WHERE event = ${event.substring(0, 50)}`,
     );
 
     return row?.channel;
@@ -134,7 +128,7 @@ export default class ConniebotDatabase {
 
   public async setChannel(event: string, channel: string) {
     return (await this.db).run(
-      SQL`INSERT INTO notifs(event, channel) VALUES(${event.substr(0, 50)}, ${channel})
+      SQL`INSERT INTO notifs(event, channel) VALUES(${event.substring(0, 50)}, ${channel})
         ON CONFLICT(event) DO UPDATE SET channel=excluded.channel`,
     );
   }
