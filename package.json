@@ -57,5 +57,6 @@
   "engines": {
     "node": ">=16.6.0"
   },
-  "engineStrict": true
+  "engineStrict": true,
+  "type": "module"
 }

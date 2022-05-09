@@ -3,7 +3,7 @@ import { Database, open } from "sqlite";
 import sqlite3 from "sqlite3";
 
 import { Message, PartialMessage } from "discord.js";
-import { log } from "./utils";
+import { log } from "./utils/index.js";
 
 /**
  * Key-value table of events.

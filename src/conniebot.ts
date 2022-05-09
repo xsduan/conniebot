@@ -1,6 +1,6 @@
 import { readdir, readFile } from "fs";
 import { request } from "https";
-import path from "path";
+import * as path from "path";
 import { promisify } from "util";
 
 import {
@@ -19,15 +19,14 @@ import {
 } from "discord.js";
 
 import c from "config";
-import yaml from "js-yaml";
-import process from "process";
+import * as yaml from "js-yaml";
 import XRegExp from "xregexp";
 
-import ConniebotDatabase from "./helper/db-management";
-import { notifyNewErrors, notifyRestart, updateActivity } from "./helper/startup";
-import { log, messageSummary, reply } from "./helper/utils";
-import { formatObject, strFormat } from "./helper/utils/format";
-import X2IMatcher, { IReplaceSource } from "./x2i";
+import ConniebotDatabase from "./helper/db-management.js";
+import { notifyNewErrors, notifyRestart, updateActivity } from "./helper/startup.js";
+import { formatObject, strFormat } from "./helper/utils/format.js";
+import { log, messageSummary, reply } from "./helper/utils/index.js";
+import X2IMatcher, { IReplaceSource } from "./x2i/index.js";
 
 export type CommandCallback =
   (this: Conniebot, message: Message, ...args: string[]) => Promise<any>;

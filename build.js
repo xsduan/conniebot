@@ -1,6 +1,8 @@
-const spawn = require('child_process').spawn
-const argv = require('minimist')(process.argv)
-const c = require('config')
+import { spawn } from 'child_process'
+import minimist from 'minimist'
+import c from 'config'
+
+const argv = minimist(process.argv)
 
 const { data, dist } = {
   data: 'data',

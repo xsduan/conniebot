@@ -1,8 +1,8 @@
 import { Client, Message, MessageEmbed, MessageOptions } from "discord.js";
 
-import { ICommands } from "../conniebot";
-import { log, reply } from "./utils";
-import { formatObject } from "./utils/format";
+import { ICommands } from "../conniebot.js";
+import { formatObject } from "./utils/format.js";
+import { log, reply } from "./utils/index.js";
 
 const dmReply = async (message: Message, bot: Client, data: string | MessageOptions) => {
   try {

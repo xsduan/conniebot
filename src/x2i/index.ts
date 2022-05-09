@@ -1,6 +1,6 @@
 import XRegExp from "xregexp";
 
-import compileKey, { CompiledReplacer, Replacer } from "./compile";
+import compileKey, { CompiledReplacer, Replacer } from "./compile.js";
 
 export interface IReplaceSource {
   format?: string;
