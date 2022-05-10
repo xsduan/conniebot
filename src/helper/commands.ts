@@ -61,11 +61,16 @@ const commands: ICommands = {
     }
     const replyFunc = shouldDM ? dmReply : reply;
 
-    return replyFunc(
+    const response = await replyFunc(
       message,
       this.bot,
       typeof data === "string" ? data : { embeds: [new MessageEmbed(data)] },
     );
+    await Promise.all([
+      this.reactIfAllowed(response, this.config.deleteEmoji),
+      this.db.addMessage(message, [response], false),
+    ]);
+    return response;
   },
 
   /**

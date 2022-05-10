@@ -244,7 +244,7 @@ export default class Conniebot {
     if ((oldMsg.author ?? newMsg.author)?.id === this.bot.user?.id
         || newMsg.partial
         || Date.now() - oldMsg.createdTimestamp > oneDay) return;
-    const replies = await this.db.getReplies(oldMsg);
+    const replies = (await this.db.getReplies(oldMsg)).filter(el => el.shouldEdit);
     if (replies.length === 0) return;
 
     const responses = await this.createX2iResponse(newMsg);
@@ -317,29 +317,6 @@ export default class Conniebot {
     }
   }
 
-  private async reactIfAllowed(message: Message, emoji: string) {
-    const isExternal = emoji.length > 1 && emoji.startsWith("<") && emoji.endsWith(">");
-    if (this.bot.user && (
-      // @ts-expect-error The thing it complains about is why the `?.` is there
-      message.channel.permissionsFor?.(this.bot.user)?.has(
-        isExternal
-          ? ["ADD_REACTIONS", "USE_EXTERNAL_EMOJIS", "READ_MESSAGE_HISTORY"]
-          : ["ADD_REACTIONS", "READ_MESSAGE_HISTORY"]
-      ) ?? true
-    )) {
-      try {
-        await message.react(emoji);
-      } catch (e) {
-        if (e instanceof DiscordAPIError) {
-          log(
-            "error:react",
-            `${message.guild?.name ?? "unknown guild"}: Unable to react with ${emoji}`
-          );
-        } else throw e;
-      }
-    }
-  }
-
   /**
    * Acts for a response to a message.
    *
@@ -383,6 +360,29 @@ export default class Conniebot {
     await reaction.message.delete();
     await this.db.deleteMessage(reaction.message);
   };
+
+  public async reactIfAllowed(message: Message, emoji: string) {
+    const isExternal = emoji.length > 1 && emoji.startsWith("<") && emoji.endsWith(">");
+    if (this.bot.user && (
+      // @ts-expect-error The thing it complains about is why the `?.` is there
+      message.channel.permissionsFor?.(this.bot.user)?.has(
+        isExternal
+          ? ["ADD_REACTIONS", "USE_EXTERNAL_EMOJIS", "READ_MESSAGE_HISTORY"]
+          : ["ADD_REACTIONS", "READ_MESSAGE_HISTORY"]
+      ) ?? true
+    )) {
+      try {
+        await message.react(emoji);
+      } catch (e) {
+        if (e instanceof DiscordAPIError) {
+          log(
+            "error:react",
+            `${message.guild?.name ?? "unknown guild"}: Unable to react with ${emoji}`
+          );
+        } else throw e;
+      }
+    }
+  }
 
   /**
    * Register multiple commands at once.

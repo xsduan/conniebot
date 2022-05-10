@@ -187,10 +187,10 @@ export default class ConniebotDatabase {
     await db.run(SQL`DELETE FROM unsentErrors WHERE id = ${id}`);
   }
 
-  public async addMessage(original: Message, messages: Message[]) {
+  public async addMessage(original: Message, messages: Message[], shouldEdit = true) {
     const statements = messages.map(async msg => (await this.db).run(
-      SQL`INSERT INTO messageAuthors(message, author, original)
-          VALUES(${msg.id}, ${original.author.id}, ${original.id})`));
+      SQL`INSERT INTO messageAuthors(message, author, original, shouldEdit)
+          VALUES(${msg.id}, ${original.author.id}, ${original.id}, ${shouldEdit ? 1 : 0})`));
     return Promise.all(statements);
   }
 
@@ -201,8 +201,8 @@ export default class ConniebotDatabase {
   }
 
   public async getReplies(message: Message | PartialMessage) {
-    return ((await this.db).all<{ message: string }[]>(
-      SQL`SELECT message FROM messageAuthors WHERE original = ${message.id}`
+    return ((await this.db).all<{ message: string, shouldEdit: 0 | 1 }[]>(
+      SQL`SELECT message, shouldEdit FROM messageAuthors WHERE original = ${message.id}`
     ));
   }
 
