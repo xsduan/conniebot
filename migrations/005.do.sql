@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS serverSettings (
+    server INTEGER PRIMARY KEY,
+    dmHelp INTEGER NOT NULL
+);

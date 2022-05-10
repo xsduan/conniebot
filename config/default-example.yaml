@@ -68,6 +68,15 @@ conniebot:
     **`{config.prefix}ping`**
     Check whether the bot is alive.
 
+    **`{config.prefix}config`**
+    List current server config settings.
+    **`{config.prefix}config reset`**
+    Reset all server config settings.
+    **`{config.prefix}config <key>`**
+    Describe the config setting `key`.
+    **`{config.prefix}config <key> <option>`**
+    Change the server config setting `key` to `option`.
+
     found a bug or want to suggest a feature?
     github: <https://github.com/xsduan/conniebot>
     come discuss: https://discord.gg/qgCG67knvs

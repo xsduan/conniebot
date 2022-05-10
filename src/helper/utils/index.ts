@@ -79,3 +79,15 @@ export const reply = async (message: Message, bot: Client, data: string | Messag
   }
   return message.channel.send(data);
 };
+
+/**
+ * Determine whether someone is a mod who can update server settings
+ */
+export const isMod = (message: Message) => {
+  const member = message.guild?.members.resolve(message.author);
+  const hasPerms = member?.permissions.has([
+    "MANAGE_CHANNELS",
+    "MANAGE_MESSAGES",
+  ]);
+  return hasPerms ?? true;
+};

@@ -68,6 +68,27 @@ interface ISentErrorsRow extends IUnsentErrorsRow {
 }
 
 /**
+ * Server settings.
+ */
+export interface IServerSettings {
+  /**
+   * The ID of the server.
+   */
+  server: string;
+  /**
+   * If 1, send help messages in DMs.
+   */
+  dmHelp: 0 | 1;
+}
+
+/**
+ * The default server settings.
+ */
+const defaultSettings: Readonly<Omit<IServerSettings, "server">> = {
+  dmHelp: 0,
+};
+
+/**
  * Database manager for Conniebot. Uses SQLite.
  */
 export default class ConniebotDatabase {
@@ -187,5 +208,43 @@ export default class ConniebotDatabase {
 
   public async deleteMessage(message: { id: string }) {
     return (await this.db).run(SQL`DELETE FROM messageAuthors WHERE message = ${message.id}`);
+  }
+
+  public async getSettings(server: string) {
+    const db = await this.db;
+    const settings = await db.get<IServerSettings>(
+      SQL`SELECT * FROM serverSettings WHERE server = ${server}`
+    );
+
+    return settings ?? {
+      ...defaultSettings,
+      server,
+    };
+  }
+
+  public async updateSettings(
+    server: string,
+    newSettings: Partial<IServerSettings>
+  ) {
+    const db = await this.db;
+
+    const oldSettings = await db.get<IServerSettings>(
+      SQL`SELECT * FROM serverSettings WHERE server = ${server}`
+    ) ?? defaultSettings;
+
+    const settings: IServerSettings = {
+      ...oldSettings,
+      ...newSettings,
+      server,
+    };
+
+    await db.run(
+      SQL`INSERT OR REPLACE INTO serverSettings(server, dmHelp)
+        VALUES(${settings.server}, ${settings.dmHelp})`
+    );
+  }
+
+  public async deleteServerSettings(server: string) {
+    return (await this.db).run(SQL`DELETE FROM serverSettings WHERE server = ${server}`);
   }
 }

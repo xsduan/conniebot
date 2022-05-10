@@ -1,22 +1,46 @@
 import { Client, Message, MessageEmbed, MessageOptions } from "discord.js";
 
 import { ICommands } from "../conniebot.js";
+import { IServerSettings } from "./db-management.js";
 import { formatObject } from "./utils/format.js";
-import { log, reply } from "./utils/index.js";
+import { isMod, log, reply } from "./utils/index.js";
 
 const dmReply = async (message: Message, bot: Client, data: string | MessageOptions) => {
+  let retval: Message | undefined;
   try {
     if (message.channel.type === "DM") {
       // Already in DMs, no need to explicitly say "DM sent"
-      await message.reply(data);
-      return "DM sent.";
+      return await message.reply(data);
     }
 
-    await message.author.send(data);
+    retval = await message.author.send(data);
   } catch {
     return reply(message, bot, "Unable to send DM.");
   }
-  return reply(message, bot, "DM sent.");
+  const directReply = reply(message, bot, "DM sent.");
+  return retval ?? directReply;
+};
+
+const coerceSetting = <T extends keyof IServerSettings = keyof IServerSettings>(
+  key: T,
+  value: string
+): IServerSettings[T] | undefined => {
+  if (key === "dmHelp") {
+    if (Number(value) === 0 || value.toLowerCase() === "false") return 0 as IServerSettings[T];
+    if (Number(value) === 1 || value.toLowerCase() === "true") return 1 as IServerSettings[T];
+  }
+  return undefined;
+};
+
+const settingsDescriptions: Readonly<Record<keyof IServerSettings, string>> = {
+  server: "Server ID. This cannot be changed.",
+  dmHelp: "Where to send help messages.\n\n`0` or `false` (default): in the same channel as the "
+    + "help command\n`1` or `true`: in DMs",
+};
+
+const settingsOrder: Readonly<Record<keyof IServerSettings, number>> = {
+  server: 0,
+  dmHelp: 1,
 };
 
 /**
@@ -30,7 +54,14 @@ const commands: ICommands = {
    */
   async help(message) {
     const data = formatObject(this.config.help, { user: message.client.user, config: this.config });
-    return reply(
+
+    let shouldDM = false;
+    if (message.guildId) {
+      shouldDM = (await this.db.getSettings(message.guildId)).dmHelp === 1;
+    }
+    const replyFunc = shouldDM ? dmReply : reply;
+
+    return replyFunc(
       message,
       this.bot,
       typeof data === "string" ? data : { embeds: [new MessageEmbed(data)] },
@@ -101,7 +132,65 @@ const commands: ICommands = {
    * List the known alphabets and their help pages.
    */
   async alpha(message) {
-    if (this.alphabetList) return reply(message, this.bot, this.alphabetList);
+    if (this.alphabetList) {
+      let shouldDM = false;
+      if (message.guildId) {
+        shouldDM = (await this.db.getSettings(message.guildId)).dmHelp === 1;
+      }
+      const replyFunc = shouldDM ? dmReply : reply;
+
+      return replyFunc(message, this.bot, this.alphabetList);
+    }
+  },
+
+  /**
+   * Update server-wide config settings.
+   */
+  async config(message, key?, option?) {
+    const sendReply = reply.bind(undefined, message, this.bot);
+
+    if (!isMod(message)) {
+      return sendReply( "Sorry, but you don't have permissions to do that.");
+    }
+
+    if (!message.guildId) {
+      return sendReply("Sorry, that command is only available in servers.");
+    }
+
+    if (!key) {
+      const settings = await this.db.getSettings(message.guildId);
+      const text = (Object.entries(settings) as
+        [keyof IServerSettings, IServerSettings[keyof IServerSettings]][])
+        .sort((a, b) => settingsOrder[a[0]] - settingsOrder[b[0]])
+        .map(([opt, val]) => `${opt} - ${val}`)
+        .join("\n");
+      return sendReply(text);
+    }
+
+    if (key === "reset") {
+      if (option) return sendReply("Cannot use reset with other options.");
+      await this.db.deleteServerSettings(message.guildId);
+      return sendReply("Server options reset to defaults.");
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(settingsDescriptions, key)) {
+      return sendReply("Sorry, I don't recognize that option.");
+    }
+
+    if (!option) {
+      const settings = await this.db.getSettings(message.guildId);
+      const text = settingsDescriptions[key as keyof IServerSettings] +
+        `\n\nCurrent setting: \`${settings[key as keyof IServerSettings]}\``;
+      return sendReply(text);
+    }
+
+    const coercedOption = coerceSetting(key as keyof IServerSettings, option);
+    if (coercedOption === undefined) {
+      return sendReply("Sorry, that's not a valid setting.");
+    }
+
+    await this.db.updateSettings(message.guildId, { [key]: coercedOption });
+    return sendReply(`${key} setting is now \`${coercedOption}\`.`);
   },
 };
 
