@@ -66,10 +66,13 @@ const commands: ICommands = {
       this.bot,
       typeof data === "string" ? data : { embeds: [new MessageEmbed(data)] },
     );
-    await Promise.all([
-      this.reactIfAllowed(response, this.config.deleteEmoji),
-      this.db.addMessage(message, [response], false),
-    ]);
+
+    try {
+      await this.reactIfAllowed(response, this.config.deleteEmoji);
+    // eslint-disable-next-line no-empty
+    } catch { }
+    await this.db.addMessage(message, [response], false);
+
     return response;
   },
 
@@ -167,7 +170,7 @@ const commands: ICommands = {
       const text = (Object.entries(settings) as
         [keyof IServerSettings, IServerSettings[keyof IServerSettings]][])
         .sort((a, b) => settingsOrder[a[0]] - settingsOrder[b[0]])
-        .map(([opt, val]) => `${opt} - ${val}`)
+        .map(([opt, val]) => `${opt} - \`${val}\``)
         .join("\n");
       return sendReply(text);
     }

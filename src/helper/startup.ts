@@ -44,14 +44,15 @@ export async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
     return log("warn", "Can't use listed error channel. (nonexistent or not text)");
   }
 
-  sendMessage(`Found ${errors.length} errors on startup.`, errorChannel);
+  await sendMessage(`Found ${errors.length} errors on startup.`, errorChannel);
 
-  for (const { id, date, stacktrace, message } of errors) {
+  const promises = errors.map(async ({ id, date, stacktrace, message }) => {
     const errorMessage = `at ${new Date(date)}:\n\`\`\`${stacktrace || message}\`\`\``;
     if (await sendMessage(errorMessage, errorChannel)) {
       await db.moveError(id);
     }
-  }
+  });
+  await Promise.all(promises);
 }
 
 /**

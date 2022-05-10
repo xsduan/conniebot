@@ -100,17 +100,17 @@ export default class Conniebot {
       })
       .on("messageUpdate", (oldMsg, newMsg) => {
         if (this.ready) {
-          this.updateReply(oldMsg, newMsg);
+          return this.updateReply(oldMsg, newMsg);
         }
       })
       .on("guildCreate", () => {
         if (this.ready) {
-          this.serverCountChanged();
+          return this.serverCountChanged();
         }
       })
       .on("guildDelete", () => {
         if (this.ready) {
-          this.serverCountChanged();
+          return this.serverCountChanged();
         }
       })
       .login(this.config.token);
@@ -125,15 +125,20 @@ export default class Conniebot {
       updateActivity(this.bot, this.config.activeMessage);
     }
 
-    notifyRestart(this.bot, this.db);
-    notifyNewErrors(this.bot, this.db);
+    await Promise.all([
+      notifyRestart(this.bot, this.db),
+      notifyNewErrors(this.bot, this.db),
+      (async () => {
+        // fetch the server list and post the count to bots.gg
+        await this.bot.guilds.fetch();
+        await this.serverCountChanged();
+      })(),
+      (async () => {
+        this.x2i = await this.loadKeys();
+        this.alphabetList = this.x2i.alphabetList;
+      })(),
+    ]);
 
-    // fetch the server list and post the count to bots.gg
-    await this.bot.guilds.fetch();
-    this.serverCountChanged();
-
-    this.x2i = await this.loadKeys();
-    this.alphabetList = this.x2i.alphabetList;
     log("info", "Setup complete.");
     this.ready = true;
   }
@@ -208,12 +213,17 @@ export default class Conniebot {
       log(`${stat}:x2i/${logCode}`, messageSummary(message), ...ms);
 
     try {
-      const responseMessages = [];
+      const responseMessages: Message[] = [];
+      const reactionPromises: Promise<void>[] = [];
       for (const response of responses) {
         const responseMessage = await reply(message, this.bot, response);
-        this.reactIfAllowed(responseMessage, this.config.deleteEmoji);
+        reactionPromises.push(this.reactIfAllowed(responseMessage, this.config.deleteEmoji));
         responseMessages.push(responseMessage);
       }
+      try {
+        await Promise.all(reactionPromises);
+      // eslint-disable-next-line no-empty
+      } catch { }
       await this.db.addMessage(message, responseMessages);
       respond("success");
     } catch (err) {
@@ -354,8 +364,8 @@ export default class Conniebot {
     user: User | PartialUser
   ) => {
     if (user.id === this.bot.user?.id
-        || user.id !== await this.db.getMessageAuthor(reaction.message)
-        || reaction.emoji.name !== this.config.deleteEmoji) { return; }
+        || reaction.emoji.name !== this.config.deleteEmoji
+        || user.id !== await this.db.getMessageAuthor(reaction.message)) { return; }
 
     await reaction.message.delete();
     await this.db.deleteMessage(reaction.message);
