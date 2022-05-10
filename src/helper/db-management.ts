@@ -195,14 +195,17 @@ export default class ConniebotDatabase {
   }
 
   public async getMessageAuthor(message: Message | PartialMessage) {
-    return (await (await this.db).get<{ author: string }>(
-      SQL`SELECT author FROM messageAuthors WHERE message = ${message.id}`
-    ))?.author;
+    const db = await this.db;
+    const result = await db.get<{ author: string }>(
+      SQL`SELECT CAST(author AS TEXT) AS author FROM messageAuthors WHERE message = ${message.id}`
+    );
+    return result?.author;
   }
 
   public async getReplies(message: Message | PartialMessage) {
     return ((await this.db).all<{ message: string, shouldEdit: 0 | 1 }[]>(
-      SQL`SELECT message, shouldEdit FROM messageAuthors WHERE original = ${message.id}`
+      SQL`SELECT CAST(message AS TEXT) AS message, shouldEdit FROM messageAuthors
+        WHERE original = ${message.id}`
     ));
   }
 
