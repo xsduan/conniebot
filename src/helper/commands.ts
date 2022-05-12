@@ -5,6 +5,8 @@ import { IServerSettings } from "./db-management.js";
 import { formatObject } from "./utils/format.js";
 import { isMod, log, reply } from "./utils/index.js";
 
+type ValueOf<T> = T[keyof T];
+
 const dmReply = async (message: Message, bot: Client, data: string | MessageOptions) => {
   let retval: Message;
   try {
@@ -21,7 +23,7 @@ const dmReply = async (message: Message, bot: Client, data: string | MessageOpti
   return retval;
 };
 
-const coerceSetting = <T extends keyof IServerSettings = keyof IServerSettings>(
+const coerceSetting = <T extends keyof IServerSettings>(
   key: T,
   value: string
 ): IServerSettings[T] | undefined => {
@@ -168,8 +170,7 @@ const commands: ICommands = {
 
     if (!key) {
       const settings = await this.db.getSettings(message.guildId);
-      const text = (Object.entries(settings) as
-        [keyof IServerSettings, IServerSettings[keyof IServerSettings]][])
+      const text = (Object.entries(settings) as [keyof IServerSettings, ValueOf<IServerSettings>][])
         .sort((a, b) => settingsOrder[a[0]] - settingsOrder[b[0]])
         .map(([opt, val]) => `${opt} - \`${val}\``)
         .join("\n");
