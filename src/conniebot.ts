@@ -214,17 +214,14 @@ export default class Conniebot {
 
     try {
       const responseMessages: Message[] = [];
-      const reactionPromises: Promise<void>[] = [];
+      const reactionPromises: Promise<any>[] = [];
       for (const response of responses) {
         const responseMessage = await reply(message, this.bot, response);
+        if (!responseMessage) continue;
         reactionPromises.push(this.reactIfAllowed(responseMessage, this.config.deleteEmoji));
         responseMessages.push(responseMessage);
       }
-      try {
-        await Promise.all(reactionPromises);
-      // eslint-disable-next-line no-empty
-      } catch { }
-      await this.db.addMessage(message, responseMessages);
+      await Promise.all(reactionPromises.concat(this.db.addMessage(message, responseMessages)));
       respond("success");
     } catch (err) {
       respond("error", err);
@@ -264,37 +261,50 @@ export default class Conniebot {
       try {
         message = await newMsg.channel.messages.fetch(el.message);
       } catch (e) {
-        if (e instanceof DiscordAPIError) {
-          if (e.code === 10008) {
-            // message already deleted
-            await this.db.deleteMessage({ id: el.message });
-          }
-
+        if (e instanceof DiscordAPIError && e.code === 10008) {
+          // message already deleted
+          await this.db.deleteMessage({ id: el.message });
+        } else {
           log(
             "error:edit",
-            `${newMsg.guild?.name ?? "unknown guild"}: Unable to edit message ${el.message}`
+            `${newMsg.guild?.name ?? "unknown guild"}: Unable to fetch message ${el.message}: ${e}`
           );
-          return;
         }
-        throw e;
+        return;
       }
 
       if (!responses[i]) {
-        await message.delete();
-        await this.db.deleteMessage(message);
+        try {
+          await message.delete();
+          await this.db.deleteMessage(message);
+        } catch (e) {
+          log(
+            "error:edit",
+            `${message.guild?.name ?? "unknown guild"}: Unable to delete message '${message}': ${e}`
+          );
+        }
       } else if (responses[i] !== message.content) {
-        await message.edit(responses[i]);
+        try {
+          await message.edit(responses[i]);
+        } catch (e) {
+          log(
+            "error:edit",
+            `${message.guild?.name ?? "unknown guild"}: Unable to edit message '${message}': ${e}`
+          );
+        }
       }
     }));
 
     if (responses.length > replies.length) {
       const newMessages: Message[] = [];
+      const reactionPromises: Promise<any>[] = [];
       for (let i = replies.length; i < responses.length; ++i) {
-        const newReply = await newMsg.reply(responses[i]);
-        this.reactIfAllowed(newReply, this.config.deleteEmoji);
+        const newReply = await reply(newMsg, this.bot, responses[i]);
+        if (!newReply) continue;
+        reactionPromises.push(this.reactIfAllowed(newReply, this.config.deleteEmoji));
         newMessages.push(newReply);
       }
-      this.db.addMessage(newMsg, newMessages);
+      await Promise.all(reactionPromises.concat(this.db.addMessage(newMsg, newMessages)));
     }
   }
 
@@ -384,12 +394,10 @@ export default class Conniebot {
       try {
         await message.react(emoji);
       } catch (e) {
-        if (e instanceof DiscordAPIError) {
-          log(
-            "error:react",
-            `${message.guild?.name ?? "unknown guild"}: Unable to react with ${emoji}`
-          );
-        } else throw e;
+        log(
+          "error:react",
+          `${message.guild?.name ?? "unknown guild"}: Unable to react with ${emoji}: ${e}`
+        );
       }
     }
   }

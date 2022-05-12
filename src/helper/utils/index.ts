@@ -70,14 +70,19 @@ export function messageSummary({ guild, content }: Message) {
  * Reply to a message, using Message#reply if allowed, or Channel#send otherwise.
  * @param message The message to reply to
  * @param bot The user to reply as
- * @param data The data to sen
+ * @param data The data to send
+ * @returns The message sent, if it could be sent.
  */
 export const reply = async (message: Message, bot: Client, data: string | MessageOptions) => {
-  // @ts-expect-error The thing it complains about is why the `?.` is there
-  if (message.channel.permissionsFor?.(bot.user)?.has("READ_MESSAGE_HISTORY") ?? true) {
-    return message.reply(data);
+  try {
+    // @ts-expect-error The thing it complains about is why the `?.` is there
+    if (message.channel.permissionsFor?.(bot.user)?.has("READ_MESSAGE_HISTORY") ?? true) {
+      return await message.reply(data);
+    }
+    return await message.channel.send(data);
+  } catch (err) {
+    log("error", err);
   }
-  return message.channel.send(data);
 };
 
 /**

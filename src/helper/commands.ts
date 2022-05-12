@@ -6,7 +6,7 @@ import { formatObject } from "./utils/format.js";
 import { isMod, log, reply } from "./utils/index.js";
 
 const dmReply = async (message: Message, bot: Client, data: string | MessageOptions) => {
-  let retval: Message | undefined;
+  let retval: Message;
   try {
     if (message.channel.type === "DM") {
       // Already in DMs, no need to explicitly say "DM sent"
@@ -17,8 +17,8 @@ const dmReply = async (message: Message, bot: Client, data: string | MessageOpti
   } catch {
     return reply(message, bot, "Unable to send DM.");
   }
-  const directReply = reply(message, bot, "DM sent.");
-  return retval ?? directReply;
+  await reply(message, bot, "DM sent.");
+  return retval;
 };
 
 const coerceSetting = <T extends keyof IServerSettings = keyof IServerSettings>(
@@ -67,11 +67,12 @@ const commands: ICommands = {
       typeof data === "string" ? data : { embeds: [new MessageEmbed(data)] },
     );
 
-    try {
-      await this.reactIfAllowed(response, this.config.deleteEmoji);
-    // eslint-disable-next-line no-empty
-    } catch { }
-    await this.db.addMessage(message, [response], false);
+    if (response) {
+      await Promise.all([
+        this.reactIfAllowed(response, this.config.deleteEmoji),
+        this.db.addMessage(message, [response], false),
+      ]);
+    }
 
     return response;
   },
