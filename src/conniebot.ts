@@ -1,7 +1,6 @@
-import { readdir, readFile } from "fs";
+import { readdir as readdirPromise, readFile as readFilePromise } from "fs/promises";
 import { request } from "https";
 import * as path from "path";
-import { promisify } from "util";
 
 import {
   Client,
@@ -20,6 +19,7 @@ import {
 
 import c from "config";
 import * as yaml from "js-yaml";
+import fetch from "node-fetch";
 import XRegExp from "xregexp";
 
 import ConniebotDatabase from "./helper/db-management.js";
@@ -53,9 +53,6 @@ export interface IConniebotConfig {
 export interface ICommands {
   [key: string]: CommandCallback;
 }
-
-const readdirPromise = promisify(readdir);
-const readFilePromise = promisify(readFile);
 
 // the length of one day, in ms
 const oneDay = 1000 * 60 * 60 * 24;
@@ -108,9 +105,12 @@ export default class Conniebot {
           return this.serverCountChanged();
         }
       })
-      .on("guildDelete", () => {
+      .on("guildDelete", async guild => {
         if (this.ready) {
-          return this.serverCountChanged();
+          await Promise.all([
+            this.serverCountChanged(),
+            this.db.deleteServerSettings(guild.id),
+          ]);
         }
       })
       .login(this.config.token);
@@ -221,7 +221,9 @@ export default class Conniebot {
         reactionPromises.push(this.reactIfAllowed(responseMessage, this.config.deleteEmoji));
         responseMessages.push(responseMessage);
       }
-      await Promise.all(reactionPromises.concat(this.db.addMessage(message, responseMessages)));
+      await Promise.allSettled(
+        reactionPromises.concat(this.db.addMessage(message, responseMessages))
+      );
       respond("success");
     } catch (err) {
       respond("error", err);
@@ -309,31 +311,28 @@ export default class Conniebot {
   }
 
   private async serverCountChanged() {
-    // send server count to bots.gg
-    if (this.config.botlistToken && this.config.botlistUrl && this.bot.user) {
+    if (!this.config.botlistToken || !this.config.botlistUrl) return;
 
-      const req = request(
+    const serverCount = this.bot.guilds.cache.size;
+    log("info", `Server count is now ${serverCount}.`);
+
+    try {
+      await fetch(
         strFormat(
           this.config.botlistUrl,
           { user: this.bot.user, config: this.config },
         ),
         {
+          body: `{"guildCount":${serverCount}}`,
           headers: {
             Authorization: this.config.botlistToken,
             "Content-Type": "application/json",
           },
           method: "POST",
-        }
+        },
       );
-
-      req.on("error", err => log("error", "Failed to post server count:", err));
-
-      const serverCount = this.bot.guilds.cache.size;
-
-      req.write(`{"guildCount":${serverCount}}`);
-      req.end();
-
-      log("info", `Server count is now ${serverCount}.`);
+    } catch (err) {
+      log("error", "Failed to post server count:", err);
     }
   }
 
