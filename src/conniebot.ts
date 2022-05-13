@@ -1,5 +1,4 @@
 import { readdir as readdirPromise, readFile as readFilePromise } from "fs/promises";
-import { request } from "https";
 import * as path from "path";
 
 import {
@@ -36,6 +35,7 @@ export interface IConniebotConfig {
   readonly botlistToken?: string;
   readonly botlistUrl?: string;
   readonly clientOptions: Readonly<ClientOptions>;
+  readonly confirmationTimeout: number;
   readonly database: string;
   readonly deleteEmoji: string;
   readonly help: Readonly<MessageEmbedOptions> | string;
@@ -54,6 +54,12 @@ export interface ICommands {
   [key: string]: CommandCallback;
 }
 
+interface IPendingConfirmation {
+  author: string;
+  channel: string;
+  timeout: NodeJS.Timeout;
+}
+
 // the length of one day, in ms
 const oneDay = 1000 * 60 * 60 * 24;
 
@@ -62,6 +68,7 @@ export default class Conniebot {
   public db: ConniebotDatabase;
   public alphabetList?: string;
   public readonly config: IConniebotConfig;
+  public readonly pendingConfirmations: IPendingConfirmation[];
 
   private commands: ICommands;
   private x2i?: X2IMatcher;
@@ -76,6 +83,7 @@ export default class Conniebot {
     this.bot = new Client(c.util.cloneDeep(config.clientOptions, 5));
     this.db = new ConniebotDatabase(this.config.database, this.config.migrations);
     this.commands = {};
+    this.pendingConfirmations = [];
 
     this.bot
       .on("ready", () => this.startup())
@@ -185,7 +193,7 @@ export default class Conniebot {
     );
 
     const toks = message.content.match(prefixRegex);
-    if (!toks) return;
+    if (!toks) return false;
     const [, cmd, args] = toks;
 
     if (!this.commands.hasOwnProperty(cmd)) return;
@@ -197,6 +205,7 @@ export default class Conniebot {
     } catch (err) {
       log(`error:command/${cmd}`, err);
     }
+    return true;
   }
 
   /**
@@ -336,6 +345,27 @@ export default class Conniebot {
     }
   }
 
+  private async checkPendingConfirmation(message: Message) {
+    if (!message.guildId) return;
+
+    const index = this.pendingConfirmations.findIndex(el =>
+      el.author === message.author.id && el.channel === message.channelId);
+    if (index === -1) return;
+
+    const { timeout } = this.pendingConfirmations[index];
+    clearTimeout(timeout);
+
+    this.pendingConfirmations.splice(index, 1);
+
+    // we know that `content` is either 'y' or 'n', though maybe uppercase or with whitespace
+    if (message.content.trim().toLowerCase() === "y") {
+      await this.db.deleteServerSettings(message.guildId);
+      return reply(message, this.bot, "Server settings reset to defaults.");
+    } else {
+      return reply(message, this.bot, "Settings reset cancelled.");
+    }
+  }
+
   /**
    * Acts for a response to a message.
    *
@@ -359,7 +389,13 @@ export default class Conniebot {
     }
 
     if (await this.sendX2iResponse(message)) return;
-    await this.command(message);
+    if (await this.command(message)) return;
+
+    const cleanedText = message.content.trim().toLowerCase();
+    if (cleanedText === "y" || cleanedText === "n") {
+      const response = await this.checkPendingConfirmation(message);
+      if (response) log("success:command/config", response.content);
+    }
   };
 
   /**

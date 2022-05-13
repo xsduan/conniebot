@@ -153,3 +153,6 @@ conniebot:
     "000000000000000000000000000000000000.000000000000000000000000000000000000000000000000000000000\
     00000000000000000.0000000000000000000000000000000000000000000"
   botlistUrl: 'https://discord.bots.gg/api/v1/bots/{user.id}/stats'
+
+  # This is the amount of delay required for confirmation of server config reset, in seconds.
+  confirmationTimeout: 300

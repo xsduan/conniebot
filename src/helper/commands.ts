@@ -1,4 +1,4 @@
-import { Client, Message, MessageEmbed, MessageOptions } from "discord.js";
+import { Client, DiscordAPIError, Message, MessageEmbed, MessageOptions } from "discord.js";
 
 import { ICommands } from "../conniebot.js";
 import { IServerSettings } from "./db-management.js";
@@ -161,7 +161,7 @@ const commands: ICommands = {
     const sendReply = reply.bind(undefined, message, this.bot);
 
     if (!isMod(message)) {
-      return sendReply( "Sorry, but you don't have permissions to do that.");
+      return sendReply("Sorry, but you don't have permissions to do that.");
     }
 
     if (!message.guildId) {
@@ -179,8 +179,52 @@ const commands: ICommands = {
 
     if (key === "reset") {
       if (option) return sendReply("Cannot use reset with other options.");
-      await this.db.deleteServerSettings(message.guildId);
-      return sendReply("Server options reset to defaults.");
+
+      // See if someone recently tried in this channel. If it's the same person, treat it as a
+      // confirmation. Otherwise, display an error message.
+      const existingConfirmationIndex = this.pendingConfirmations.findIndex(el =>
+        el.channel === message.channelId);
+      if (existingConfirmationIndex !== -1) {
+        const info = this.pendingConfirmations[existingConfirmationIndex];
+        if (message.author.id === info.author) {
+          clearTimeout(info.timeout);
+          this.pendingConfirmations.splice(existingConfirmationIndex, 1);
+
+          await this.db.deleteServerSettings(message.guildId);
+          return sendReply("Server settings reset to defaults.");
+        } else {
+          return sendReply("There's already a pending reset in this channel!");
+        }
+      }
+
+      const response = await sendReply("Are you sure you want to reset all settings to defaults?" +
+        " Reply y/n to confirm/cancel. Otherwise, this will automatically cancel" +
+        ` <t:${Math.ceil(Date.now() / 1000) + this.config.confirmationTimeout}:R>.`);
+      if (!response) return;
+
+      // add a confirmation
+      const timeout = setTimeout(async () => {
+        try {
+          response.edit("Cancelled automatically due to timeout.");
+          const index = this.pendingConfirmations.findIndex(el => el.timeout === timeout);
+          if (index !== -1) this.pendingConfirmations.splice(index, 1);
+          log("info:command/config", "Confirmation timed out");
+        } catch (err) {
+          if (err instanceof DiscordAPIError && err.code === 10008) return;
+          log(
+            "error:command/config",
+            `${message.guild?.name ?? "unknown guild"}: Unable to edit message '${message}': ${err}`
+          );
+        }
+      }, this.config.confirmationTimeout * 1000);
+
+      this.pendingConfirmations.push({
+        timeout,
+        author: message.author.id,
+        channel: message.channelId,
+      });
+
+      return "Awaiting reset confirmation";
     }
 
     if (!Object.prototype.hasOwnProperty.call(settingsDescriptions, key)) {
