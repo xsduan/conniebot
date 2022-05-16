@@ -31,6 +31,7 @@ overrides:
             - PascalCase
           leadingUnderscore: allowSingleOrDouble
           selector: variable
+      '@typescript-eslint/no-floating-promises': error
       '@typescript-eslint/no-shadow': error
       '@typescript-eslint/no-throw-literal': error
       '@typescript-eslint/no-unnecessary-qualifier': error

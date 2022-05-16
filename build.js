@@ -59,9 +59,8 @@ async function start () {
   }
 }
 
-(async () => {
-  if (argv.h || argv.help) {
-    return console.log(`
+if (argv.h || argv.help) {
+  console.log(`
 usage: node build [-hsfn] [--no-install]
 
 conniebot build script.
@@ -72,9 +71,8 @@ conniebot build script.
 -n, --name      process name if running in forever mode. (default: conniebot)
 --no-install    pass \`--no\` to npx, so you don't waste time installing nodemon
                 or pm2.
-    `.trim())
-  }
-
+  `.trim())
+} else {
   await build()
   await start()
-})()
+}

@@ -85,7 +85,7 @@ export default class Conniebot {
     this.commands = {};
     this.pendingConfirmations = [];
 
-    this.bot
+    void this.bot
       .on("ready", () => this.startup())
       .on("messageCreate", message => {
         if (this.ready) {
@@ -96,7 +96,7 @@ export default class Conniebot {
         if (err && err.message && err.message.includes("ECONNRESET")) {
           return log("warn", "connection reset. oops!");
         }
-        this.panicResponsibly(err);
+        return this.panicResponsibly(err);
       })
       .on("messageReactionAdd", (message, user) => {
         if (this.ready) {
@@ -134,8 +134,10 @@ export default class Conniebot {
     }
 
     await Promise.all([
-      notifyRestart(this.bot, this.db),
-      notifyNewErrors(this.bot, this.db),
+      (async () => {
+        await notifyRestart(this.bot, this.db);
+        await notifyNewErrors(this.bot, this.db);
+      })(),
       (async () => {
         // fetch the server list and post the count to bots.gg
         await this.bot.guilds.fetch();
@@ -214,7 +216,7 @@ export default class Conniebot {
    * @param message Message to reply to
    */
   private async sendX2iResponse(message: Message) {
-    const responses = await this.createX2iResponse(message);
+    const responses = this.createX2iResponse(message);
     if (responses.length === 0) return false;
     const logCode = responses.length === 1 ? "all" : "partial";
 
@@ -241,7 +243,7 @@ export default class Conniebot {
     return true;
   }
 
-  private async createX2iResponse(message: Message): Promise<(MessageOptions | string)[]> {
+  private createX2iResponse(message: Message): (MessageOptions | string)[] {
     const results = this.x2i?.search(message.content)?.join("\n") ?? "";
     if (results.length > this.config.timeoutChars) {
       const timeoutMessage = formatObject(
@@ -265,7 +267,7 @@ export default class Conniebot {
     const replies = (await this.db.getReplies(oldMsg)).filter(el => el.shouldEdit);
     if (replies.length === 0) return;
 
-    const responses = await this.createX2iResponse(newMsg);
+    const responses = this.createX2iResponse(newMsg);
 
     await Promise.all(replies.map(async (el, i) => {
       let message: Message;
@@ -385,7 +387,8 @@ export default class Conniebot {
       // - the mention isn't @here or @everyone
       && !message.mentions.everyone
     ) {
-      this.reactIfAllowed(message, this.config.pingEmoji);
+      this.reactIfAllowed(message, this.config.pingEmoji)
+        .catch(() => undefined);
     }
 
     if (await this.sendX2iResponse(message)) return;

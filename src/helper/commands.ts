@@ -205,7 +205,7 @@ const commands: ICommands = {
       // add a confirmation
       const timeout = setTimeout(async () => {
         try {
-          response.edit("Cancelled automatically due to timeout.");
+          await response.edit("Cancelled automatically due to timeout.");
           const index = this.pendingConfirmations.findIndex(el => el.timeout === timeout);
           if (index !== -1) this.pendingConfirmations.splice(index, 1);
           log("info:command/config", "Confirmation timed out");
@@ -227,7 +227,7 @@ const commands: ICommands = {
       return "Awaiting reset confirmation";
     }
 
-    if (!Object.prototype.hasOwnProperty.call(settingsDescriptions, key)) {
+    if (!settingsDescriptions.hasOwnProperty(key)) {
       return sendReply("Sorry, I don't recognize that option.");
     }
 
