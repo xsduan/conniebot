@@ -232,7 +232,7 @@ export default class Conniebot {
         reactionPromises.push(this.reactIfAllowed(responseMessage, this.config.deleteEmoji));
         responseMessages.push(responseMessage);
       }
-      await Promise.allSettled(
+      await Promise.all(
         reactionPromises.concat(this.db.addMessage(message, responseMessages))
       );
       respond("success");

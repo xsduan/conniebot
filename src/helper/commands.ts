@@ -70,7 +70,7 @@ const commands: ICommands = {
     );
 
     if (response) {
-      await Promise.allSettled([
+      await Promise.all([
         this.reactIfAllowed(response, this.config.deleteEmoji),
         this.db.addMessage(message, [response], false),
       ]);
