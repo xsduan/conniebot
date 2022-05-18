@@ -13,6 +13,7 @@ import {
   PartialMessage,
   PartialMessageReaction,
   PartialUser,
+  Permissions,
   User,
 } from "discord.js";
 
@@ -73,8 +74,6 @@ export default class Conniebot {
   private commands: ICommands;
   private x2i?: X2IMatcher;
 
-  private ready: boolean = false;
-
   constructor(config: IConniebotConfig) {
     log("verbose", "Starting to load bot...");
 
@@ -86,40 +85,12 @@ export default class Conniebot {
     this.pendingConfirmations = [];
 
     void this.bot
-      .on("ready", () => this.startup())
-      .on("messageCreate", message => {
-        if (this.ready) {
-          return this.parse(message);
-        }
-      })
+      .once("ready", () => this.startup())
       .on("error", err => {
         if (err && err.message && err.message.includes("ECONNRESET")) {
           return log("warn", "connection reset. oops!");
         }
         return this.panicResponsibly(err);
-      })
-      .on("messageReactionAdd", (message, user) => {
-        if (this.ready) {
-          return this.reactDeleteMessage(message, user);
-        }
-      })
-      .on("messageUpdate", (oldMsg, newMsg) => {
-        if (this.ready) {
-          return this.updateReply(oldMsg, newMsg);
-        }
-      })
-      .on("guildCreate", () => {
-        if (this.ready) {
-          return this.serverCountChanged();
-        }
-      })
-      .on("guildDelete", async guild => {
-        if (this.ready) {
-          await Promise.all([
-            this.serverCountChanged(),
-            this.db.deleteServerSettings(guild.id),
-          ]);
-        }
       })
       .login(this.config.token);
 
@@ -150,7 +121,19 @@ export default class Conniebot {
     ]);
 
     log("info", "Setup complete.");
-    this.ready = true;
+
+    // add event handlers
+    this.bot
+      .on("messageCreate", message => this.parse(message))
+      .on("messageReactionAdd", (message, user) => this.reactDeleteMessage(message, user))
+      .on("messageUpdate", (oldMsg, newMsg) => this.updateReply(oldMsg, newMsg))
+      .on("guildCreate", () => this.serverCountChanged())
+      .on("guildDelete", async guild => {
+        await Promise.all([
+          this.serverCountChanged(),
+          this.db.deleteServerSettings(guild.id),
+        ]);
+      });
   }
 
   /**
@@ -420,13 +403,13 @@ export default class Conniebot {
   };
 
   public async reactIfAllowed(message: Message, emoji: string) {
-    const isExternal = emoji.length > 1 && emoji.startsWith("<") && emoji.endsWith(">");
+    const isExternal = emoji.startsWith("<") && emoji.endsWith(">");
     if (this.bot.user && (
       // @ts-expect-error The thing it complains about is why the `?.` is there
       message.channel.permissionsFor?.(this.bot.user)?.has(
-        isExternal
-          ? ["ADD_REACTIONS", "USE_EXTERNAL_EMOJIS", "READ_MESSAGE_HISTORY"]
-          : ["ADD_REACTIONS", "READ_MESSAGE_HISTORY"]
+        Permissions.FLAGS.ADD_REACTIONS | Permissions.FLAGS.READ_MESSAGE_HISTORY | (
+          isExternal ? Permissions.FLAGS.USE_EXTERNAL_EMOJIS : 0n
+        )
       ) ?? true
     )) {
       try {

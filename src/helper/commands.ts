@@ -206,8 +206,6 @@ const commands: ICommands = {
       const timeout = setTimeout(async () => {
         try {
           await response.edit("Cancelled automatically due to timeout.");
-          const index = this.pendingConfirmations.findIndex(el => el.timeout === timeout);
-          if (index !== -1) this.pendingConfirmations.splice(index, 1);
           log("info:command/config", "Confirmation timed out");
         } catch (err) {
           if (err instanceof DiscordAPIError && err.code === 10008) return;
@@ -215,6 +213,9 @@ const commands: ICommands = {
             "error:command/config",
             `${message.guild?.name ?? "unknown guild"}: Unable to edit message '${message}': ${err}`
           );
+        } finally {
+          const index = this.pendingConfirmations.findIndex(el => el.timeout === timeout);
+          if (index !== -1) this.pendingConfirmations.splice(index, 1);
         }
       }, this.config.confirmationTimeout * 1000);
 
