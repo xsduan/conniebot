@@ -226,7 +226,7 @@ export default class Conniebot {
     return true;
   }
 
-  private createX2iResponse(message: Message): (MessageOptions | string)[] {
+  private createX2iResponse(message: Message): (Omit<MessageOptions, "flags"> | string)[] {
     const results = this.x2i?.search(message.content)?.join("\n") ?? "";
     if (results.length > this.config.timeoutChars) {
       const timeoutMessage = formatObject(
