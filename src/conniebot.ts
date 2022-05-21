@@ -174,7 +174,7 @@ export default class Conniebot {
   private async command(message: Message) {
     // commands
     const prefixRegex = XRegExp.build(
-      `(?:^${XRegExp.escape(this.config.prefix)})(\\S*) ?(.*)`, {},
+      `(?:^${XRegExp.escape(this.config.prefix)})(\\S*)\\s*(.*)`, {}, "s"
     );
 
     const toks = message.content.match(prefixRegex);
@@ -185,7 +185,7 @@ export default class Conniebot {
     const cb = this.commands[cmd].bind(this);
 
     try {
-      const logItem = await cb(message, ...args.split(" "));
+      const logItem = await cb(message, ...args.split(/\s+/gu));
       log(`success:command/${cmd}`, logItem === undefined ? "" : String(logItem));
     } catch (err) {
       log(`error:command/${cmd}`, err);
