@@ -160,12 +160,12 @@ const commands: ICommands = {
   async config(message, key?, option?) {
     const sendReply = reply.bind(undefined, message, this.bot);
 
-    if (!isMod(message)) {
-      return sendReply("Sorry, but you don't have permissions to do that.");
-    }
-
     if (!message.guildId) {
       return sendReply("Sorry, that command is only available in servers.");
+    }
+
+    if (!isMod(message)) {
+      return sendReply("Sorry, but you don't have permissions to do that.");
     }
 
     if (!key) {

@@ -1,5 +1,5 @@
 import c from "config";
-import { AnyChannel, Client, Message, MessageOptions, TextChannel } from "discord.js";
+import { AnyChannel, Client, Message, MessageOptions, Permissions, TextChannel } from "discord.js";
 
 import npmlog from "npmlog";
 
@@ -41,7 +41,7 @@ export function log(status: string, message: string, ...args: any[]) {
  * this workaround.
  */
 export function isTextChannel(channel: AnyChannel): channel is TextChannel {
-  return ["DM", "GUILD_TEXT", "GUILD_PUBLIC_THREAD"].includes(channel.type)
+  return ["DM", "GUILD_TEXT", "GUILD_PUBLIC_THREAD", "GUILD_VOICE"].includes(channel.type)
     && "send" in channel;
 }
 
@@ -90,9 +90,8 @@ export const reply = async (message: Message, bot: Client, data: string | Messag
  */
 export const isMod = (message: Message) => {
   const member = message.guild?.members.resolve(message.author);
-  const hasPerms = member?.permissions.has([
-    "MANAGE_CHANNELS",
-    "MANAGE_MESSAGES",
-  ]);
-  return hasPerms ?? true;
+  const hasPerms = member?.permissions.has(
+    Permissions.FLAGS.MANAGE_CHANNELS | Permissions.FLAGS.MANAGE_MESSAGES
+  );
+  return hasPerms ?? false;
 };
