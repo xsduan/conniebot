@@ -76,9 +76,9 @@ export interface IServerSettings {
    */
   server: string;
   /**
-   * If 1, send help messages in DMs.
+   * When to send help in DMs.
    */
-  dmHelp: 0 | 1;
+  dmHelp: 0 | 1 | 2 | 3 | 4;
 }
 
 /**
@@ -249,5 +249,15 @@ export default class ConniebotDatabase {
 
   public async deleteServerSettings(server: string) {
     return (await this.db).run(SQL`DELETE FROM serverSettings WHERE server = ${server}`);
+  }
+
+  /**
+   * Remove all mentions of a user ID from the database.
+   */
+  public async purgeUser(userId: string) {
+    const db = await this.db;
+    return db.run(
+      SQL`DELETE FROM messageAuthors WHERE author = ${userId}`
+    );
   }
 }

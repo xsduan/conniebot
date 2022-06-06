@@ -28,16 +28,17 @@ const coerceSetting = <T extends keyof IServerSettings>(
   value: string
 ): IServerSettings[T] | undefined => {
   if (key === "dmHelp") {
-    if (Number(value) === 0 || value.toLowerCase() === "false") return 0 as IServerSettings[T];
-    if (Number(value) === 1 || value.toLowerCase() === "true") return 1 as IServerSettings[T];
+    const num = Number(value);
+    if ([0, 1, 2, 3, 4].includes(num)) return num as IServerSettings[T];
   }
   return undefined;
 };
 
 const settingsDescriptions: Readonly<Record<keyof IServerSettings, string>> = {
   server: "Server ID. This cannot be changed.",
-  dmHelp: "Where to send help messages.\n\n`0` or `false` (default): in the same channel as the "
-    + "help command\n`1` or `true`: in DMs",
+  dmHelp: "When to send help messages in DMs rather than the original channel.\n\n`0` (default): " +
+    "Never.\n`1`: In voice channel chat only.\n`2`: In threads only.\n`3`: In voice channel chat " +
+    "or threads.\n`4`: In all channels.",
 };
 
 const settingsOrder: Readonly<Record<keyof IServerSettings, number>> = {
@@ -59,7 +60,10 @@ const commands: ICommands = {
 
     let shouldDM = false;
     if (message.guildId) {
-      shouldDM = (await this.db.getSettings(message.guildId)).dmHelp === 1;
+      const dmHelpSetting = (await this.db.getSettings(message.guildId)).dmHelp;
+      shouldDM = dmHelpSetting === 4 ||
+        message.channel.isVoice() && Boolean(dmHelpSetting & 1) ||
+        message.channel.isThread() && Boolean(dmHelpSetting & 2);
     }
     const replyFunc = shouldDM ? dmReply : reply;
 
@@ -146,7 +150,10 @@ const commands: ICommands = {
     if (this.alphabetList) {
       let shouldDM = false;
       if (message.guildId) {
-        shouldDM = (await this.db.getSettings(message.guildId)).dmHelp === 1;
+        const dmHelpSetting = (await this.db.getSettings(message.guildId)).dmHelp;
+        shouldDM = dmHelpSetting === 4 ||
+          message.channel.isVoice() && Boolean(dmHelpSetting & 1) ||
+          message.channel.isThread() && Boolean(dmHelpSetting & 2);
       }
       const replyFunc = shouldDM ? dmReply : reply;
 
@@ -246,6 +253,17 @@ const commands: ICommands = {
 
     await this.db.updateSettings(message.guildId, { [key]: coercedOption });
     return sendReply(`${key} setting is now \`${coercedOption}\`.`);
+  },
+
+  async purge(message, user?) {
+    const sendReply = reply.bind(undefined, message, this.bot);
+
+    if (!user) {
+      return sendReply("Are you sure you want to permanently delete yourself from the records?" +
+        "\nThis will prevent the bot from editing or self-deleting responses to messages you " +
+        "sent, but does not prevent future records from being added.\nIf you want to continue, " +
+        `type "x/purge [TODO: FIGURE OUT WHAT HERE]".`);
+    }
   },
 };
 
