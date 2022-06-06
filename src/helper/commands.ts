@@ -1,4 +1,12 @@
-import { Client, DiscordAPIError, Message, MessageEmbed, MessageOptions } from "discord.js";
+import {
+  Client,
+  DiscordAPIError,
+  Message,
+  MessageEmbed,
+  MessageOptions,
+  version as djsVersion,
+} from "discord.js";
+import formatDuration from "format-duration";
 
 import { ICommands } from "../conniebot.js";
 import { IServerSettings } from "./db-management.js";
@@ -264,6 +272,22 @@ const commands: ICommands = {
         "sent, but does not prevent future records from being added.\nIf you want to continue, " +
         `type "x/purge [TODO: FIGURE OUT WHAT HERE]".`);
     }
+  },
+
+  async about(message) {
+    return reply(
+      message,
+      this.bot,
+      `__Bot Info__
+Server count: ${this.bot.guilds.cache.size}
+Version: ${process.env.npm_package_version}
+Uptime: ${formatDuration(this.bot.uptime ?? 0, { leading: true })}
+NodeJS: ${process.versions.node}
+discord.js: ${djsVersion}
+
+For information about commands, type "${this.config.prefix}help". For information about text \
+replacement, type "${this.config.prefix}alpha".`
+    );
   },
 };
 

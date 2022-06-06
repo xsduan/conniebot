@@ -77,6 +77,9 @@ conniebot:
     **`{config.prefix}config <key> <option>`**
     Change the server config setting `key` to `option`.
 
+    **`{config.prefix}about`**
+    Display information about the bot's runtime.
+
     found a bug or want to suggest a feature?
     github: <https://github.com/xsduan/conniebot>
     come discuss: https://discord.gg/qgCG67knvs

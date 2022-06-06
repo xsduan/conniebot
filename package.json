@@ -25,6 +25,7 @@
     "@types/node": ">=16.4.7",
     "config": "^3.3.7",
     "discord.js": "^13.8.0",
+    "format-duration": "^2.0.0",
     "js-yaml": "^4.1.0",
     "minimist": "^1.2.6",
     "node-fetch": "^2.6.7",
