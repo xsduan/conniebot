@@ -159,3 +159,6 @@ conniebot:
 
   # This is the amount of delay required for confirmation of server config reset, in seconds.
   confirmationTimeout: 300
+
+  # the URL of the privacy policy
+  privacyURL: 'https://github.com/xsduan/conniebot/blob/master/PRIVACY_POLICY.md'

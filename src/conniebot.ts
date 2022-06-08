@@ -44,6 +44,7 @@ export interface IConniebotConfig {
   readonly owner: string;
   readonly pingEmoji?: string;
   readonly prefix: string;
+  readonly privacyURL: string;
   readonly timeoutChars: number;
   readonly timeoutMessage: Readonly<MessageEmbedOptions> | string;
   readonly token: string;
@@ -57,7 +58,10 @@ export interface ICommands {
 
 interface IPendingConfirmation {
   author: string;
+  allowOthers: boolean;
   channel: string;
+  command: string;
+  onConfirm(confirmation: Message): unknown;
   timeout: NodeJS.Timeout;
 }
 
@@ -341,17 +345,16 @@ export default class Conniebot {
       el.author === message.author.id && el.channel === message.channelId);
     if (index === -1) return;
 
-    const { timeout } = this.pendingConfirmations[index];
+    const { timeout, onConfirm } = this.pendingConfirmations[index];
     clearTimeout(timeout);
 
     this.pendingConfirmations.splice(index, 1);
 
     // we know that `content` is either 'y' or 'n', though maybe uppercase or with whitespace
     if (message.content.trim().toLowerCase() === "y") {
-      await this.db.deleteServerSettings(message.guildId);
-      return reply(message, this.bot, "Server settings reset to defaults.");
+      return onConfirm(message);
     } else {
-      return reply(message, this.bot, "Settings reset cancelled.");
+      return reply(message, this.bot, "Cancelled!");
     }
   }
 
@@ -384,7 +387,7 @@ export default class Conniebot {
     const cleanedText = message.content.trim().toLowerCase();
     if (cleanedText === "y" || cleanedText === "n") {
       const response = await this.checkPendingConfirmation(message);
-      if (response) log("success:command/config", response.content);
+      if (response) log("success:command/config", String(response));
     }
   };
 
@@ -425,6 +428,66 @@ export default class Conniebot {
         );
       }
     }
+  }
+
+  /**
+   * Require confirmation to go through with an action.
+   * @param onConfirm What to do when confirmation is received.
+   * @param message The message to reply to.
+   * @param command Which command is awaiting confirmation.
+   * @param response The warning text asking for confirmation.
+   * @param allowOthers Whether to allow multiple people to perform this action in the same channel.
+   */
+  public async addConfirmation<T>(
+    onConfirm: (confirmation: Message) => T,
+    message: Message,
+    command: string,
+    response: string | MessageOptions,
+    allowOthers: boolean
+  ) {
+    // Check for an existing confirmation
+    const existingConfirmationIndex = this.pendingConfirmations.findIndex(el =>
+      el.channel === message.channelId && el.command === command);
+    if (existingConfirmationIndex !== -1) {
+      const previous = this.pendingConfirmations[existingConfirmationIndex];
+      if (previous.author === message.author.id) {
+        // treat repeated command as confirmation
+        clearTimeout(previous.timeout);
+        this.pendingConfirmations.splice(existingConfirmationIndex, 1);
+        return previous.onConfirm(message) as T;
+      } else if (!allowOthers || !previous.allowOthers) {
+        // prevent simultaneous requests from different users
+        return reply(message, this.bot, "There's already a pending confirmation in this channel!");
+      }
+    }
+
+    const respMsg = await reply(message, this.bot, response);
+    if (!respMsg) return;
+
+    const timeout = setTimeout(async () => {
+      try {
+        await respMsg.edit("Cancelled automatically due to timeout.");
+        log("info/confirmation", "Confirmation timed out");
+      } catch (err) {
+        if (err instanceof DiscordAPIError && err.code === 10008) return;
+        log(
+          "error/confirmation",
+          `${respMsg.guild?.name ?? "unknown guild"}: Unable to edit message '${respMsg}': ${err}`
+        );
+      } finally {
+        const index = this.pendingConfirmations.findIndex(el => el.timeout === timeout);
+        if (index !== -1) this.pendingConfirmations.splice(index, 1);
+      }
+    }, this.config.confirmationTimeout * 1000);
+
+    this.pendingConfirmations.push({
+      allowOthers,
+      command,
+      onConfirm,
+      timeout,
+      author: message.author.id,
+      channel: message.channelId,
+    });
   }
 
   /**
