@@ -1,6 +1,6 @@
 {
   "name": "conniebot",
-  "version": "4.0.6",
+  "version": "4.1.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -46,7 +46,7 @@
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.6",
-    "encoding": "~0.1.12",
+    "encoding": "~0.1.13",
     "erlpack": "~0.1.4",
     "utf-8-validate": "^5.0.8",
     "zlib-sync": "~0.1.7"
