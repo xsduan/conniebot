@@ -80,6 +80,9 @@ conniebot:
     **`{config.prefix}about`**
     Display information about the bot's runtime.
 
+    **`{config.prefix}purge`**
+    Remove yourself from the database, if applicable.
+
     found a bug or want to suggest a feature?
     github: <https://github.com/xsduan/conniebot>
     come discuss: https://discord.gg/qgCG67knvs

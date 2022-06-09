@@ -447,16 +447,17 @@ export default class Conniebot {
   ) {
     // Check for an existing confirmation
     const existingConfirmationIndex = this.pendingConfirmations.findIndex(el =>
-      el.channel === message.channelId && el.command === command);
+      el.channel === message.channelId &&
+      (el.command === command || el.author === message.author.id));
     if (existingConfirmationIndex !== -1) {
       const previous = this.pendingConfirmations[existingConfirmationIndex];
-      if (previous.author === message.author.id) {
+      if (previous.author === message.author.id && previous.command === command) {
         // treat repeated command as confirmation
         clearTimeout(previous.timeout);
         this.pendingConfirmations.splice(existingConfirmationIndex, 1);
         return previous.onConfirm(message) as T;
-      } else if (!allowOthers || !previous.allowOthers) {
-        // prevent simultaneous requests from different users
+      } else if (previous.command !== command || !allowOthers || !previous.allowOthers) {
+        // prevent simultaneous requests from different commands
         return reply(message, this.bot, "There's already a pending confirmation in this channel!");
       }
     }
