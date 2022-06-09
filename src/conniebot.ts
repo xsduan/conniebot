@@ -387,7 +387,7 @@ export default class Conniebot {
     const cleanedText = message.content.trim().toLowerCase();
     if (cleanedText === "y" || cleanedText === "n") {
       const response = await this.checkPendingConfirmation(message);
-      if (response) log("success:command/config", String(response));
+      if (response) log("success:confirmation", String(response));
     }
   };
 
