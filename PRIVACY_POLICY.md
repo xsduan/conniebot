@@ -19,7 +19,8 @@ files, they may also be stored for no more than a few minutes while certain comm
 The bot stores several numeric IDs, so that it may operate normally. To be specific:
 
 - If a user sends a message and the bot replies to that message, the bot may store the snowflake of
-  the message's author, the message itself, or both.
+  the message's author, the message itself, or both. Effective 14 July 2022, this information will
+  be deleted after approximately 30 days.
 - The bot stores the snowflake of any server which has a custom configuration.
 
 ## How to Request Deletion

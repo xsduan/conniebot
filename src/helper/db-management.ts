@@ -119,8 +119,10 @@ export default class ConniebotDatabase {
    * directory.
    */
   private async init(filename: string, migrationPattern: string) {
+    // Connect to the database
     const db = await open({ filename, driver: sqlite3.Database });
 
+    // Run migrations
     const pg = new Postgrator({
       migrationPattern,
       driver: "sqlite3",
@@ -134,6 +136,15 @@ export default class ConniebotDatabase {
     });
 
     await pg.migrate();
+
+    // Set up the cycle to delete sufficiently old records
+    const oneDay = 24 * 60 * 60 * 1000;
+    const deleteOldMessages = () => db.run(
+      SQL`DELETE FROM messageAuthors WHERE createdAt < unixepoch('now -29 days')`
+    );
+
+    await deleteOldMessages();
+    setInterval(deleteOldMessages, oneDay);
 
     return db;
   }
@@ -188,9 +199,16 @@ export default class ConniebotDatabase {
   }
 
   public async addMessage(original: Message, messages: Message[], shouldEdit = true) {
-    const statements = messages.map(async msg => (await this.db).run(
-      SQL`INSERT INTO messageAuthors(message, author, original, shouldEdit)
-          VALUES(${msg.id}, ${original.author.id}, ${original.id}, ${shouldEdit ? 1 : 0})`));
+    const db = await this.db;
+    const statements = messages.map(async msg => db.run(
+      SQL`INSERT INTO messageAuthors(message, author, original, shouldEdit, createdAt)
+          VALUES(
+            ${msg.id},
+            ${original.author.id},
+            ${original.id},
+            ${shouldEdit ? 1 : 0},
+            ${original.createdTimestamp / 1000}
+          )`));
     return Promise.all(statements);
   }
 
@@ -203,10 +221,10 @@ export default class ConniebotDatabase {
   }
 
   public async getReplies(message: Message | PartialMessage) {
-    return ((await this.db).all<{ message: string, shouldEdit: 0 | 1 }[]>(
+    return (await this.db).all<{ message: string, shouldEdit: 0 | 1 }[]>(
       SQL`SELECT CAST(message AS TEXT) AS message, shouldEdit FROM messageAuthors
         WHERE original = ${message.id}`
-    ));
+    );
   }
 
   public async deleteMessage(message: { id: string }) {
@@ -235,15 +253,14 @@ export default class ConniebotDatabase {
       SQL`SELECT * FROM serverSettings WHERE server = ${server}`
     ) ?? defaultSettings;
 
-    const settings: IServerSettings = {
+    const settings: typeof oldSettings = {
       ...oldSettings,
       ...newSettings,
-      server,
     };
 
     await db.run(
       SQL`INSERT OR REPLACE INTO serverSettings(server, dmHelp)
-        VALUES(${settings.server}, ${settings.dmHelp})`
+        VALUES(${server}, ${settings.dmHelp})`
     );
   }
 
