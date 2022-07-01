@@ -106,6 +106,11 @@ export default class Conniebot {
 
     if (this.config.activeMessage) {
       updateActivity(this.bot, this.config.activeMessage);
+      // The status seems to disappear after 2-3 days if I don't keep calling that function
+      setInterval(
+        () => this.config.activeMessage && updateActivity(this.bot, this.config.activeMessage),
+        oneDay * 2
+      );
     }
 
     await Promise.all([
