@@ -24,7 +24,7 @@
     "@types/js-yaml": "^4.0.5",
     "@types/node": ">=16.4.7",
     "config": "^3.3.7",
-    "discord.js": "^13.8.0",
+    "discord.js": "^13.8.1",
     "format-duration": "^2.0.0",
     "js-yaml": "^4.1.0",
     "minimist": "^1.2.6",
@@ -34,14 +34,14 @@
     "sql-template-strings": "^2.2.2",
     "sqlite": "^4.1.1",
     "sqlite3": "^5.0.8",
-    "typescript": "^4.7.3",
+    "typescript": "^4.7.4",
     "xregexp": "^5.1.1"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.28.0",
-    "@typescript-eslint/eslint-plugin-tslint": "^5.28.0",
-    "@typescript-eslint/parser": "^5.28.0",
-    "eslint": "^8.16.0",
+    "@typescript-eslint/eslint-plugin": "^5.30.5",
+    "@typescript-eslint/eslint-plugin-tslint": "^5.30.5",
+    "@typescript-eslint/parser": "^5.30.5",
+    "eslint": "^8.18.0",
     "standard": "^17.0.0"
   },
   "optionalDependencies": {
