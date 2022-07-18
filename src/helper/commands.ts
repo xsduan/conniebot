@@ -1,7 +1,7 @@
 import {
   Client,
+  EmbedBuilder,
   Message,
-  MessageEmbed,
   MessageOptions,
   version as djsVersion,
 } from "discord.js";
@@ -17,7 +17,7 @@ type ValueOf<T> = T[keyof T];
 const dmReply = async (message: Message, bot: Client, data: string | MessageOptions) => {
   let retval: Message;
   try {
-    if (message.channel.type === "DM") {
+    if (message.channel.isDMBased()) {
       // Already in DMs, no need to explicitly say "DM sent"
       return await message.reply(data);
     }
@@ -69,7 +69,7 @@ const commands: ICommands = {
     if (message.guildId) {
       const dmHelpSetting = (await this.db.getSettings(message.guildId)).dmHelp;
       shouldDM = dmHelpSetting === 4 ||
-        message.channel.isVoice() && Boolean(dmHelpSetting & 1) ||
+        message.channel.isVoiceBased() && Boolean(dmHelpSetting & 1) ||
         message.channel.isThread() && Boolean(dmHelpSetting & 2);
     }
     const replyFunc = shouldDM ? dmReply : reply;
@@ -77,7 +77,7 @@ const commands: ICommands = {
     const response = await replyFunc(
       message,
       this.bot,
-      typeof data === "string" ? data : { embeds: [new MessageEmbed(data)] },
+      typeof data === "string" ? data : { embeds: [new EmbedBuilder(data)] },
     );
 
     if (response) {
@@ -159,7 +159,7 @@ const commands: ICommands = {
       if (message.guildId) {
         const dmHelpSetting = (await this.db.getSettings(message.guildId)).dmHelp;
         shouldDM = dmHelpSetting === 4 ||
-          message.channel.isVoice() && Boolean(dmHelpSetting & 1) ||
+          message.channel.isVoiceBased() && Boolean(dmHelpSetting & 1) ||
           message.channel.isThread() && Boolean(dmHelpSetting & 2);
       }
       const replyFunc = shouldDM ? dmReply : reply;

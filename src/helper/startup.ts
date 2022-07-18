@@ -1,7 +1,7 @@
 import { Client } from "discord.js";
 
 import ConniebotDatabase from "./db-management.js";
-import { isTextChannel, log, sendMessage } from "./utils/index.js";
+import { log, sendMessage } from "./utils/index.js";
 
 /**
  * Send notification to channel for reboot.
@@ -13,13 +13,14 @@ export async function notifyRestart(bot: Client, db: ConniebotDatabase) {
   }
 
   const channel = await bot.channels.fetch(channelId);
-  if (!channel || !isTextChannel(channel)) {
+  if (!channel?.isTextBased()) {
     return log("warn", `Channel ${channelId} doesn't exist or is not a text channel.`);
   }
 
   try {
     const timestamp = Math.round(Date.now() / 1000);
     await channel.send(`Rebooted at <t:${timestamp}:D> <t:${timestamp}:T>.`);
+    // @ts-expect-error There's a reason the `||` is there.
     log("info", `Notified ${channel} (#${channel.name || "??"}) of restart.`);
   } catch (err) {
     log("error", err);
@@ -40,7 +41,7 @@ export async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
   }
 
   const errorChannel = await bot.channels.fetch(errorChannelId);
-  if (!errorChannel || !isTextChannel(errorChannel)) {
+  if (!errorChannel?.isTextBased()) {
     return log("warn", "Can't use listed error channel. (nonexistent or not text)");
   }
 

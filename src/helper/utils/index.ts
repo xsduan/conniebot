@@ -1,5 +1,5 @@
 import c from "config";
-import { AnyChannel, Client, Message, MessageOptions, Permissions, TextChannel } from "discord.js";
+import { Client, Message, MessageOptions, PermissionFlagsBits, TextBasedChannel } from "discord.js";
 
 import npmlog from "npmlog";
 
@@ -36,19 +36,9 @@ export function log(status: string, message: string, ...args: any[]) {
 }
 
 /**
- * Check if channel is a TextChannel. Technically it can be a guild or dm channel, but
- * the default discord.js type for a text based channel is not actually a type, so we have to have
- * this workaround.
- */
-export function isTextChannel(channel: AnyChannel): channel is TextChannel {
-  return ["DM", "GUILD_TEXT", "GUILD_PUBLIC_THREAD", "GUILD_VOICE"].includes(channel.type)
-    && "send" in channel;
-}
-
-/**
  * Send a message to a channel and swallow errors.
  */
-export async function sendMessage(msg: string, channel: TextChannel) {
+export async function sendMessage(msg: string, channel: TextBasedChannel) {
   try {
     await channel.send(msg);
     return true;
@@ -75,8 +65,11 @@ export function messageSummary({ guild, content }: Message) {
  */
 export const reply = async (message: Message, bot: Client, data: string | MessageOptions) => {
   try {
-    // @ts-expect-error The thing it complains about is why the `?.` is there
-    if (message.channel.permissionsFor?.(bot.user)?.has("READ_MESSAGE_HISTORY") ?? true) {
+    if (
+      // @ts-expect-error The thing it complains about is why the `?.` is there
+      message.channel.permissionsFor?.(bot.user)?.has(PermissionFlagsBits.ReadMessageHistory)
+        ?? true
+    ) {
       return await message.reply(data);
     }
     return await message.channel.send(data);
@@ -91,7 +84,7 @@ export const reply = async (message: Message, bot: Client, data: string | Messag
 export const isMod = (message: Message) => {
   const member = message.guild?.members.resolve(message.author);
   const hasPerms = member?.permissions.has(
-    Permissions.FLAGS.MANAGE_CHANNELS | Permissions.FLAGS.MANAGE_MESSAGES
+    PermissionFlagsBits.ManageChannels | PermissionFlagsBits.ManageMessages
   );
   return hasPerms ?? false;
 };

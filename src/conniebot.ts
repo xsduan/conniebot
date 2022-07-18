@@ -1,19 +1,19 @@
-import { readdir as readdirPromise, readFile as readFilePromise } from "fs/promises";
+import { readdir, readFile } from "fs/promises";
 import * as path from "path";
 
 import {
   Client,
   ClientOptions,
   DiscordAPIError,
+  EmbedBuilder,
+  EmbedData,
   Message,
-  MessageEmbed,
-  MessageEmbedOptions,
   MessageOptions,
   MessageReaction,
   PartialMessage,
   PartialMessageReaction,
   PartialUser,
-  Permissions,
+  PermissionFlagsBits,
   User,
 } from "discord.js";
 
@@ -39,17 +39,17 @@ export interface IConniebotConfig {
   readonly confirmationTimeout: number;
   readonly database: string;
   readonly deleteEmoji: string;
-  readonly help: Readonly<MessageEmbedOptions> | string;
+  readonly help: Readonly<EmbedData> | string;
   readonly migrations: string;
   readonly owner: string;
   readonly pingEmoji?: string;
   readonly prefix: string;
   readonly privacyURL: string;
   readonly timeoutChars: number;
-  readonly timeoutMessage: Readonly<MessageEmbedOptions> | string;
+  readonly timeoutMessage: Readonly<EmbedData> | string;
   readonly token: string;
   readonly x2iFiles: string;
-  readonly invite: Readonly<MessageEmbedOptions> | string;
+  readonly invite: Readonly<EmbedData> | string;
 }
 
 export interface ICommands {
@@ -83,7 +83,7 @@ export default class Conniebot {
 
     this.config = config;
 
-    this.bot = new Client(c.util.cloneDeep(config.clientOptions, 5));
+    this.bot = new Client(config.clientOptions);
     this.db = new ConniebotDatabase(this.config.database, this.config.migrations);
     this.commands = {};
     this.pendingConfirmations = [];
@@ -156,9 +156,9 @@ export default class Conniebot {
     log("info", "Loading X2I keys from: \x1b[96m%s\x1b[0m...", this.config.x2iFiles);
 
     const x2iDir = this.config.x2iFiles;
-    const x2iFiles = await readdirPromise(x2iDir);
+    const x2iFiles = await readdir(x2iDir);
     const x2iData = await Promise.all(x2iFiles.map(
-      fname => readFilePromise(path.resolve(x2iDir, fname), "utf8"),
+      fname => readFile(path.resolve(x2iDir, fname), "utf8"),
     ));
 
     log("info", "X2I keys have been loaded.");
@@ -250,7 +250,7 @@ export default class Conniebot {
         `${results.slice(0, this.config.timeoutChars - 1)}…`,
         typeof timeoutMessage === "string"
           ? timeoutMessage
-          : { embeds: [new MessageEmbed(timeoutMessage)] },
+          : { embeds: [new EmbedBuilder(timeoutMessage)] },
       ];
     } else if (results.length === 0) return [];
     return [results];
@@ -419,8 +419,8 @@ export default class Conniebot {
     if (this.bot.user && (
       // @ts-expect-error The thing it complains about is why the `?.` is there
       message.channel.permissionsFor?.(this.bot.user)?.has(
-        Permissions.FLAGS.ADD_REACTIONS | Permissions.FLAGS.READ_MESSAGE_HISTORY | (
-          isExternal ? Permissions.FLAGS.USE_EXTERNAL_EMOJIS : 0n
+        PermissionFlagsBits.AddReactions | PermissionFlagsBits.ReadMessageHistory | (
+          isExternal ? PermissionFlagsBits.UseExternalEmojis : 0n
         )
       ) ?? true
     )) {

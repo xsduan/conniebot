@@ -45,7 +45,7 @@ conniebot:
   x2iFiles: data/x2i
 
   # help string
-  # can be object for embed, see [MessageEmbedOptions](https://discord.js.org/#/docs/main/stable/typedef/MessageEmbedOptions)
+  # can be object for embed, see [EmbedData](https://discord.js.org/#/docs/main/stable/typedef/EmbedData)
   # for more info about how the object should be structured.
 
   # additionally, you can use string substitution with `user` and `config` objects
