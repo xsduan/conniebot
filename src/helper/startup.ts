@@ -59,10 +59,11 @@ export async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
 /**
  * Update activity of bot.
  */
-export function updateActivity(bot: Client, activeMessage: string) {
+export function updateActivity(bot: Client, activeMessage: string | undefined) {
   log("info", "Changing game status: \x1b[95m%s\x1b[0m...", activeMessage);
   try {
-    bot?.user?.setActivity(activeMessage);
+    // This is type-safe, but TypeScript can't prove it due to https://github.com/microsoft/TypeScript/issues/14107
+    bot?.user?.setActivity(activeMessage as any);
     log("info", "Set game status.");
   } catch (err) {
     log("error", `Status couldn't be set. ${err}`);

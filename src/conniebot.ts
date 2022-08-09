@@ -91,7 +91,7 @@ export default class Conniebot {
     void this.bot
       .once("ready", () => this.startup())
       .on("error", err => {
-        if (err && err.message && err.message.includes("ECONNRESET")) {
+        if (err?.message?.includes("ECONNRESET")) {
           return log("warn", "connection reset. oops!");
         }
         return this.panicResponsibly(err);
@@ -108,7 +108,7 @@ export default class Conniebot {
       updateActivity(this.bot, this.config.activeMessage);
       // The status seems to disappear after 2-3 days if I don't keep calling that function
       setInterval(
-        () => this.config.activeMessage && updateActivity(this.bot, this.config.activeMessage),
+        () => updateActivity(this.bot, this.config.activeMessage),
         oneDay * 2
       );
     }

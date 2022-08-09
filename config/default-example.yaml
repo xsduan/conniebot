@@ -44,9 +44,11 @@ conniebot:
   # where x2i data should be read from
   x2iFiles: data/x2i
 
-  # help string
-  # can be object for embed, see [EmbedData](https://discord.js.org/#/docs/main/stable/typedef/EmbedData)
-  # for more info about how the object should be structured.
+  # Help string; can be object instead for embed. Object structure should match the EmbedData
+  # interface. As of discord.js v14.0.3, this is intentionally undocumented (if you're on the
+  # server, see the thread at https://discord.com/channels/222078108977594368/999317051782987797 ).
+  # However, the interface is very similar to APIEmbed, which is documented at
+  # https://discord-api-types.dev/api/discord-api-types-v10/interface/APIEmbed .
 
   # additionally, you can use string substitution with `user` and `config` objects
   # supplied, of the User object and configuration respectively. Use like
