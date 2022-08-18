@@ -20,7 +20,7 @@
     "bbrk24 (https://github.com/bbrk24)"
   ],
   "dependencies": {
-    "@types/config": "0.0.41",
+    "@types/config": "^3.3.0",
     "@types/js-yaml": "^4.0.5",
     "@types/node": ">=16.11.11",
     "config": "^3.3.7",
@@ -32,8 +32,8 @@
     "npmlog": "^6.0.1",
     "postgrator": "^7.1.0",
     "sql-template-strings": "^2.2.2",
-    "sqlite": "^4.1.1",
-    "sqlite3": "^5.0.8",
+    "sqlite": "^4.1.2",
+    "sqlite3": "^5.0.11",
     "typescript": "^4.7.4",
     "xregexp": "^5.1.1"
   },
