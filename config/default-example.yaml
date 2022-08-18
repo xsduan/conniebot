@@ -29,15 +29,16 @@ conniebot:
   # discord.js config
   clientOptions:
     partials:
-      - MESSAGE
-      - CHANNEL
-      - REACTION
+      - Message
+      - Channel
+      - Reaction
     intents:
-      - DIRECT_MESSAGES
-      - DIRECT_MESSAGE_REACTIONS
-      - GUILD_MESSAGES
-      - GUILD_MESSAGE_REACTIONS
-      - GUILDS
+      - DirectMessages
+      - DirectMessageReactions
+      - GuildMessages
+      - GuildMessageReactions
+      - Guilds
+      - MessageContent
     allowedMentions:
       repliedUser: false
 

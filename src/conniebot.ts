@@ -83,7 +83,7 @@ export default class Conniebot {
 
     this.config = config;
 
-    this.bot = new Client(config.clientOptions);
+    this.bot = new Client(c.util.cloneDeep(config.clientOptions, 5));
     this.db = new ConniebotDatabase(this.config.database, this.config.migrations);
     this.commands = {};
     this.pendingConfirmations = [];
