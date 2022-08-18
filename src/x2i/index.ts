@@ -8,6 +8,7 @@ export interface IReplaceSource {
   name: string;
   insensitive?: boolean;
   prefix: string;
+  escape?: string;
   replacers: Replacer[];
 }
 
@@ -70,10 +71,21 @@ export default class X2IMatcher {
   }
 
   public register(notation: IReplaceSource) {
-    this.replacers[notation.prefix] = {
+    const matcher: IMatcher = {
       join: notation.format ? X2IMatcher.joinResult(notation.format) : parts => parts.join(""),
-      keys: notation.replacers.map(el => compileKey(el, notation.insensitive)),
+      keys: notation.replacers.map(el => compileKey(el, notation.insensitive, notation.escape)),
     };
+
+    // remove the escape character if applicable
+    if (notation.escape) {
+      matcher.keys.push([
+        XRegExp(XRegExp.escape(notation.escape)),
+        "",
+        "all",
+      ]);
+    }
+
+    this.replacers[notation.prefix] = matcher;
   }
 
   public search(content: string) {

@@ -7,6 +7,7 @@ interface IRawReplaceKey {
 interface INestedKey {
   delimiters: [string, string];
   translations: Replacer[];
+  escape?: string;
 }
 
 type ReplaceKey = [string, string];
@@ -24,30 +25,35 @@ export type CompiledReplacer = [
  * @param entry Regex and replacement pair, or delimited match object.
  * @param insensitive Whether the replacement should be case-insensitive or not.
  */
-export default function compileKey(entry: Replacer, insensitive?: boolean): CompiledReplacer {
+export default function compileKey(
+  entry: Replacer,
+  insensitive?: boolean,
+  escape?: string
+): CompiledReplacer {
+  const escapeStr = escape ? `(?<!${XRegExp.escape(escape)})` : "";
   if (Array.isArray(entry)) {
     const [key, val] = entry;
-    return [XRegExp(XRegExp.escape(key), insensitive ? "i" : undefined), val, "all"];
+    return [XRegExp(escapeStr + XRegExp.escape(key), insensitive ? "i" : undefined), val, "all"];
   }
 
   // don't escape key
   if ("raw" in entry) {
     const [key, val] = entry.raw;
-    return [XRegExp(key, insensitive ? "i" : undefined), val, "all"];
+    return [XRegExp(escapeStr + key, insensitive ? "i" : undefined), val, "all"];
   }
 
   // is a dict
   const {
     delimiters: [left, right],
     translations,
+    escape: newEscape,
   } = entry;
 
   return [
-    XRegExp(`${XRegExp.escape(left)}(.*?)${XRegExp.escape(right)}`),
+    XRegExp(`${escapeStr}${XRegExp.escape(left)}(.*?)${XRegExp.escape(right)}`),
     m => XRegExp.replaceEach(
-      // Apparently captures don't work the way they used to
       m.substring(left.length, m.length - right.length),
-      translations.map(el => compileKey(el, insensitive))
+      translations.map(el => compileKey(el, insensitive, newEscape))
     ),
     "all"];
 }
