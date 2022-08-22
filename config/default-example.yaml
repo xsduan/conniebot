@@ -29,9 +29,10 @@ conniebot:
   # discord.js config
   clientOptions:
     partials:
-      - Message
-      - Channel
-      - Reaction
+    # In v13 and earlier, these were strings. In v14 this is an enum, so numeric values are required
+      - 1 # Channel
+      - 3 # Message
+      - 4 # Reaction
     intents:
       - DirectMessages
       - DirectMessageReactions

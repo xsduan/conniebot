@@ -344,8 +344,6 @@ export default class Conniebot {
   }
 
   private async checkPendingConfirmation(message: Message) {
-    if (!message.guildId) return;
-
     const index = this.pendingConfirmations.findIndex(el =>
       el.author === message.author.id && el.channel === message.channelId);
     if (index === -1) return;
