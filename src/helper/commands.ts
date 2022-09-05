@@ -44,8 +44,8 @@ const coerceSetting = <T extends keyof IServerSettings>(
 const settingsDescriptions: Readonly<Record<keyof IServerSettings, string>> = {
   server: "Server ID. This cannot be changed.",
   dmHelp: "When to send help messages in DMs rather than the original channel.\n\n`0` (default): " +
-    "Never.\n`1`: In voice channel chat only.\n`2`: In threads only.\n`3`: In voice channel chat " +
-    "or threads.\n`4`: In all channels.",
+    "Never.\n`1`: In voice channel chat only.\n`2`: In threads only (including forum posts).\n" +
+    "`3`: In voice channel chat or threads.\n`4`: In all channels.",
 };
 
 const settingsOrder: Readonly<Record<keyof IServerSettings, number>> = {
