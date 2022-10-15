@@ -8,7 +8,6 @@ import {
   EmbedBuilder,
   EmbedData,
   Message,
-  MessageOptions,
   MessageReaction,
   PartialMessage,
   PartialMessageReaction,
@@ -25,7 +24,7 @@ import XRegExp from "xregexp";
 import ConniebotDatabase from "./helper/db-management.js";
 import { notifyNewErrors, notifyRestart, updateActivity } from "./helper/startup.js";
 import { formatObject, strFormat } from "./helper/utils/format.js";
-import { log, messageSummary, reply } from "./helper/utils/index.js";
+import { log, MessageOptions, messageSummary, reply } from "./helper/utils/index.js";
 import X2IMatcher, { IReplaceSource } from "./x2i/index.js";
 
 export type CommandCallback =

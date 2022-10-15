@@ -1,5 +1,12 @@
 import c from "config";
-import { Client, Message, MessageOptions, PermissionFlagsBits, TextBasedChannel } from "discord.js";
+import {
+  Client,
+  Message,
+  MessageCreateOptions,
+  MessageReplyOptions,
+  PermissionFlagsBits,
+  TextBasedChannel,
+} from "discord.js";
 
 import npmlog from "npmlog";
 
@@ -55,6 +62,8 @@ export function messageSummary({ guild, content }: Message) {
   const guildName = guild ? guild.name : "unknown guild";
   return `${guildName}: ${content.substring(0, 100)}`;
 }
+
+export type MessageOptions = MessageCreateOptions & MessageReplyOptions;
 
 /**
  * Reply to a message, using Message#reply if allowed, or Channel#send otherwise.

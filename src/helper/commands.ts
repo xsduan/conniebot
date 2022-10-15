@@ -2,7 +2,6 @@ import {
   Client,
   EmbedBuilder,
   Message,
-  MessageOptions,
   version as djsVersion,
 } from "discord.js";
 import formatDuration from "format-duration";
@@ -10,7 +9,7 @@ import formatDuration from "format-duration";
 import { ICommands } from "../conniebot.js";
 import { IServerSettings } from "./db-management.js";
 import { formatObject } from "./utils/format.js";
-import { isMod, log, reply } from "./utils/index.js";
+import { isMod, log, MessageOptions, reply } from "./utils/index.js";
 
 type ValueOf<T> = T[keyof T];
 
