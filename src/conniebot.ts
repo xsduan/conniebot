@@ -193,7 +193,7 @@ export default class Conniebot {
     if (!toks) return false;
     const [, cmd, args] = toks;
 
-    if (!this.commands.hasOwnProperty(cmd)) return;
+    if (!this.commands.hasOwnProperty(cmd)) return false;
     const cb = this.commands[cmd].bind(this);
 
     try {
