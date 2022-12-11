@@ -2,7 +2,7 @@
 name: APIE
 help: 'https://github.com/xsduan/conniebot/blob/master/docs/apie.md'
 prefix: p
-format: \*$1
+format: '*$1'
 replacers:
   - raw:
       - '[“"”]a:'
@@ -110,4 +110,4 @@ replacers:
   - - xx
     - hₓ
   - - ' ~ '
-    - \~\*
+    - ~*

@@ -1,3 +1,4 @@
+import { escapeMarkdown } from "discord.js";
 import XRegExp from "xregexp";
 
 import compileKey, { CompiledReplacer, Replacer } from "./compile.js";
@@ -70,11 +71,6 @@ export default class X2IMatcher {
     return "```\n" + XRegExp.replaceEach(match, keys) + "\n```";
   }
 
-  /** Escape any punctuation Discord might recognize as markdown */
-  private markdownEscape(str: string): string {
-    return str.replaceAll(/([~<@#>\\*_[\]()\-|!&`])/gu, "\\$1");
-  }
-
   public register(notation: IReplaceSource) {
     const matcher: IMatcher = {
       join: notation.format ? X2IMatcher.joinResult(notation.format) : parts => parts.join(""),
@@ -91,10 +87,6 @@ export default class X2IMatcher {
       ], [
         XRegExp(`${escapedEscape}${escapedEscape}`),
         notation.escape,
-        "all",
-      ], [
-        XRegExp(escapedEscape),
-        this.markdownEscape(notation.escape),
         "all",
       ]);
     }
@@ -168,7 +160,7 @@ export default class X2IMatcher {
         const converted = this.decode(k, m, l, r); // eg x, text, [, ]
 
         if (converted) {
-          results.push(converted);
+          results.push(escapeMarkdown(converted));
         }
       }
     });

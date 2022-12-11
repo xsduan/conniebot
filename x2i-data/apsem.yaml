@@ -2,7 +2,7 @@
 name: APSem
 help: 'https://github.com/xsduan/conniebot/blob/master/docs/apsem.md'
 prefix: sem
-format: \*$1
+format: '*$1'
 replacers:
   - - t-.
     - ṯ̣
@@ -75,4 +75,4 @@ replacers:
   - - z
     - z
   - - ' ~ '
-    - ~\*
+    - ~*
