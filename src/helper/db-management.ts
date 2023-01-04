@@ -140,7 +140,7 @@ export default class ConniebotDatabase {
     // Set up the cycle to delete sufficiently old records
     const oneDay = 24 * 60 * 60 * 1000;
     const deleteOldMessages = () => db.run(
-      SQL`DELETE FROM messageAuthors WHERE createdAt < unixepoch('now -29 days')`
+      SQL`DELETE FROM messageAuthors WHERE createdAt < unixepoch('now', '-29 days')`
     );
 
     await deleteOldMessages();
