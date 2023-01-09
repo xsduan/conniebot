@@ -79,6 +79,10 @@ export interface IServerSettings {
    * When to send help in DMs.
    */
   dmHelp: 0 | 1 | 2 | 3 | 4;
+  /**
+   * How long to wait before removing the delete react.
+   */
+  reactRemovalTimeout: number;
 }
 
 /**
@@ -86,6 +90,7 @@ export interface IServerSettings {
  */
 const defaultSettings: Readonly<Omit<IServerSettings, "server">> = {
   dmHelp: 0,
+  reactRemovalTimeout: 7,
 };
 
 /**
@@ -231,7 +236,12 @@ export default class ConniebotDatabase {
     return (await this.db).run(SQL`DELETE FROM messageAuthors WHERE message = ${message.id}`);
   }
 
-  public async getSettings(server: string) {
+  public async getSettings(
+    server: string | null
+  ): Promise<Omit<IServerSettings, "server"> & { server: string | null }>;
+  public async getSettings(server: string): Promise<IServerSettings>;
+
+  public async getSettings(server: string | null) {
     const db = await this.db;
     const settings = await db.get<IServerSettings>(
       SQL`SELECT * FROM serverSettings WHERE server = ${server}`
@@ -259,8 +269,8 @@ export default class ConniebotDatabase {
     };
 
     await db.run(
-      SQL`INSERT OR REPLACE INTO serverSettings(server, dmHelp)
-        VALUES(${server}, ${settings.dmHelp})`
+      SQL`INSERT OR REPLACE INTO serverSettings(server, dmHelp, reactRemovalTimeout)
+        VALUES(${server}, ${settings.dmHelp}, ${settings.reactRemovalTimeout})`
     );
   }
 

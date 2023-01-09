@@ -36,6 +36,11 @@ const coerceSetting = <T extends keyof IServerSettings>(
   if (key === "dmHelp") {
     const num = Number(value);
     if ([0, 1, 2, 3, 4].includes(num)) return num as IServerSettings[T];
+  } else if (key === "reactRemovalTimeout") {
+    const num = Number(value);
+    // It's official, TypeScript is dumb. It won't compile *without* this cast.
+    if (Object.is(num, -0)) return 0 as IServerSettings[T];
+    if (Number.isFinite(num) && num >= 0) return num as IServerSettings[T];
   }
   return undefined;
 };
@@ -45,11 +50,14 @@ const settingsDescriptions: Readonly<Record<keyof IServerSettings, string>> = {
   dmHelp: "When to send help messages in DMs rather than the original channel.\n\n`0` (default): " +
     "Never.\n`1`: In voice channel chat only.\n`2`: In threads only (including forum posts).\n" +
     "`3`: In voice channel chat or threads.\n`4`: In all channels.",
+  reactRemovalTimeout: "How long to wait before removing the wastebasket reaction from a message," +
+    " in minutes. Enter `0` to disable reaction removal.",
 };
 
 const settingsOrder: Readonly<Record<keyof IServerSettings, number>> = {
   server: 0,
   dmHelp: 1,
+  reactRemovalTimeout: 2,
 };
 
 /**
@@ -81,7 +89,7 @@ const commands: ICommands = {
 
     if (response) {
       await Promise.all([
-        this.reactIfAllowed(response, this.config.deleteEmoji),
+        this.addDeleteReaction(response),
         this.db.addMessage(message, [response], false),
       ]);
     }

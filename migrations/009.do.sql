@@ -1,0 +1,2 @@
+ALTER TABLE serverSettings
+ADD COLUMN reactRemovalTimeout NUMERIC NOT NULL DEFAULT 7;

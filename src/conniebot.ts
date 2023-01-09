@@ -21,7 +21,7 @@ import * as yaml from "js-yaml";
 import fetch from "node-fetch";
 import XRegExp from "xregexp";
 
-import ConniebotDatabase from "./helper/db-management.js";
+import ConniebotDatabase, { IServerSettings } from "./helper/db-management.js";
 import { notifyNewErrors, notifyRestart, updateActivity } from "./helper/startup.js";
 import { formatObject, strFormat } from "./helper/utils/format.js";
 import { log, MessageOptions, messageSummary, reply } from "./helper/utils/index.js";
@@ -224,7 +224,7 @@ export default class Conniebot {
       for (const response of responses) {
         const responseMessage = await reply(message, this.bot, response);
         if (!responseMessage) continue;
-        reactionPromises.push(this.reactIfAllowed(responseMessage, this.config.deleteEmoji));
+        reactionPromises.push(this.addDeleteReaction(responseMessage));
         responseMessages.push(responseMessage);
       }
       await Promise.all(
@@ -309,7 +309,7 @@ export default class Conniebot {
       for (let i = replies.length; i < responses.length; ++i) {
         const newReply = await reply(newMsg, this.bot, responses[i]);
         if (!newReply) continue;
-        reactionPromises.push(this.reactIfAllowed(newReply, this.config.deleteEmoji));
+        reactionPromises.push(this.addDeleteReaction(newReply));
         newMessages.push(newReply);
       }
       await Promise.all(reactionPromises.concat(this.db.addMessage(newMsg, newMessages)));
@@ -411,6 +411,21 @@ export default class Conniebot {
     await this.db.deleteMessage(reaction.message);
   };
 
+  public async addDeleteReaction(message: Message) {
+    if (!this.bot.user) return;
+    const reaction = await this.reactIfAllowed(message, this.config.deleteEmoji);
+    if (!reaction) return;
+
+    const settings = await this.db.getSettings(message.guildId);
+    if (settings.reactRemovalTimeout > 0) {
+      setTimeout(
+        user => reaction.users.remove(user),
+        settings.reactRemovalTimeout * 60000,
+        this.bot.user
+      );
+    }
+  }
+
   public async reactIfAllowed(message: Message, emoji: string) {
     const isExternal = emoji.startsWith("<") && emoji.endsWith(">");
     if (this.bot.user && (
@@ -422,7 +437,7 @@ export default class Conniebot {
       ) ?? true
     )) {
       try {
-        await message.react(emoji);
+        return await message.react(emoji);
       } catch (e) {
         log(
           "error:react",
