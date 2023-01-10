@@ -419,7 +419,15 @@ export default class Conniebot {
     const settings = await this.db.getSettings(message.guildId);
     if (settings.reactRemovalTimeout > 0) {
       setTimeout(
-        user => reaction.users.remove(user),
+        async user => {
+          try {
+            await reaction.users.remove(user);
+          } catch (e) {
+            if (!(e instanceof DiscordAPIError && e.code === 10008)) {
+              log("error", "reaction removal", `Error removing reaction: ${e}`);
+            }
+          }
+        },
         settings.reactRemovalTimeout * 60000,
         this.bot.user
       );
