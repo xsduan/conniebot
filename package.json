@@ -24,7 +24,7 @@
     "@types/js-yaml": "^4.0.5",
     "@types/node": "^16.18.2 || >=18.11.1",
     "config": "^3.3.8",
-    "discord.js": "^14.7.0",
+    "discord.js": "^14.8.0",
     "format-duration": "^3.0.2",
     "js-yaml": "^4.1.0",
     "minimist": "^1.2.6",
