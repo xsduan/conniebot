@@ -133,12 +133,8 @@ export default class Conniebot {
     // add event handlers
     this.bot
       .on("messageCreate", message => this.parse(message))
-      // I'm not sure what's going on here, in terms of type inference or indentation
-      .on<"messageReactionAdd">(
-      "messageReactionAdd",
-      (message, user) => this.reactDeleteMessage(message, user)
-    )
-      .on<"messageUpdate">("messageUpdate", (oldMsg, newMsg) => this.updateReply(oldMsg, newMsg))
+      .on("messageReactionAdd", (message, user) => this.reactDeleteMessage(message, user))
+      .on("messageUpdate", (oldMsg, newMsg) => this.updateReply(oldMsg, newMsg))
       .on("guildCreate", () => this.serverCountChanged())
       .on("guildDelete", async guild => {
         await Promise.all([
