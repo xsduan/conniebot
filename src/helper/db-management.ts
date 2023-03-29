@@ -88,7 +88,7 @@ export interface IServerSettings {
 /**
  * The default server settings.
  */
-const defaultSettings: Readonly<Omit<IServerSettings, "server">> = {
+export const defaultSettings: Readonly<Omit<IServerSettings, "server">> = {
   dmHelp: 0,
   reactRemovalTimeout: 7,
 };

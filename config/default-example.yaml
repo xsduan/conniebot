@@ -60,32 +60,22 @@ conniebot:
   help: |-
     **Commands**
 
-    **`{config.prefix}alpha`**
-    List all available alphabets.
+    **`{config.prefix}alpha`**: List all available alphabets.
 
-    **`{config.prefix}help`**
-    Reply with this message.
+    **`{config.prefix}help`**: Reply with this message.
 
-    **`{config.prefix}invite`**
-    Send a DM with information about adding this bot to other servers.
+    **`{config.prefix}invite`**: Send a DM with information about adding this bot to other servers.
 
-    **`{config.prefix}ping`**
-    Check whether the bot is alive.
+    **`{config.prefix}ping`**: Check whether the bot is alive.
 
-    **`{config.prefix}config`**
-    List current server config settings.
-    **`{config.prefix}config reset`**
-    Reset all server config settings.
-    **`{config.prefix}config <key>`**
-    Describe the config setting `key`.
-    **`{config.prefix}config <key> <option>`**
-    Change the server config setting `key` to `option`.
+    **`{config.prefix}config`**: List current server config settings.
+    **`{config.prefix}config reset`**: Reset all server config settings.
+    **`{config.prefix}config <key>`**: Describe the config setting `key`.
+    **`{config.prefix}config <key> <option>`**: Change the server config setting `key` to `option`.
 
-    **`{config.prefix}about`**
-    Display information about the bot's runtime.
+    **`{config.prefix}about`**: Display information about the bot's runtime.
 
-    **`{config.prefix}purge`**
-    Remove yourself from the database, if applicable.
+    **`{config.prefix}purge`**: Remove yourself from the database, if applicable.
 
     found a bug or want to suggest a feature?
     github: <https://github.com/xsduan/conniebot>

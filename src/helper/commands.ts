@@ -7,7 +7,7 @@ import {
 import formatDuration from "format-duration";
 
 import { ICommands } from "../conniebot.js";
-import { IServerSettings } from "./db-management.js";
+import { defaultSettings, IServerSettings } from "./db-management.js";
 import { formatObject } from "./utils/format.js";
 import { isMod, log, MessageOptions, reply } from "./utils/index.js";
 
@@ -47,9 +47,9 @@ const coerceSetting = <T extends keyof IServerSettings>(
 
 const settingsDescriptions: Readonly<Record<keyof IServerSettings, string>> = {
   server: "Server ID. This cannot be changed.",
-  dmHelp: "When to send help messages in DMs rather than the original channel.\n\n`0` (default): " +
-    "Never.\n`1`: In voice channel chat only.\n`2`: In threads only (including forum posts).\n" +
-    "`3`: In voice channel chat or threads.\n`4`: In all channels.",
+  dmHelp: "When to send help messages in DMs rather than the original channel.\n\n`0`: Never.\n" +
+    "`1`: In voice channel chat only.\n`2`: In threads only (including forum posts).\n`3`: In " +
+    "voice channel chat or threads.\n`4`: In all channels.",
   reactRemovalTimeout: "How long to wait before removing the wastebasket reaction from a message," +
     " in minutes. Enter `0` to disable reaction removal.",
 };
@@ -222,8 +222,11 @@ const commands: ICommands = {
 
     if (!option) {
       const settings = await this.db.getSettings(message.guildId);
-      const text = settingsDescriptions[key as keyof IServerSettings] +
-        `\n\nCurrent setting: \`${settings[key as keyof IServerSettings]}\``;
+      const text = settingsDescriptions[key as keyof IServerSettings] + (
+        defaultSettings.hasOwnProperty(key)
+          ? `\nDefault: \`${defaultSettings[key as keyof typeof defaultSettings]}\``
+          : ""
+      ) + `\nCurrent setting: \`${settings[key as keyof IServerSettings]}\``;
       return sendReply(text);
     }
 
