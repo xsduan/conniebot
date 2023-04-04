@@ -194,7 +194,11 @@ export default class Conniebot {
 
     try {
       const logItem = await cb(message, ...args.split(/\s+/gu));
-      log(`success:command/${cmd}`, logItem === undefined ? "" : String(logItem));
+      const logString = logItem === undefined
+        ? ""
+        : logItem instanceof Message ? messageSummary(logItem) : String(logItem);
+
+      log(`success:command/${cmd}`, logString);
     } catch (err) {
       log(`error:command/${cmd}`, err);
     }

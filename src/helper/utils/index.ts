@@ -60,7 +60,7 @@ export async function sendMessage(msg: string, channel: TextBasedChannel) {
  */
 export function messageSummary({ guild, content }: Message) {
   const guildName = guild ? guild.name : "unknown guild";
-  return `${guildName}: ${content.substring(0, 100)}`;
+  return `${guildName}: ${content.substring(0, 100).trimEnd()}`;
 }
 
 export type MessageOptions = MessageCreateOptions & MessageReplyOptions;
