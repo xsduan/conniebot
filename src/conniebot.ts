@@ -8,6 +8,7 @@ import {
   EmbedBuilder,
   EmbedData,
   Message,
+  MessageFlags,
   MessageReaction,
   PartialMessage,
   PartialMessageReaction,
@@ -70,12 +71,15 @@ const oneDay = 1000 * 60 * 60 * 24;
 export default class Conniebot {
   public bot: Client;
   public db: ConniebotDatabase;
-  public alphabetList?: string;
   public readonly config: IConniebotConfig;
   public readonly pendingConfirmations: IPendingConfirmation[];
 
   private commands: ICommands;
   private x2i?: X2IMatcher;
+
+  public get alphabetList(): string | undefined {
+    return this.x2i?.alphabetList;
+  }
 
   constructor(config: IConniebotConfig) {
     log("verbose", "Starting to load bot...");
@@ -113,20 +117,15 @@ export default class Conniebot {
     }
 
     await Promise.all([
-      (async () => {
-        await notifyRestart(this.bot, this.db);
-        await notifyNewErrors(this.bot, this.db);
-      })(),
+      notifyNewErrors(this.bot, this.db),
       (async () => {
         // fetch the server list and post the count to bots.gg
         await this.bot.guilds.fetch();
         await this.serverCountChanged();
       })(),
-      (async () => {
-        this.x2i = await this.loadKeys();
-        this.alphabetList = this.x2i.alphabetList;
-      })(),
+      (async () => this.x2i = await this.loadKeys())(),
     ]);
+    await notifyRestart(this.bot, this.db);
 
     log("info", "Setup complete.");
 
@@ -378,9 +377,10 @@ export default class Conniebot {
       && message.mentions.repliedUser?.id !== this.bot.user.id
       // - the mention isn't @here or @everyone
       && !message.mentions.everyone
+      // - the message isn't @silent
+      && !message.flags.has(MessageFlags.SuppressNotifications)
     ) {
-      this.reactIfAllowed(message, this.config.pingEmoji)
-        .catch(() => undefined);
+      void this.reactIfAllowed(message, this.config.pingEmoji);
     }
 
     if (await this.sendX2iResponse(message)) return;

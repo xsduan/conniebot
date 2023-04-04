@@ -242,8 +242,9 @@ const commands: ICommands = {
   async purge(message) {
     return await this.addConfirmation(
       async confirmation => {
-        await this.db.purgeUser(message.author.id);
-        return reply(confirmation, this.bot, "You have been deleted from our records.");
+        const result = await this.db.purgeUser(message.author.id);
+        void reply(confirmation, this.bot, "You have been deleted from our records.");
+        return `Removed ${result.changes} rows for user ${message.author.id}.`;
       },
       message,
       "purge",
