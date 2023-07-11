@@ -1,20 +1,9 @@
 ---
 name: APTA
-help: 'https://web.archive.org/web/20230407205814/https://docs.google.com/spreadsheets/u/0/d/1vrO-PypNiL8SlYCGEmuVFfHdQl2daXkM9tXkek0iUNQ/htmlview'
+help: 'https://docs.google.com/spreadsheets/u/0/d/1vrO-PypNiL8SlYCGEmuVFfHdQl2daXkM9tXkek0iUNQ/htmlview'
 prefix: pt
 escape: \
 replacers:
-  - raw:
-      - \\(.)
-      - $1
-  - - "tS};-j"
-    - 𝼗
-  - - "dZ};-j"
-    - 𝼒
-  - - tS};-R
-    - 𝼜
-  - - dZ};-R
-    - 𝼙
   - - "dd};"
     - ʭ
   - - "dz};"
@@ -39,24 +28,8 @@ replacers:
     - ꭧ
   - - "tS;};"
     - ʨ
-  - - "1-R"
-    - 𝼚
-  - - o-R
-    - 𝼛
-  - - "!-R"
-    - 𝼊
   - - R-L
     - ꭨ
-  - - N-j
-    - 𝼔
-  - - Z-j
-    - 𝼘
-  - - "$-j"
-    - 𝼓
-  - - R-j
-    - 𝼕
-  - - "4-j"
-    - 𝼖
   - - i-R
     - ᶖ
   - - u-R
@@ -152,8 +125,6 @@ replacers:
     - ꜎
   - - "#5;<"
     - ꜍
-  - - "t;<"
-    - 𝼉
   - - "#1<"
     - ꜖
   - - "#2<"
@@ -232,30 +203,18 @@ replacers:
     - ꜉
   - - "#5;"
     - ꜈
-  - - "$;|"
-    - 𝼅
   - - "1;|"
     - ʅ
-  - - "4;|"
-    - 𝼈
-  - - "F;|"
-    - 𝼌
   - - "I;|"
     - ᵼ
   - - "L;|"
     - 𝼄
-  - - "N;|"
-    - 𝼇
   - - "S;|"
     - ƪ
-  - - "T;|"
-    - 𝼍
   - - "W;|"
     - ʯ
   - - "Z;|"
     - ƺ
-  - - "c;|"
-    - 𝼏
   - - "g;|"
     - 𝼁
   - - "k;|"
@@ -264,15 +223,11 @@ replacers:
     - σ
   - - "z;|"
     - ƍ
-  - - "?;|"
-    - 𝼎
   - raw:
       - '[gG];<'
       - ʛ
   - - "d;<"
     - ᶑ
-  - - "t;<"
-    - 𝼉
   - - "^?;"
     - 𐞳
   - - "^%;"
@@ -989,5 +944,5 @@ replacers:
   - - "}"
     - ͡
   - raw:
-      - '(.)([͜͢͡])'
+      - '(\P{Inherited}\p{Inherited}*)([͜͢͡])'
       - $2$1
