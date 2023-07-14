@@ -60,7 +60,7 @@ overrides:
       no-throw-literal: 'off'
 parser: '@typescript-eslint/parser'
 parserOptions:
-  ecmaVersion: 2021
+  ecmaVersion: 2022
 plugins:
   - '@typescript-eslint/eslint-plugin'
   - '@typescript-eslint/tslint'
