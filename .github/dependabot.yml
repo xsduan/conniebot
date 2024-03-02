@@ -10,7 +10,13 @@ updates:
     versioning-strategy: increase-if-necessary
     ignore:
       - dependency-name: '@types/node'
+      - dependency-name: '@typescript-eslint/*'
+        update-types:
+          - 'version-update:semver-major'
     groups:
       typescript-eslint:
         patterns:
           - '@typescript-eslint/*'
+        update-types:
+          - minor
+          - patch
