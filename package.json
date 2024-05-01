@@ -41,7 +41,7 @@
     "@typescript-eslint/eslint-plugin": "^6.5.0",
     "@typescript-eslint/eslint-plugin-tslint": "^6.5.0",
     "@typescript-eslint/parser": "^6.5.0",
-    "eslint": "^8.45.0",
+    "eslint": "^9.1.1",
     "standard": "^17.0.0"
   },
   "optionalDependencies": {
