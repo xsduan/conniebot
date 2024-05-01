@@ -44,26 +44,27 @@ overrides:
           avoidEscape: true
       '@typescript-eslint/return-await': error
       '@typescript-eslint/semi': error
-      '@typescript-eslint/tslint/config':
-        - error
-        # As TSLint is poorly supported, only the TSLint-exclusive rules go here. Any rules with
-        # ESLint equivalents should use those instead.
-        - rules:
-            match-default-export-name: true
-            no-duplicate-super: true
-            no-redundant-jsdoc: true
-            no-unnecessary-callback-wrapper: true
-            # There is an ESLint equivalent, sort-imports, but it's too different for the old
-            # configuration to be replicated.
-            ordered-imports: true
-            use-isnan: true
+      # TSLint is incompatible with TS 5 :/
+      # '@typescript-eslint/tslint/config':
+      #   - error
+      #   # As TSLint is poorly supported, only the TSLint-exclusive rules go here. Any rules with
+      #   # ESLint equivalents should use those instead.
+      #   - rules:
+      #       match-default-export-name: true
+      #       no-duplicate-super: true
+      #       no-redundant-jsdoc: true
+      #       no-unnecessary-callback-wrapper: true
+      #       # There is an ESLint equivalent, sort-imports, but it's too different for the old
+      #       # configuration to be replicated.
+      #       ordered-imports: true
+      #       use-isnan: true
       no-throw-literal: 'off'
 parser: '@typescript-eslint/parser'
 parserOptions:
   ecmaVersion: 2022
 plugins:
   - '@typescript-eslint/eslint-plugin'
-  - '@typescript-eslint/tslint'
+  # - '@typescript-eslint/tslint'
 rules:
   '@typescript-eslint/array-type': error
   '@typescript-eslint/prefer-function-type': error
