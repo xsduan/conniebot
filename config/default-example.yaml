@@ -111,13 +111,13 @@ conniebot:
     \nYou may only add the bot to a server that you have the \"manage server\" permission in.
     \n
     \nIt will request the following permissions:
-    \n - Read messages
-    \n - Send messages in channels
-    \n - Send messages in threads
-    \n - Embed links
-    \n - Read message history
-    \n - Add reactions
-    \n - Use external emojis
+    \n- Read messages
+    \n- Send messages in channels
+    \n- Send messages in threads
+    \n- Embed links
+    \n- Read message history
+    \n- Add reactions
+    \n- Use external emojis
     \n
     \nIn order for the bot to function, at least the \"read messages\" and one of the \"send messages\"
     permissions must be enabled.
