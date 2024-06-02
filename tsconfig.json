@@ -6,6 +6,7 @@
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "useUnknownInCatchVariables": false,
+    "skipLibCheck": true,
   },
   "include": ["src"],
 }
