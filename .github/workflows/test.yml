@@ -26,4 +26,5 @@ jobs:
       - shell: bash
         run: |
           npm ci --omit dev
+          cp config/default-example.yaml config/default.yaml
           npm run build
