@@ -1,11 +1,12 @@
 import c from "config";
 import {
+  ChannelType,
   Client,
   Message,
   MessageCreateOptions,
   MessageReplyOptions,
   PermissionFlagsBits,
-  TextBasedChannel,
+  SendableChannels,
 } from "discord.js";
 
 import npmlog from "npmlog";
@@ -45,7 +46,7 @@ export function log(status: string, message: string, ...args: any[]) {
 /**
  * Send a message to a channel and swallow errors.
  */
-export async function sendMessage(msg: string, channel: TextBasedChannel) {
+export async function sendMessage(msg: string, channel: SendableChannels) {
   try {
     await channel.send(msg);
     return true;
@@ -65,6 +66,12 @@ export function messageSummary({ guild, content }: Message) {
 
 export type MessageOptions = MessageCreateOptions & MessageReplyOptions;
 
+export type ReplyFn = (
+  message: Message,
+  bot: Client,
+  data: string | MessageOptions
+) => Promise<Message | undefined>;
+
 /**
  * Reply to a message, using Message#reply if allowed, or Channel#send otherwise.
  * @param message The message to reply to
@@ -72,7 +79,7 @@ export type MessageOptions = MessageCreateOptions & MessageReplyOptions;
  * @param data The data to send
  * @returns The message sent, if it could be sent.
  */
-export const reply = async (message: Message, bot: Client, data: string | MessageOptions) => {
+export const reply: ReplyFn = async (message, bot, data) => {
   try {
     if (
       // @ts-expect-error The thing it complains about is why the `?.` is there
@@ -80,8 +87,11 @@ export const reply = async (message: Message, bot: Client, data: string | Messag
         ?? true
     ) {
       return await message.reply(data);
+    } else if (message.channel.isSendable()) {
+      return await message.channel.send(data);
+    } else {
+      log("error", "Cannot send message in channel of type ", ChannelType[message.channel.type]);
     }
-    return await message.channel.send(data);
   } catch (err) {
     log("error", err);
   }
