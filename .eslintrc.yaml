@@ -40,20 +40,10 @@ overrides:
       '@typescript-eslint/no-unnecessary-type-assertion': error
       '@typescript-eslint/no-var-requires': error
       '@typescript-eslint/return-await': error
-      # TSLint is incompatible with TS 5 :/
-      # '@typescript-eslint/tslint/config':
-      #   - error
-      #   # As TSLint is poorly supported, only the TSLint-exclusive rules go here. Any rules with
-      #   # ESLint equivalents should use those instead.
-      #   - rules:
-      #       match-default-export-name: true
-      #       no-duplicate-super: true
-      #       no-redundant-jsdoc: true
-      #       no-unnecessary-callback-wrapper: true
-      #       # There is an ESLint equivalent, sort-imports, but it's too different for the old
-      #       # configuration to be replicated.
-      #       ordered-imports: true
-      #       use-isnan: true
+      sort-imports:
+        - error
+        - ignoreCase: true
+          allowSeparatedGroups: true
 parser: '@typescript-eslint/parser'
 parserOptions:
   ecmaVersion: 2022

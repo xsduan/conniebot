@@ -1,6 +1,6 @@
+import { Database, open } from "sqlite";
 import Postgrator from "postgrator";
 import SQL from "sql-template-strings";
-import { Database, open } from "sqlite";
 import sqlite3 from "sqlite3";
 
 import { Message, PartialMessage } from "discord.js";

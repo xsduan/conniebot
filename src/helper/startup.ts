@@ -1,7 +1,7 @@
 import { Client } from "discord.js";
 
-import ConniebotDatabase from "./db-management.js";
 import { log, sendMessage } from "./utils/index.js";
+import ConniebotDatabase from "./db-management.js";
 
 /**
  * Send notification to channel for reboot.

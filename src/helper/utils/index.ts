@@ -1,4 +1,3 @@
-import c from "config";
 import {
   ChannelType,
   Client,
@@ -8,6 +7,7 @@ import {
   PermissionFlagsBits,
   SendableChannels,
 } from "discord.js";
+import c from "config";
 
 import npmlog from "npmlog";
 
