@@ -13,7 +13,7 @@ export async function notifyRestart(bot: Client, db: ConniebotDatabase) {
   }
 
   const channel = await bot.channels.fetch(channelId);
-  if (!channel?.isTextBased()) {
+  if (!channel?.isSendable()) {
     return log("warn", `Channel ${channelId} doesn't exist or is not a text channel.`);
   }
 
@@ -41,7 +41,7 @@ export async function notifyNewErrors(bot: Client, db: ConniebotDatabase) {
   }
 
   const errorChannel = await bot.channels.fetch(errorChannelId);
-  if (!errorChannel?.isTextBased()) {
+  if (!errorChannel?.isSendable()) {
     return log("warn", "Can't use listed error channel. (nonexistent or not text)");
   }
 

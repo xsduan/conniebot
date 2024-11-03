@@ -1,5 +1,4 @@
 import {
-  Client,
   EmbedBuilder,
   Message,
   version as djsVersion,
@@ -9,11 +8,11 @@ import formatDuration from "format-duration";
 import { ICommands } from "../conniebot.js";
 import { defaultSettings, IServerSettings } from "./db-management.js";
 import { formatObject } from "./utils/format.js";
-import { isMod, log, MessageOptions, reply } from "./utils/index.js";
+import { isMod, log, reply, ReplyFn } from "./utils/index.js";
 
 type ValueOf<T> = T[keyof T];
 
-const dmReply = async (message: Message, bot: Client, data: string | MessageOptions) => {
+const dmReply: ReplyFn = async (message, bot, data) => {
   let retval: Message;
   try {
     if (message.channel.isDMBased()) {
