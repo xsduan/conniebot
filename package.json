@@ -58,7 +58,7 @@
     "exitcrash": true
   },
   "engines": {
-    "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+    "node": "^20.18.0 || >=21.1.0"
   },
   "engineStrict": true,
   "type": "module"
