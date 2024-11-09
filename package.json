@@ -22,7 +22,7 @@
   "dependencies": {
     "@types/config": "^3.3.0",
     "@types/js-yaml": "^4.0.5",
-    "@types/node": ">=18.11.1",
+    "@types/node": ">=22.9.0",
     "config": "^3.3.8",
     "discord.js": "^14.13.0",
     "format-duration": "^3.0.2",
