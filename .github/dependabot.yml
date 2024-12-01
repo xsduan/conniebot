@@ -14,9 +14,10 @@ updates:
         update-types:
           - 'version-update:semver-major'
     groups:
-      typescript-eslint:
+      typescript:
         patterns:
           - '@typescript-eslint/*'
+          - typescript
         update-types:
           - minor
           - patch
