@@ -30,7 +30,7 @@
     "minimist": "^1.2.8",
     "node-fetch": "^3.2.10",
     "npmlog": "^7.0.1",
-    "postgrator": "^7.1.1",
+    "postgrator": "^8.0.0",
     "sql-template-strings": "^2.2.2",
     "sqlite": "^5.0.1",
     "sqlite3": "^5.1.6",
@@ -58,7 +58,7 @@
     "exitcrash": true
   },
   "engines": {
-    "node": "^20.18.0 || >=21.1.0"
+    "node": "^20.18.0 || >=22.0.0"
   },
   "engineStrict": true,
   "type": "module"
