@@ -35,7 +35,7 @@
     "sqlite": "^5.0.1",
     "sqlite3": "^5.1.6",
     "typescript": "~5.7.2",
-    "xregexp": "^5.1.1"
+    "xregexp": "^5.1.2"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin-ts": "^3.0.1",
