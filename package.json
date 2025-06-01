@@ -23,7 +23,7 @@
     "@types/config": "^3.3.0",
     "@types/js-yaml": "^4.0.5",
     "@types/node": ">=22.9.0",
-    "config": "^3.3.8",
+    "config": "^4.0.0",
     "discord.js": "^14.17.0",
     "format-duration": "^3.0.2",
     "js-yaml": "^4.1.0",
