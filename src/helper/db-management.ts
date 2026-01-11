@@ -134,6 +134,9 @@ export default class ConniebotDatabase {
       async execQuery(query) {
         return { rows: await db.all(query) };
       },
+      execSqlScript(sqlScript) {
+        return db.exec(sqlScript);
+      },
     });
 
     pg.on("migration-started", migration => {
