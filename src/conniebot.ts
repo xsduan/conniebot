@@ -92,7 +92,7 @@ export default class Conniebot {
     this.pendingConfirmations = [];
 
     void this.bot
-      .once("ready", () => this.startup())
+      .once("clientReady", () => this.startup())
       .on("error", err => {
         if (err?.message?.includes("ECONNRESET")) {
           return log("warn", "connection reset. oops!");
