@@ -33,7 +33,7 @@
     "postgrator": "^8.0.0",
     "sql-template-strings": "^2.2.2",
     "sqlite": "^5.0.1",
-    "sqlite3": "^5.1.6",
+    "sqlite3": "^6.0.1",
     "typescript": "~5.9.3",
     "xregexp": "^5.1.2"
   },
