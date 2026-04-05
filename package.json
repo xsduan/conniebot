@@ -57,7 +57,7 @@
     "exitcrash": true
   },
   "engines": {
-    "node": "^20.18.0 || >=22.0.0",
+    "node": ">=22.22.1",
     "npm": "^11.6.1"
   },
   "engineStrict": true,
