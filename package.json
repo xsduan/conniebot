@@ -7,8 +7,8 @@
     "url": "https://github.com/xsduan/conniebot.git"
   },
   "scripts": {
-    "lint": "eslint ./ --ignore-path .gitignore",
-    "fix": "eslint ./ --ignore-path .gitignore --fix",
+    "lint": "eslint ./ --ignore-pattern dist/",
+    "fix": "eslint ./ --ignore-pattern dist/ --fix",
     "build": "node build",
     "start": "node build -s",
     "forever": "node build -f",
@@ -34,14 +34,17 @@
     "sql-template-strings": "^2.2.2",
     "sqlite": "^5.0.1",
     "sqlite3": "^6.0.1",
-    "typescript": "~5.9.3",
+    "typescript": "~6.0.2",
     "xregexp": "^5.1.2"
   },
   "devDependencies": {
-    "@stylistic/eslint-plugin-ts": "^3.0.1",
-    "@typescript-eslint/eslint-plugin": "^8.38.0",
-    "@typescript-eslint/parser": "^8.38.0",
-    "eslint": "^8.57.1",
+    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin-ts": "^4.4.1",
+    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "@typescript-eslint/parser": "^8.58.0",
+    "eslint": "^10.2.0",
+    "globals": "^17.4.0",
     "standard": "^17.0.0"
   },
   "optionalDependencies": {

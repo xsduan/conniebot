@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es2022",
+    "target": "es2024",
     "module": "es2020",
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "useUnknownInCatchVariables": false,
     "skipLibCheck": true,
+    "rootDir": "src",
+    "ignoreDeprecations": "6.0",
   },
-  "include": ["src"],
 }

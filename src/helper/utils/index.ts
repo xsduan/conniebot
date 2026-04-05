@@ -14,7 +14,6 @@ import npmlog from "npmlog";
 // init log style
 Object.defineProperty(npmlog, "heading", {
   get: () => `[${new Date().toISOString()}]`,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   set: () => { }, // ignore sets since we just need it to be a timestamp
 });
 npmlog.headingStyle = { fg: "blue" };
