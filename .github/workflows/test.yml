@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: 20.18.0
+          node-version: 25.7.0
       - shell: bash
         run: npm i -g npm@11
       - shell: bash
@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: 20.18.0
+          node-version: 25.7.0
       - shell: bash
         run: npm i -g npm@11
       - shell: bash
