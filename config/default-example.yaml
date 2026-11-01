@@ -159,3 +159,6 @@ conniebot:
 
   # the URL of the privacy policy
   privacyURL: 'https://github.com/xsduan/conniebot/blob/master/PRIVACY_POLICY.md'
+
+  # If false, the bot does not include user message content in its log output.
+  canLogMessages: true

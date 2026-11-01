@@ -35,11 +35,13 @@ export interface IConniebotConfig {
   readonly activeMessage?: string;
   readonly botlistToken?: string;
   readonly botlistUrl?: string;
+  readonly canLogMessages: boolean;
   readonly clientOptions: Readonly<ClientOptions>;
   readonly confirmationTimeout: number;
   readonly database: string;
   readonly deleteEmoji: string;
   readonly help: Readonly<EmbedData> | string;
+  readonly invite: Readonly<EmbedData> | string;
   readonly migrations: string;
   readonly owner: string;
   readonly pingEmoji?: string;
@@ -49,7 +51,6 @@ export interface IConniebotConfig {
   readonly timeoutMessage: Readonly<EmbedData> | string;
   readonly token: string;
   readonly x2iFiles: string;
-  readonly invite: Readonly<EmbedData> | string;
 }
 
 export interface ICommands {
@@ -214,8 +215,12 @@ export default class Conniebot {
     if (responses.length === 0) return false;
     const logCode = responses.length === 1 ? "all" : "partial";
 
-    const respond = (stat: string, ...ms: any[]) =>
-      log(`${stat}:x2i/${logCode}`, messageSummary(message), ...ms);
+    const respond = (stat: string, ...ms: any[]) => {
+      const summary = this.config.canLogMessages
+        ? messageSummary(message)
+        : `Message in ${message.guild?.name ?? "unknown guild"}`;
+      log(`${stat}:x2i/${logCode}`, summary, ...ms);
+    };
 
     try {
       const responseMessages: Message[] = [];
