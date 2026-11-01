@@ -1,6 +1,6 @@
 {
   "name": "conniebot",
-  "version": "4.6.5",
+  "version": "4.7.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -41,9 +41,10 @@
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin-ts": "^4.4.1",
-    "@typescript-eslint/eslint-plugin": "^8.58.0",
-    "@typescript-eslint/parser": "^8.58.0",
+    "@typescript-eslint/eslint-plugin": "^8.72.1",
+    "@typescript-eslint/parser": "^8.72.1",
     "eslint": "^10.2.0",
+    "eslint-plugin-n": "^16.6.2",
     "globals": "^17.4.0",
     "standard": "^17.0.0"
   },
